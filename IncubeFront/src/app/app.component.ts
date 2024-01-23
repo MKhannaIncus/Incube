@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  templateUrl: './app.component.html', //what is to be loaded
+  styleUrls: ['./app.component.css'] //corresponding css file
 })
 export class AppComponent implements OnInit {
   title = 'Incube';
@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.get('http://localhost:5001/api/users').subscribe({
+    this.http.get('http://localhost:5005').subscribe({
       next: response => this.users = response,
       error: error => console.log(error),
       complete: () => console.log('Requst has completed')
