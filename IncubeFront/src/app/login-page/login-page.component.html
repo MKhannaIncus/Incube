@@ -1,0 +1,32 @@
+<main class="form-signin w-100 m-auto">
+    <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+      <img class="image-container" src="\assets\incus_capital_logo.jfif">
+      <h1 class="title">Please sign in</h1>
+  
+      <div class="form-floating">
+        <input 
+        name="email"
+        [(ngModel)]="model.email"
+        type="email" 
+        class="form-control" 
+        placeholder="name@example.com">
+        <label for="floatingInput">Email address</label>
+      </div>
+      <div class="form-floating">
+        <input 
+        name="password"
+        [(ngModel)]="model.password"
+        type="password"
+        class="form-control" 
+        placeholder="Password">
+        <label for="floatingPassword">Password</label>
+      </div>
+      <div class="form-check text-start my-3">
+        <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+        <label class="form-check-label" for="flexCheckDefault">
+          Remember me
+        </label>
+      </div>
+      <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+    </form>
+  </main>

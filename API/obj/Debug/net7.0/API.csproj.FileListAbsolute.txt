@@ -1,3 +1,4 @@
+C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\.filenesting.json
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\appsettings.json
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\API.exe
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\API.deps.json
@@ -12,11 +13,16 @@ C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.EntityFramew
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Sqlite.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\Mono.TextTemplating.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\SQLitePCLRaw.batteries_v2.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\SQLitePCLRaw.core.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\SQLitePCLRaw.provider.e_sqlite3.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\System.CodeDom.dll
+C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\runtimes\alpine-arm\native\libe_sqlite3.so
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\runtimes\alpine-arm64\native\libe_sqlite3.so
 C:\Users\mkhanna\source\repos\Incube\API\bin\Debug\net7.0\runtimes\alpine-x64\native\libe_sqlite3.so

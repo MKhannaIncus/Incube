@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.FirstMigration
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240123172228_NewMigration")]
-    partial class NewMigration
+    [Migration("20240131134731_UserRegisterationDatabase")]
+    partial class UserRegisterationDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,8 +34,11 @@ namespace API.Data.FirstMigration
                     b.Property<string>("LastName")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("BLOB");
 
                     b.HasKey("Id");
 

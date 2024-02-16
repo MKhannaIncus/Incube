@@ -1,0 +1,29 @@
+.form-signin {
+    max-width: 330px;
+    padding: 1rem;
+}
+
+.m-auto {
+    margin: auto !important;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    margin-top: 30%;
+    margin-left: 15%;
+    margin-bottom: 15%;
+    /* Center vertically */
+    height: 80;
+    /* Optional: Adjust based on your needs */
+}
+
+.title{
+    align-items: center;
+    display: flex;
+    margin-left: 30%;
+    font-size:large;
+    margin-bottom: 10%;
+}
