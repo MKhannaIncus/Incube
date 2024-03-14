@@ -12,6 +12,7 @@ public class AppUser
     public string LastName {get; set;}
 
     public string Email {get; set;}
+    public string Password { get; set;}
 
     //The password is only stored as hash and salt in the database- for sercurity purposes
     //public string Password {get; set;}

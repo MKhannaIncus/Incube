@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -19,9 +20,9 @@ public class AccountController : BaseApiController
 {
     private readonly DataContext _context;
     private readonly ITokenService _tokenService;
-
     public AccountController(DataContext context, ITokenService tokenService)
     {
+        _tokenService = tokenService;
         _context = context;
     }
 
@@ -35,7 +36,10 @@ public class AccountController : BaseApiController
 
         var user = new AppUser
         {
+            FirstName = registerdto.FirstName.ToLower(),
+            LastName = registerdto.LastName.ToLower(),
             Email = registerdto.Email.ToLower(),
+            Password = registerdto.Password,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerdto.Password)),
             PasswordSalt = hmac.Key
         };
@@ -57,7 +61,7 @@ public class AccountController : BaseApiController
 
         if (user == null) return Unauthorized("Invalid Username");
 
-        using var hmac = new HMACSHA512();
+        using var hmac = new HMACSHA512(user.PasswordSalt);
 
         var ComputedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(logindto.Password));
 
@@ -65,6 +69,7 @@ public class AccountController : BaseApiController
         {
             if (ComputedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
         }
+        Console.WriteLine("User is authenticated");
         return new UserDto
         {
             Username = user.Email,
@@ -72,10 +77,8 @@ public class AccountController : BaseApiController
         };
 
     }
-
     private async Task<bool> UserExists(string email)
     {
         return await _context.Users.AnyAsync(x => x.Email == email.ToLower());
     }
-
 }
