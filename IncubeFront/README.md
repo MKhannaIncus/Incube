@@ -1,6 +1,12 @@
+<<<<<<< Updated upstream
 # Client
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.8.
+=======
+# IncubeFront
+
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9.
+>>>>>>> Stashed changes
 
 ## Development server
 
