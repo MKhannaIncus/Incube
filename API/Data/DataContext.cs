@@ -10,4 +10,6 @@ public class DataContext : DbContext
     }
 
     public DbSet<AppUser> Users { get; set; }
+
+    public DbSet<Deal> Deals { get; set; }
 }
