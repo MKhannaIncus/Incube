@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppComponent } from '../app.component';
 import { AccountService } from '../_services/account.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -12,7 +13,7 @@ export class LoginPageComponent implements OnInit {
   loggedIn = false;
 
   //Service injectable
-  constructor(public accountService: AccountService){}
+  constructor(public accountService: AccountService, private router:Router){}
 
   ngOnInit(): void{
   }
@@ -22,6 +23,7 @@ export class LoginPageComponent implements OnInit {
       next: response =>{
         console.log(response);
         this.loggedIn =true;
+        this.router.navigate(['/deals']);
       },
       error: error => console.log(error)
     })
