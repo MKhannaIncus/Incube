@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DealService } from '../_services/deal.service';
 import { Data } from '@angular/router';
 import { Deal } from '../_models/deal';
+
 
 @Component({
   selector: 'app-deals',
@@ -11,7 +12,9 @@ import { Deal } from '../_models/deal';
 export class DealsComponent {
   model: any = {};
   deals : Deal[] = [];
-
+  
+  popup = false;
+  
   constructor(private dealService: DealService){}
 
   ngOnInit(): void{

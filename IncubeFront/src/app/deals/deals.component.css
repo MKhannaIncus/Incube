@@ -2,19 +2,126 @@
 .floating-rectangle {
   margin-bottom: 1rem; /* Spacing between items */
   border-radius: 0.25rem; /* Rounded corners for the rectangles */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transition for hover effects, including background color */
   box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  /* Add a default background color if necessary, e.g., white or any other color */
 }
 
 .floating-rectangle:hover {
   transform: translateY(-5px); /* Move up slightly on hover */
   box-shadow: 0 10px 15px rgba(0,0,0,0.2); /* Increase shadow for floating effect */
+  background-color: blue; /* Changes the background color to blue on hover */
 }
+
+.nav-pills{
+  background-color:blue;
+}
+
+.nav-pills:hover {
+  background-color: aliceblue;
+}
+
 
 .deal-title {
   margin-bottom: 0.5rem; /* Spacing between title and description */
+  color: antiquewhite;
 }
 
 .deal-description {
   margin-bottom: 0.75rem; /* Spacing above the action button */
+}
+
+/* .custom-nav-link:hover {
+  background-color: blue; /* Keeps the hover background color change for the link 
+  color: white; Change text color on hover */
+ 
+
+  .popup {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+    transition: all 5s ease-in-out;
+  }
+  
+  .popup h2 {
+    margin-top: 0;
+    color: #333;
+    font-family: Tahoma, Arial, sans-serif;
+  }
+  .popup .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+  }
+  .popup .close:hover {
+    color: #06D85F;
+    cursor: pointer;
+  }
+  .popup .content {
+    max-height: 30%;
+    overflow: auto;
+  }
+  
+  @media screen and (max-width: 700px){
+    
+    .popup{
+      width: 70%;
+    }
+  }
+
+
+  
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+visibility: visible;
+  opacity: 1;
+}
+
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+  cursor: pointer;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
 }

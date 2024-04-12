@@ -1,11 +1,25 @@
 
 <div class="container">
   <div *ngFor="let deal of deals" class="card my-2">
-    <div class="card-body">
-      <h5 class="card-title">{{deal.alias}}</h5>
-      <p class="card-text">{{ deal.description }}</p>
+    <ul class="nav nav-pills nav-stacked card-body">
+      <li><a href="#" class="floating-rectangle custom-nav-link deal-title">{{deal.alias}}</a></li>      
+    </ul>
+  </div>
+  <div>
+    <button (click)="popup=true">New Deal</button>
+    <div *ngIf="popup">
+
+
+      <div class="overlay" *ngIf="popup">
+        <div class="popup">
+          <h2>Here i am</h2>
+          <a class="close" (click)="popup = false">&times;</a>
+          <div class="content">
+          you have selected this event
+          </div>
+        </div>
+      </div>
       
-      <!-- Display other deal details as needed -->
     </div>
   </div>
 </div>
