@@ -1,18 +1,25 @@
-<div class="container">
+<div class="deals-list">
   <!-- Loop through each deal and display it using Bootstrap's card component -->
   <div *ngFor="let deal of deals" class="card my-2">
-    <div class="card-body">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a href="#" class="nav-link active">{{ deal.alias }}</a>
-        </li>      
-      </ul>
+    <div class="floating-rectangle">
+      <div class="row align-items-center"> <!-- align-items-center vertically centers the content in each column -->
+        <div class="col-md-3 ">
+          <a href="#" class="nav-pills nav-link active" (click)="false">{{ deal.alias }}</a>
+        </div>
+        <div class="col-md-3">
+          <p>country</p> <!-- Assuming 'country' is part of your deal object -->
+        </div>
+        <div class="col-md-3">
+          <p>sector</p> <!-- Assuming 'sector' is part of your deal object -->
+        </div>
+        <div class="col-md-3">
+          <p>{{deal.signingDate | date: 'mediumDate'}}</p> <!-- Assuming 'sector' is part of your deal object -->
+        </div>
     </div>
   </div>
-</div>
-<div>
+  </div>
   <!-- Button to open the popup -->
-  <button type="button" class="btn btn-primary" (click)="popup=true">New Deal</button>
+  <button type="button" class="newDealButton btn btn-primary" (click)="popup=true">New Deal</button>
   <!-- Popup Overlay -->
   <div class="modal fade show" style="display: block;" *ngIf="popup">
     <div class="modal-dialog">

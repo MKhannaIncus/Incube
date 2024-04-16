@@ -1,9 +1,8 @@
-<h2>New Deal</h2>
 
-<form action="/action_page.php">
+<form [formGroup]="dealForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
         <label for="alias">Alias:</label>
-        <input type="alias" class="form-control">
+        <input type="alias" class="form-control" formControlName="alias">
     </div>
-    <button type="submit" class="btn btn-primary">Add</button>
+    <button type="submit" class="add-button btn btn-primary">Add</button>
 </form> 

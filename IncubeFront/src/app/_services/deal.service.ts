@@ -15,4 +15,11 @@ export class DealService {
     const params = new HttpParams({fromObject: model});
     return this.http.get<Deal[]>(this.apiUrl, { params });
   }
-}
+
+
+  createDeal(model:any){
+    return this.http.post<Deal>(this.apiUrl,model);
+    }
+  }
+
+

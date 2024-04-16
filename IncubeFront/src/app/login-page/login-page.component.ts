@@ -35,22 +35,4 @@ export class LoginPageComponent implements OnInit {
     this.accountService.logout();
   }
 
-  // constructor(private accountService: AccountService){  
-  // }
-
-  // ngOnInit(): void{
-
-  // }
-
-  
-  // login() {
-  //   this.accountService.login(this.model).subscribe(response => {
-  //     console.log(response);
-  //     this.loggedIn =true;
-  //   }, error => {
-  //     console.log(error);
-  //   })
-  // }
-  //#endregion
-
 }

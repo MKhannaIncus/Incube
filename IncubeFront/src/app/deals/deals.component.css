@@ -1,15 +1,22 @@
+
+.deals-list{
+  padding: 3%;
+}
+
 /* General styles for deal cards */
 .floating-rectangle {
-  margin-bottom: 1rem; /* Spacing between items */
+  padding: 1.5%;
   border-radius: 0.25rem; /* Rounded corners */
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transitions for hover effects */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
+  background-color: whitesmoke;
 }
 
 .floating-rectangle:hover {
   transform: translateY(-5px); /* Slight upward lift on hover */
   box-shadow: 0 10px 15px rgba(141, 133, 222, 0.2); /* Enhanced shadow for floating effect */
   background-color: #040c13; 
+  color: aliceblue;
 }
 
 /* Navigation pills customization */
@@ -20,12 +27,12 @@
 }
 
 .nav-pills {
-  background-color: #0056b3; /* Darker shade on hover/active */
+  color: #0056b3; /* Darker shade on hover/active */
+}
+.nav-pills:hover {
+  color: azure; /* Darker shade on hover/active */
 }
 
-.nav-pills:hover {
-  background-color: aliceblue;
-}
 
 /* Title and description styles within deals */
 .deal-title {
@@ -41,7 +48,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 70%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
   visibility: visible;
@@ -54,7 +61,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 30%;
+  width: 1000%;
   padding: 20px;
   background: #fff;
   border-radius: 5px;
@@ -88,4 +95,8 @@
   .popup {
     width: 90%; /* More width for smaller screens */
   }
+}
+
+.newDealButton{
+  margin-top: 1%;
 }
