@@ -1,6 +1,6 @@
 ﻿using API.Data;
-using API.Interfaces;
 using API.Services;
+using API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +25,7 @@ namespace API.Extensions
 
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<TransactionService>();
             return services;
         }
 

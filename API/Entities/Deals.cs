@@ -60,5 +60,11 @@ namespace API.Entities
 
         [Column("Deal_Performance")]
         public string DealPerformance { get; set; }
+
+        [Column("Related_investment_code")]
+        public int InvestorCode { get; set; }
+
+        //[ForeignKey("deal_ibfk_1")]
+        //public Fund Fund { get; set;}
     }
 }
