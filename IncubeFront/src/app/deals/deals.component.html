@@ -1,33 +1,45 @@
-<div class="deals-list">
-  <!-- Loop through each deal and display it using Bootstrap's card component -->
-  <div *ngFor="let deal of deals" class="card my-2">
-    <div class="floating-rectangle">
-      <div class="row align-items-center"> <!-- align-items-center vertically centers the content in each column -->
-        <div class="col-md-3 ">
-          <a href="#" class="nav-pills nav-link active" (click)="false">{{ deal.alias }}</a>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="deals-list">
+        <!-- Loop through each deal and display it using Bootstrap's card component -->
+        <div *ngFor="let deal of deals" class="card mb-3" (click)="pageRedirection()">
+          <div class="card-body">
+            <div class="row align-items-center"> <!-- Aligns items vertically in the center -->
+              <div class="col-md-3">
+                <strong class="d-block text-uppercase">Deal</strong>
+                <p>{{ deal.alias }}</p>
+              </div>
+              <div class="col-md-3">
+                <strong class="d-block text-uppercase">Country</strong>
+                <p>country</p> <!-- Assuming 'country' is part of your deal object -->
+              </div>
+              <div class="col-md-3">
+                <strong class="d-block text-uppercase">Sector</strong>
+                <p>{{ deal.sector }}</p> <!-- Assuming 'sector' is part of your deal object -->
+              </div>
+              <div class="col-md-3">
+                <strong class="d-block text-uppercase">Signing Date</strong>
+                <p>{{ deal.signingDate | date: 'mediumDate' }}</p> <!-- Formats the date -->
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-3">
-          <p>country</p> <!-- Assuming 'country' is part of your deal object -->
-        </div>
-        <div class="col-md-3">
-          <p>sector</p> <!-- Assuming 'sector' is part of your deal object -->
-        </div>
-        <div class="col-md-3">
-          <p>{{deal.signingDate | date: 'mediumDate'}}</p> <!-- Assuming 'sector' is part of your deal object -->
-        </div>
+      </div>
     </div>
   </div>
-  </div>
-  <!-- Button to open the popup -->
-  <button type="button" class="newDealButton btn btn-primary" (click)="popup=true">New Deal</button>
-  <!-- Popup Overlay -->
-  <div class="modal fade show" style="display: block;" *ngIf="popup">
+
+  <!-- Button to open the popup for a new deal -->
+  <button type="button" class="btn btn-primary mt-3" (click)="popup=true">New Deal</button>
+
+  <!-- Popup Overlay for adding a new deal -->
+  <div class="modal fade show" *ngIf="popup" style="display: block;" aria-hidden="!popup" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Add New Deal</h5>
           <button type="button" class="close" (click)="popup = false">
-            <span>&times;</span>
+            <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">

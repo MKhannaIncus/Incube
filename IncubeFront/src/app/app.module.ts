@@ -11,12 +11,13 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { FormsModule } from '@angular/forms';
 import { DealsComponent } from './deals/deals.component';
 import { AddNewDealComponent } from './add-new-deal/add-new-deal.component';
+import { TransactionsComponent } from './transactions/transactions.component';
 
 //responsable for loading the webpage
 
 @NgModule({ //decorator
   declarations: [ //new components
-    AppComponent, LoginPageComponent, DealsComponent, AddNewDealComponent
+    AppComponent, LoginPageComponent, DealsComponent, AddNewDealComponent, TransactionsComponent
   ],
   imports: [
     BrowserModule,

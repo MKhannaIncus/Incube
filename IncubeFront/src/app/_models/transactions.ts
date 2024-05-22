@@ -1,23 +1,31 @@
 export interface Transaction {
-    transaction_Id: number;
-    related_Deal_Id?: number;
-    transaction_Date?: Date;
-    amount_Due_BOP?: number;
-    principal_BOP?: number;
-    cash_Interest_BOP?: number;
-    pik_Interest_BOP?: number;
-    undrawn_Interest_BOP?: number;
-    capitalized?: number;
-    repayment?: number;
-    pik_Interest_EOP?: number;
-    cash_Interest_EOP?: number;
-    undrawn_Interest_EOP?: number;
-    principal_EOP?: number;
-    amount_Due_EOP?: number;
+   transaction_Id: number;
+   related_Deal_Id: number;
+   transaction_Date: Date;
     occurred?: boolean;
-    repayment_CashInterest?: number;
-    repayment_PIKInterest?: number;
-    repayment_Principal?: number;
-    repayment_UndrawnFees?: number;
+    amountDueBOP?: number;
+    principalBOP?: number;
+    cashInterestBOP?: number;
+    pikInterestBOP?: number;
+    undrawnInterestBOP?: number;
+    cashInterestRate?: number;
+    pikInterestRate?: number;
+    undrawnFeeInterestRate?: number;
+    undrawnAmount?: number;
+    cashInterestAccrued?: number;
+    pikInterestAccrued?: number;
+    undrawnInterestAccrued?: number;
+    repayment?: number;
+    repaymentCashInterest?: number;
+    repaymentPikInterest?: number;
+    repaymentPrincipal?: number;
+    repaymentUndrawnFees?: number;
+    capitalized?: number;
+    principalEOP?: number;
+    cashInterestEOP?: number;
+    pikInterestEOP?: number;
+    undrawnInterestEOP?: number;
+    amountDueEOP?: number;
     drawdown?: number;
-}
+  }
+  

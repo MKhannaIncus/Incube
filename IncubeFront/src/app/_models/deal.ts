@@ -1,4 +1,5 @@
 export interface Deal {
+  dealId: number;
     alias: string;
     fund: string;
     signingDate: Date;

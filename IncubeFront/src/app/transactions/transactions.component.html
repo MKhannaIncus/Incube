@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Summary 1</h5>
+          <p class="card-text">Details or metrics for Summary 1.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Summary 2</h5>
+          <p class="card-text">Details or metrics for Summary 2.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h2>Transactions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Transaction ID</th>
+          <th>Related Deal ID</th>
+          <th>Transaction Date</th>
+          <th>Amount Due BOP</th>
+          <!-- Add more headers as necessary -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of transactions">
+          <td>{{ transaction.transaction_Id }}</td>
+          <td>{{ transaction.related_Deal_Id }}</td>
+          <td>{{ transaction.transaction_Date | date }}</td>
+          <!-- Add more fields as necessary -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
