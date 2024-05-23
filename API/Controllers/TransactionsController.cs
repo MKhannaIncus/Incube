@@ -25,12 +25,14 @@ namespace API.Controllers
             _context = context;
         }
         
+        //All transactionsse
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Entities.Transaction>>> GetTransactions()
         {
             return await _context.Transactions.ToListAsync();
         }
 
+        //Get all transactions in descending order
         [HttpGet("TransactionsInDescending")]
         public async Task<List<Transaction>> GetMostRecentTransactions()
         {
@@ -38,6 +40,17 @@ namespace API.Controllers
 
             return mostRecentTransaction;
         }
+
+        //Get all transactions based on a certain deal
+        [HttpGet("TransactionsFromDeal/{DealId}")]
+        public async Task<List<Transaction>> GetTransactionsForDeals(int DealId)
+        {
+            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => t.Related_Deal_Id == DealId).ToListAsync();
+
+            return transactionForDeal;
+        }
+
+
 
         [HttpPost("NewTransactionRepayment")]
         public Task<Transaction> Repayment(Transaction transaction)

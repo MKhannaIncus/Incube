@@ -1,8 +1,8 @@
 export interface Deal {
-  dealId: number;
-    alias: string;
+    deal_Id: number;
+    deal_Name: string;
     fund: string;
-    signingDate: Date;
+    investment_date: Date;
     borrowerOne: string;
     borrowerTwo?: string; 
     ownershipOne: string;

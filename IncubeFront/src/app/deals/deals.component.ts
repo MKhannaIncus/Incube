@@ -2,7 +2,9 @@ import { Component, ViewChild } from '@angular/core';
 import { DealService } from '../_services/deal.service';
 import { Data } from '@angular/router';
 import { Deal } from '../_models/deal';
+import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -13,13 +15,15 @@ import { Router } from '@angular/router';
 export class DealsComponent {
   model: any = {};
   deals : Deal[] = [];
-  
+  dealId!: number;
+
   popup = false;
   
-  constructor(private dealService: DealService, private router: Router){}
+  constructor(private dealService: DealService, private route: ActivatedRoute, private router: Router){}
 
   ngOnInit(): void{
     this.deal();
+
   }
 
   // Method to handle click events
@@ -28,8 +32,13 @@ export class DealsComponent {
   //     this.deals = data;
   //   });
     // or perform other actions related to the deal
-    pageRedirection(): void {
-      this.router.navigate(['/deal-transaction']);
+    pageRedirection(dealId:number): void {
+      if (dealId !== undefined && dealId !== null) {
+        console.log('redirectin with dealId:', dealId);
+        this.router.navigate(['/deal-transaction', dealId]);
+      } else {
+        console.error('dealId is undefined or null:', dealId);
+      }
     }
 
     deal() {

@@ -1,0 +1,55 @@
+.view{
+padding: 2%;
+}
+
+.tableView {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    text-align: center;
+    padding: 15px;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #f2f2f2;
+  }
+
+
+  .table-bordered {
+    border: 2px solid #343a40; /* Darker border color */
+  }
+  
+  .table-bordered thead th {
+    border-bottom-width: 2px;
+  }
+  
+  .table-bordered td, .table-bordered th {
+    border: 1px solid #343a40; /* Darker border color for table cells */
+  }
+  
+  .card-header {
+    background-color: #343a40; /* Dark background for header */
+    color: white; /* White text color */
+  }
+  
+  .btn-light {
+    background-color: #f8f9fa; /* Light background for buttons */
+    color: #343a40; /* Dark text color for buttons */
+    border-color: #343a40; /* Dark border color for buttons */
+    padding: 2%;
+  }
+  
+  .btn-light:hover {
+    background-color: #e2e6ea; /* Slightly darker background on hover */
+  }
+  
+  .headingPadding{
+    padding-right: 10%;
+  }
+
+  .buttons-heading {
+    margin-right: 10px; /* Adjust spacing between buttons */
+  }

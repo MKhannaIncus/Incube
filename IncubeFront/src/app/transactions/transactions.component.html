@@ -1,7 +1,9 @@
-<div class="container mt-4">
+
+<div class="view container-fluid mt-4">
+  <!-- Summary Cards -->
   <div class="row mb-3">
     <div class="col-md-6">
-      <div class="card">
+      <div class="card text-white bg-primary mb-3">
         <div class="card-body">
           <h5 class="card-title">Summary 1</h5>
           <p class="card-text">Details or metrics for Summary 1.</p>
@@ -9,7 +11,7 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="card">
+      <div class="card text-white bg-success mb-3">
         <div class="card-body">
           <h5 class="card-title">Summary 2</h5>
           <p class="card-text">Details or metrics for Summary 2.</p>
@@ -17,16 +19,41 @@
       </div>
     </div>
   </div>
-  <div>
-    <h2>Transactions</h2>
-    <table>
-      <thead>
+
+  <!-- Transactions Table -->
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+      <div class="d-flex align-items-center">
+        <h2 class="mb-0 mr-3 headingPadding">Transactions</h2>
+        <button class="btn btn-light text-dark mr-2 buttons-heading">Repayment</button>
+        <button class="btn btn-light text-dark">Disbursement</button>
+      </div>
+    </div>
+    <div class="table-responsive w-100">
+    <table class="table table-hover w-100" align="left">
+      <thead class="thead-dark">
         <tr>
           <th>Transaction ID</th>
           <th>Related Deal ID</th>
           <th>Transaction Date</th>
-          <th>Amount Due BOP</th>
-          <!-- Add more headers as necessary -->
+          <th>Amount due BOP</th>
+          <th>Principal BOP</th>
+          <th>Cash Interest BOP</th>
+          <th>PIK Interest BOP</th>
+          <th>Undrawn Amount</th>
+          <th>Cash Interest Accrued</th>
+          <th>PIK Interest Accrued</th>
+          <th>Undrawn Interest Accrued</th>
+          <th>Repayment Cash Interest</th>
+          <th>Repayment PIK Interest</th>
+          <th>Repayment Principal</th>
+          <th>Repayment Undrawn Fees</th>
+          <th>Capitalized</th>
+          <th>Principal EOP</th>
+          <th>Cash Interest EOP</th>
+          <th>PIK Interest EOP</th>
+          <th>Undrawn Interest EOP</th>
+          <th>Amount Due EOP</th>
         </tr>
       </thead>
       <tbody>
@@ -34,9 +61,27 @@
           <td>{{ transaction.transaction_Id }}</td>
           <td>{{ transaction.related_Deal_Id }}</td>
           <td>{{ transaction.transaction_Date | date }}</td>
-          <!-- Add more fields as necessary -->
+          <td>{{ transaction.amount_Due_BOP }}</td>
+          <td>{{ transaction.principal_BOP }}</td>
+          <td>{{ transaction.cash_Interest_BOP }}</td>
+          <td>{{ transaction.pik_Interest_BOP }}</td>
+          <td>{{ transaction.undrawn_Amount }}</td>
+          <td>{{ transaction.cash_Interest_Accrued }}</td>
+          <td>{{ transaction.pik_Interest_Accrued }}</td>
+          <td>{{ transaction.undrawn_Interest_Accrued }}</td>
+          <td>{{ transaction.repayment_CashInterest }}</td>
+          <td>{{ transaction.repayment_PikInterest }}</td>
+          <td>{{ transaction.repayment_Principal }}</td>
+          <td>{{ transaction.repayment_UndrawnFees }}</td>
+          <td>{{ transaction.capitalized }}</td>
+          <td>{{ transaction.principal_EOP }}</td>
+          <td>{{ transaction.cash_Interest_EOP }}</td>
+          <td>{{ transaction.pik_Interest_EOP }}</td>
+          <td>{{ transaction.undrawn_Interest_EOP }}</td>
+          <td>{{ transaction.amount_Due_EOP }}</td>
         </tr>
       </tbody>
     </table>
+    </div> 
   </div>
-  
+</div>

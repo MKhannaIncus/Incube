@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'login', component: LoginPageComponent }, 
   { path: 'new-deal', component: AddNewDealComponent }, 
   { path: '', redirectTo: '/login', pathMatch: 'full' }, 
-  { path: 'deal-transaction', component: TransactionsComponent},
+  { path: 'deal-transaction/:dealId', component: TransactionsComponent},
   // { path: '', redirectTo: '/deals', pathMatch: 'full' }, // Redirect empty path to '/deals'
 ];
 

@@ -1,51 +1,53 @@
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="deals-list">
-        <!-- Loop through each deal and display it using Bootstrap's card component -->
-        <div *ngFor="let deal of deals" class="card mb-3" (click)="pageRedirection()">
-          <div class="card-body">
-            <div class="row align-items-center"> <!-- Aligns items vertically in the center -->
-              <div class="col-md-3">
-                <strong class="d-block text-uppercase">Deal</strong>
-                <p>{{ deal.alias }}</p>
-              </div>
-              <div class="col-md-3">
-                <strong class="d-block text-uppercase">Country</strong>
-                <p>country</p> <!-- Assuming 'country' is part of your deal object -->
-              </div>
-              <div class="col-md-3">
-                <strong class="d-block text-uppercase">Sector</strong>
-                <p>{{ deal.sector }}</p> <!-- Assuming 'sector' is part of your deal object -->
-              </div>
-              <div class="col-md-3">
-                <strong class="d-block text-uppercase">Signing Date</strong>
-                <p>{{ deal.signingDate | date: 'mediumDate' }}</p> <!-- Formats the date -->
+<body>
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="deals-list">
+          <!-- Loop through each deal and display it using Bootstrap's card component -->
+          <div *ngFor="let deal of deals" class="card mb-3">
+            <div class="card-body" (click)="pageRedirection(deal.deal_Id)">
+              <div class="row align-items-center"> <!-- Aligns items vertically in the center -->
+                <div class="col-md-3">
+                  <strong class="d-block text-uppercase">{{deal.deal_Name }}</strong>
+                  <p>{{ deal.deal_Id }}</p>
+                </div>
+                <div class="col-md-3">
+                  <strong class="d-block text-uppercase">Country</strong>
+                  <p>country</p> <!-- Assuming 'country' is part of your deal object -->
+                </div>
+                <div class="col-md-3">
+                  <strong class="d-block text-uppercase">Sector</strong>
+                  <p>{{ deal.sector }}</p> <!-- Assuming 'sector' is part of your deal object -->
+                </div>
+                <div class="col-md-3">
+                  <strong class="d-block text-uppercase">{{deal.investment_date}}</strong>
+                  <p>{{ deal.investment_date| date: 'mediumDate' }}</p> <!-- Formats the date -->
+                </div>
               </div>
             </div>
+          </div>
+          <!-- Button to open the popup for a new deal -->
+          <button type="button" class="btn btn-primary mt-3" (click)="popup=true">New Deal</button>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Popup Overlay for adding a new deal -->
+    <div class="modal fade show" *ngIf="popup" style="display: block;" aria-hidden="!popup" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Deal</h5>
+            <button type="button" class="close" (click)="popup = false">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <app-add-new-deal></app-add-new-deal> <!-- Ensure this component is declared and imported correctly -->
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Button to open the popup for a new deal -->
-  <button type="button" class="btn btn-primary mt-3" (click)="popup=true">New Deal</button>
-
-  <!-- Popup Overlay for adding a new deal -->
-  <div class="modal fade show" *ngIf="popup" style="display: block;" aria-hidden="!popup" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add New Deal</h5>
-          <button type="button" class="close" (click)="popup = false">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <app-add-new-deal></app-add-new-deal> <!-- Ensure this component is declared and imported correctly -->
-        </div>
-      </div>
-    </div>
-  </div>
-</div>

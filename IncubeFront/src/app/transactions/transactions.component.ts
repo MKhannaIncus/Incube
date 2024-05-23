@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Transaction } from '../_models/transactions';
 import { TransactionService } from '../_services/transactions.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-transactions',
@@ -10,18 +10,27 @@ import { Router } from '@angular/router';
 })
 export class TransactionsComponent {
   transactions : Transaction[] = [];
+  dealId!: number;
   model: any = {};
 
 
-  constructor(private TransactionService: TransactionService,private router: Router){}
+  constructor(private TransactionService: TransactionService, private route: ActivatedRoute){}
   
   ngOnInit(): void {
-    this.transactionTable();
+    this.route.paramMap.subscribe(params => {
+      const dealIdParam = params.get('dealId');
+      console.log('dealIdParam from URL:', dealIdParam); // Debug log
+      if (dealIdParam) {
+        this.dealId = +dealIdParam;
+        this.transactionTable();
+      } else {
+        console.error('dealIdParam is null or undefined');
+      }
+    });
   }
 
   transactionTable(){
-    this.TransactionService.getTransactions(this.model).subscribe(
-      (data: Transaction[]) =>{
+    this.TransactionService.getDealsTransactions(this.dealId).subscribe((data: Transaction[]) =>{
       this.transactions = data;
     });
   }

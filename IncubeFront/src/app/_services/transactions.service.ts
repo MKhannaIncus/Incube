@@ -8,13 +8,18 @@ import { Transaction } from "../_models/transactions";
     providedIn: 'root'
 })
 export class TransactionService{
-    private apiUrl = 'https://localhost:5001/api/transactions';
+    private apiUrl = 'http://localhost:5000/api/transactions';
 
     constructor( private http: HttpClient) { }
 
     getTransactions(model: any): Observable<Transaction[]>{
         const params = new HttpParams({fromObject: model});
         return this.http.get<Transaction[]>(this.apiUrl,  { params });
+    }
+
+    getDealsTransactions(dealId:number): Observable<Transaction[]>{
+        const params = new HttpParams().set('dealId', dealId.toString());
+        return this.http.get<Transaction[]>(`${this.apiUrl}/transactionsfromdeal/${dealId}`);
     }
 
 
