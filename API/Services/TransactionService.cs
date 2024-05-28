@@ -2,6 +2,7 @@
 using API.Entities;
 using API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using SQLitePCL;
 using System.Collections.Generic;
@@ -82,15 +83,27 @@ namespace API.Services
 
         //DRAWDOWNS
         //Money payed to the client
-        public async Task<Transaction> NewTransaction_Drawdown (Transaction transaction)
+        public async Task<Transaction> NewTransaction_Disbursement (Transaction transaction)
         {
-            if(transaction.Drawdown!= null)
+            Transaction transactionNext=null;
+
+            if (transaction.Drawdown!= null)
             {
+                transactionNext = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
+
+                // Get the most recent Transaction_Id and add one to it
+                int? maxTransactionId = await _context.Transactions.MaxAsync(t => t.Transaction_Id);
+                transactionNext.Transaction_Id = maxTransactionId + 1;
+
+                transactionNext.Drawdown = transaction.Drawdown;
+                transactionNext.Related_Deal_Id = transaction.Related_Deal_Id;
                 //If more money is payed to the client- it is subtracted from the undrawn amount
-                transaction.Undrawn_Amount = transaction.Undrawn_Amount - transaction.Drawdown;
+                transactionNext.Undrawn_Amount = transactionNext.Undrawn_Amount - transaction.Drawdown;
+                _context.Transactions.Add(transactionNext);
+                await _context.SaveChangesAsync();
             }
 
-            return transaction;
+            return transactionNext;
         }
 
         //ACCRUED

@@ -40,14 +40,14 @@ namespace API.Controllers
 
             var newDeal = new Deal
             {
-                Deal_Name = deal.DealName
+                Deal_Name = deal.Deal_Name
             };
 
             _context.Deals.Add(newDeal);
             await _context.SaveChangesAsync();
             return new DealDTO
             {
-                DealName = deal.DealName,
+                Deal_Name = deal.Deal_Name,
             };
         }
 

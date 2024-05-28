@@ -14,9 +14,9 @@ export class AddNewDealComponent {
 
   constructor(public dealService: DealService, private formBuilder: FormBuilder) {
     this.dealForm = this.formBuilder.group({
-      alias: ['', Validators.required]
-    }
-    );
+      deal_Id: [0], // Assuming 0 as default for new deals
+      deal_Name: ['', Validators.required]
+    });
   }
 
   onSubmit() {

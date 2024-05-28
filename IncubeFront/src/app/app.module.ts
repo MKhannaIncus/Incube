@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -12,12 +14,14 @@ import { FormsModule } from '@angular/forms';
 import { DealsComponent } from './deals/deals.component';
 import { AddNewDealComponent } from './add-new-deal/add-new-deal.component';
 import { TransactionsComponent } from './transactions/transactions.component';
+import { DisbursementComponent } from './disbursement/disbursement.component';
+import { RepaymentComponent } from './repayment/repayment.component';
 
 //responsable for loading the webpage
 
 @NgModule({ //decorator
   declarations: [ //new components
-    AppComponent, LoginPageComponent, DealsComponent, AddNewDealComponent, TransactionsComponent
+    AppComponent, LoginPageComponent, DealsComponent, AddNewDealComponent, TransactionsComponent, DisbursementComponent, RepaymentComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +29,8 @@ import { TransactionsComponent } from './transactions/transactions.component';
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ],
   providers: [],
   bootstrap: [AppComponent] //boostrapping appcomponent

@@ -1,4 +1,3 @@
-
 <div class="view container-fluid mt-4">
   <!-- Summary Cards -->
   <div class="row mb-3">
@@ -25,63 +24,89 @@
     <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
       <div class="d-flex align-items-center">
         <h2 class="mb-0 mr-3 headingPadding">Transactions</h2>
-        <button class="btn btn-light text-dark mr-2 buttons-heading">Repayment</button>
-        <button class="btn btn-light text-dark">Disbursement</button>
+        <button class="btn btn-light text-dark"(click)="togglePopup('repayment')">Repayment</button>
+
+        <button class="btn btn-light text-dark" (click)="togglePopup('disbursement')">Disbursement</button>
       </div>
     </div>
     <div class="table-responsive w-100">
-    <table class="table table-hover w-100" align="left">
-      <thead class="thead-dark">
-        <tr>
-          <th>Transaction ID</th>
-          <th>Related Deal ID</th>
-          <th>Transaction Date</th>
-          <th>Amount due BOP</th>
-          <th>Principal BOP</th>
-          <th>Cash Interest BOP</th>
-          <th>PIK Interest BOP</th>
-          <th>Undrawn Amount</th>
-          <th>Cash Interest Accrued</th>
-          <th>PIK Interest Accrued</th>
-          <th>Undrawn Interest Accrued</th>
-          <th>Repayment Cash Interest</th>
-          <th>Repayment PIK Interest</th>
-          <th>Repayment Principal</th>
-          <th>Repayment Undrawn Fees</th>
-          <th>Capitalized</th>
-          <th>Principal EOP</th>
-          <th>Cash Interest EOP</th>
-          <th>PIK Interest EOP</th>
-          <th>Undrawn Interest EOP</th>
-          <th>Amount Due EOP</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let transaction of transactions">
-          <td>{{ transaction.transaction_Id }}</td>
-          <td>{{ transaction.related_Deal_Id }}</td>
-          <td>{{ transaction.transaction_Date | date }}</td>
-          <td>{{ transaction.amount_Due_BOP }}</td>
-          <td>{{ transaction.principal_BOP }}</td>
-          <td>{{ transaction.cash_Interest_BOP }}</td>
-          <td>{{ transaction.pik_Interest_BOP }}</td>
-          <td>{{ transaction.undrawn_Amount }}</td>
-          <td>{{ transaction.cash_Interest_Accrued }}</td>
-          <td>{{ transaction.pik_Interest_Accrued }}</td>
-          <td>{{ transaction.undrawn_Interest_Accrued }}</td>
-          <td>{{ transaction.repayment_CashInterest }}</td>
-          <td>{{ transaction.repayment_PikInterest }}</td>
-          <td>{{ transaction.repayment_Principal }}</td>
-          <td>{{ transaction.repayment_UndrawnFees }}</td>
-          <td>{{ transaction.capitalized }}</td>
-          <td>{{ transaction.principal_EOP }}</td>
-          <td>{{ transaction.cash_Interest_EOP }}</td>
-          <td>{{ transaction.pik_Interest_EOP }}</td>
-          <td>{{ transaction.undrawn_Interest_EOP }}</td>
-          <td>{{ transaction.amount_Due_EOP }}</td>
-        </tr>
-      </tbody>
-    </table>
-    </div> 
+      <table class="table table-hover w-100" align="left">
+        <thead class="thead-dark">
+          <tr>
+            <th>Transaction ID</th>
+            <th>Related Deal ID</th>
+            <th>Transaction Date</th>
+            <th>Amount due BOP</th>
+            <th>Principal BOP</th>
+            <th>Cash Interest BOP</th>
+            <th>PIK Interest BOP</th>
+            <th>Undrawn Amount</th>
+            <th>Cash Interest Accrued</th>
+            <th>PIK Interest Accrued</th>
+            <th>Undrawn Interest Accrued</th>
+            <th>Repayment Cash Interest</th>
+            <th>Repayment PIK Interest</th>
+            <th>Repayment Principal</th>
+            <th>Repayment Undrawn Fees</th>
+            <th>Capitalized</th>
+            <th>Principal EOP</th>
+            <th>Cash Interest EOP</th>
+            <th>PIK Interest EOP</th>
+            <th>Undrawn Interest EOP</th>
+            <th>Amount Due EOP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of transactions">
+            <td>{{ transaction.transaction_Id }}</td>
+            <td>{{ transaction.related_Deal_Id }}</td>
+            <td>{{ transaction.transaction_Date | date }}</td>
+            <td>{{ transaction.amount_Due_BOP }}</td>
+            <td>{{ transaction.principal_BOP }}</td>
+            <td>{{ transaction.cash_Interest_BOP }}</td>
+            <td>{{ transaction.pik_Interest_BOP }}</td>
+            <td>{{ transaction.undrawn_Amount }}</td>
+            <td>{{ transaction.cash_Interest_Accrued }}</td>
+            <td>{{ transaction.pik_Interest_Accrued }}</td>
+            <td>{{ transaction.undrawn_Interest_Accrued }}</td>
+            <td>{{ transaction.repayment_CashInterest }}</td>
+            <td>{{ transaction.repayment_PikInterest }}</td>
+            <td>{{ transaction.repayment_Principal }}</td>
+            <td>{{ transaction.repayment_UndrawnFees }}</td>
+            <td>{{ transaction.capitalized }}</td>
+            <td>{{ transaction.principal_EOP }}</td>
+            <td>{{ transaction.cash_Interest_EOP }}</td>
+            <td>{{ transaction.pik_Interest_EOP }}</td>
+            <td>{{ transaction.undrawn_Interest_EOP }}</td>
+            <td>{{ transaction.amount_Due_EOP }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
+
+
+
+    <!-- Popup Overlay for adding a new deal -->
+    <div *ngIf="popup" class="overlay">
+    <div class="modal fade show" *ngIf="popup" style="display: block;" aria-hidden="!popup" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" (click)="closePopup()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ng-container *ngIf="isRepayment">
+              <app-repayment></app-repayment>
+            </ng-container>
+            <ng-container *ngIf="isDisbursement">
+              <app-disbursement></app-disbursement>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>

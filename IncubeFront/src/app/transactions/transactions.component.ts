@@ -3,6 +3,7 @@ import { Transaction } from '../_models/transactions';
 import { TransactionService } from '../_services/transactions.service';
 import { ActivatedRoute } from '@angular/router';
 
+
 @Component({
   selector: 'app-transactions',
   templateUrl: './transactions.component.html',
@@ -10,8 +11,11 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class TransactionsComponent {
   transactions : Transaction[] = [];
-  dealId!: number;
+  public dealId!: number;
   model: any = {};
+  popup =false;
+  isRepayment: boolean = false;
+  isDisbursement: boolean = false;
 
 
   constructor(private TransactionService: TransactionService, private route: ActivatedRoute){}
@@ -29,9 +33,23 @@ export class TransactionsComponent {
     });
   }
 
+  togglePopup(type: string): void {
+    this.popup = true;
+    this.isRepayment = type === 'repayment';
+    this.isDisbursement = type === 'disbursement';
+  }
+
+  closePopup(): void {
+    this.popup = false;
+    this.isRepayment = false;
+    this.isDisbursement = false;
+  }
+  
   transactionTable(){
     this.TransactionService.getDealsTransactions(this.dealId).subscribe((data: Transaction[]) =>{
       this.transactions = data;
     });
   }
+
+
 }

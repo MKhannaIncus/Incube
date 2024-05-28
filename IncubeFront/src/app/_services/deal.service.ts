@@ -12,14 +12,17 @@ export class DealService {
   constructor(private http: HttpClient) { }
 
   getDeals(model: any): Observable<Deal[]> {
-    const params = new HttpParams({fromObject: model});
+    const params = new HttpParams({ fromObject: model });
     return this.http.get<Deal[]>(this.apiUrl, { params });
   }
 
 
-  createDeal(model:any){
-    return this.http.post<Deal>(this.apiUrl,model);
-    }
+  createDeal(model: any) {
+    return this.http.post<Deal>(this.apiUrl, model);
   }
+
+}
+
+
 
 

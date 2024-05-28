@@ -1,0 +1,11 @@
+<form [formGroup]="disbursementForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <h3>Disbursement</h3>
+  
+      <label for="disbursement">Disbursement:</label>
+      <input type="number" class="form-control" formControlName="disbursement" required>
+  
+      <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </div>
+  </form>
+  

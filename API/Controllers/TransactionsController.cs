@@ -69,13 +69,13 @@ namespace API.Controllers
         }
 
 
-        [HttpPost("NewTransactionDrawdown")]
-        public Task<Transaction> Drawdown(Transaction transaction)
+        [HttpPost("NewTransactionDisbursement")]
+        public Task<Transaction> Disbursement(Transaction transaction)
         {
             try
             {
                 //var result = _transactionService.NewTransactionMade(transaction);
-                var result = _transactionService.NewTransaction_Drawdown(transaction);
+                var result = _transactionService.NewTransaction_Disbursement(transaction);
                 return result;
             }
             catch (System.Exception ex)

@@ -22,6 +22,18 @@ export class TransactionService{
         return this.http.get<Transaction[]>(`${this.apiUrl}/transactionsfromdeal/${dealId}`);
     }
 
+    /*A new disbursement is added by the User*/ 
+    addDisbursement(model:any): Observable<Transaction>{
+        return this.http.post<Transaction>(`${this.apiUrl}/NewTransactionDisbursement`, model);
+    }
+
+    // /*A new repayment is added by the User*/
+    // addRepayment(model:any): Observable<Transaction>{
+    //     return this.http.
+    // }
+
+
+
 
     // getTransactions(relatedDealId?: number): Observable<Transaction[]>{
     //     let params = new HttpParams();
