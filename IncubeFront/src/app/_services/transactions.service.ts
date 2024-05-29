@@ -27,10 +27,10 @@ export class TransactionService{
         return this.http.post<Transaction>(`${this.apiUrl}/NewTransactionDisbursement`, model);
     }
 
-    // /*A new repayment is added by the User*/
-    // addRepayment(model:any): Observable<Transaction>{
-    //     return this.http.
-    // }
+    /*A new repayment is added by the User*/
+    addRepayment(model:any): Observable<Transaction>{
+        return this.http.post<Transaction>(`${this.apiUrl}/NewTransactionRepayment`, model);
+    }
 
 
 

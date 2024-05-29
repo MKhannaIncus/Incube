@@ -51,7 +51,6 @@ namespace API.Controllers
         }
 
 
-
         [HttpPost("NewTransactionRepayment")]
         public Task<Transaction> Repayment(Transaction transaction)
         {
@@ -84,6 +83,7 @@ namespace API.Controllers
                 return null;
             }
         }
+
 
         //[HttpPost("PeriodicAccrued")]
         //public Task<Transaction> Periodic_Accrued(Transaction transaction)

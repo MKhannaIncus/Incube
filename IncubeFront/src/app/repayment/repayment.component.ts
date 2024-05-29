@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TransactionsComponent } from '../transactions/transactions.component';
+import { TransactionService } from '../_services/transactions.service';
+import { Transaction } from '../_models/transactions';
 
 @Component({
   selector: 'app-repayment',
@@ -9,22 +12,31 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class RepaymentComponent {
   repaymentForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, public transactionsComponent: TransactionsComponent, public transactionsService: TransactionService) {
     this.repaymentForm = this.formBuilder.group({
-      cashInterest: ['', Validators.required],
-      pikInterest: ['', Validators.required],
-      principal: ['', Validators.required],
-      undrawnInterest: ['', Validators.required]
+      repayment: ['', Validators.required]
     });
   }
 
   onSubmit() {
     if (this.repaymentForm.valid) {
-      console.log('Repayment Form Values:', this.repaymentForm.value);
+      //console.log('Repayment Form Values:', this.repaymentForm.value);
       // Add logic to handle form submission, such as sending data to a service
-      this.repaymentForm.reset();
-    } else {
-      console.error('Form is invalid');
-    }
+      const repayment = this.repaymentForm.value.repayment;
+      
+      const transaction = {
+        Transaction_Date : new Date(),
+        Related_Deal_Id: this.transactionsComponent.dealId,
+        Repayment: repayment
+      };
+      
+      this.transactionsService.addRepayment(transaction).subscribe((response: Transaction)=> {
+        console.log('Transaction response', response);
+        this.repaymentForm.reset();
+      },
+      error => {
+        console.error('Error', error);
+      })
+  }
   }
 }

@@ -32,53 +32,90 @@ namespace API.Services
         //REPAYMENT
         //When a new transaction is added and Calculate button is Clicked --> amount divided between - Cash Interest, PIK Interest, Principal, Fees
         //The result is simply returned, not stored in the database  
-        public async Task<Transaction> NewTransaction_Repayment(Transaction transaction)
+        public async Task<Transaction> NewTransaction_Repayment(Transaction incomingTransaction)
         {
-            // Implementation to process and save the transaction
-            //_context.Transactions.Add(transaction);
-            //await _context.SaveChangesAsync();
+            decimal? RemainingAfterCash;
+            //Get the most recent transaction from the table
+            //Transaction newTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == incomingTransaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
+            Transaction newTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == incomingTransaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
+
+
+            newTransaction.Related_Deal_Id=incomingTransaction.Related_Deal_Id;
+            newTransaction.Transaction_Date=incomingTransaction.Transaction_Date;
+
+            //Move the values that were EOP to BOP
+            newTransaction.Amount_Due_BOP = newTransaction.Amount_Due_EOP;
+            newTransaction.Cash_Interest_BOP = newTransaction.Cash_Interest_EOP;
+            newTransaction.PIK_Interest_BOP = newTransaction.PIK_Interest_EOP;
+            newTransaction.Principal_BOP = newTransaction.Principal_EOP;
+            newTransaction.Undrawn_Interest_BOP = newTransaction.Undrawn_Interest_EOP;
+
+            //Move the repayment from incoming transaction to the newtransaction- repayments are the same
+            newTransaction.Repayment = incomingTransaction.Repayment;
             
-            if(transaction.Amount_Due_BOP > 0 && transaction.Repayment != 0){
+            //If previous transancion Amount due EOP >0 and repayment made this time >0 
+            if (newTransaction.Amount_Due_BOP > 0 && incomingTransaction.Repayment != 0){
 
                 //If repayment- cashInterest >0 meaning there is sufficient repayment to pay the cash
-                decimal? RemainingAfterCash = transaction.Repayment - transaction.Cash_Interest_BOP;
+                //Subtracted from the cash interest due BOP
+                RemainingAfterCash = newTransaction.Repayment - newTransaction.Cash_Interest_BOP;
 
                 #region Cash Interest 
-                if ((transaction.Repayment - transaction.Cash_Interest_BOP) > 0) 
+                if (RemainingAfterCash > 0) 
                 {
-                    transaction.Repayment_CashInterest = transaction.Cash_Interest_BOP;
+                    //The cash interest is paid off
+                    newTransaction.Repayment_CashInterest = newTransaction.Cash_Interest_BOP;
+                    newTransaction.Cash_Interest_EOP = 0;
 
                     #region PIK Interest
-                    //If the remaining after paying cash subtracted from PIK Interest is greater than 0 meaning that there is sufficient to pay PIK and left over
-                    if (RemainingAfterCash - transaction.PIK_Interest_BOP > 0) {
-                        transaction.Repayment_PIKInterest = transaction.PIK_Interest_BOP;
+                    decimal? RemainingAfterPIK = RemainingAfterCash - newTransaction.PIK_Interest_BOP;
 
+                    if (RemainingAfterPIK > 0) {
+                        newTransaction.Repayment_PIKInterest = newTransaction.PIK_Interest_BOP;
+                        newTransaction.PIK_Interest_EOP = 0;
                         //If PIK Interest is payed, it does not need to be capitalized
-                        transaction.Capitalized = 0;
+                        newTransaction.Capitalized = 0;
 
                         //For now- the rest gets payed to principal amount
-                        transaction.Repayment_Principal = transaction.Repayment - transaction.Repayment_PIKInterest;
+                        newTransaction.Repayment_Principal = RemainingAfterPIK;
+                        newTransaction.Principal_EOP = newTransaction.Principal_BOP - newTransaction.Repayment_Principal;
                         
                         //PENDING --  Payment to undrawn interest 
+                        //PENDING -- If the amount paid is more 
+                   
 
                     }
                     //Else not sufficient to pay PIK - Capitalized the rest
                     else
-                    {
-                        transaction.Repayment_PIKInterest = transaction.Repayment;
-                        decimal? RemainingPIK = transaction.PIK_Interest_BOP - transaction.Repayment;
+                    { 
+
+                        newTransaction.Repayment_PIKInterest =  RemainingAfterCash;
+                        newTransaction.Capitalized = newTransaction.PIK_Interest_BOP - newTransaction.Repayment_PIKInterest;
                         //Remaining PIK gets capitalized if the period is reached
                         //IF three months or six months passed capitalize
-                        transaction.Capitalized = RemainingPIK;
+
+
                         //IF three months or six months pass calculate accruals 
                     }
                     #endregion
                 }
+                else
+                {
+                    //can only pay part of the cash interest
+                    newTransaction.Repayment_CashInterest = newTransaction.Repayment;
+                    newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP - newTransaction.Repayment_CashInterest;
+                    newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP - newTransaction.Repayment;
+
+                }
                 #endregion
             }
 
+            int? maxTransactionId = await _context.Transactions.MaxAsync(t => t.Transaction_Id);
+            newTransaction.Transaction_Id = maxTransactionId + 1;
 
-            return transaction;
+            _context.Transactions.Add(newTransaction);
+            _context.SaveChanges();
+            return newTransaction;
         }
 
         //DRAWDOWNS
@@ -89,16 +126,38 @@ namespace API.Services
 
             if (transaction.Drawdown!= null)
             {
-                transactionNext = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
+
+                if(_context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).Count()  > 0)
+                {
+                    transactionNext = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
+                }
+                else
+                {
+                    transactionNext = new Transaction();
+                }
 
                 // Get the most recent Transaction_Id and add one to it
                 int? maxTransactionId = await _context.Transactions.MaxAsync(t => t.Transaction_Id);
-                transactionNext.Transaction_Id = maxTransactionId + 1;
+
+                if(transactionNext.Transaction_Id != null)
+                {
+                    transactionNext.Transaction_Id = maxTransactionId + 1;
+                }
+                else
+                {
+                    transaction.Transaction_Id = 1;
+                }
+
 
                 transactionNext.Drawdown = transaction.Drawdown;
                 transactionNext.Related_Deal_Id = transaction.Related_Deal_Id;
                 //If more money is payed to the client- it is subtracted from the undrawn amount
                 transactionNext.Undrawn_Amount = transactionNext.Undrawn_Amount - transaction.Drawdown;
+                //Added to the amount due
+                transactionNext.Principal_EOP = transaction.Principal_BOP + transaction.Drawdown;
+                transactionNext.Amount_Due_EOP = transactionNext.Amount_Due_BOP + transaction.Drawdown;
+
+
                 _context.Transactions.Add(transactionNext);
                 await _context.SaveChangesAsync();
             }
@@ -106,9 +165,7 @@ namespace API.Services
             return transactionNext;
         }
 
-        //ACCRUED
-        //Calculation of all the built up Accruels
-        //Cash Interest, PIK Interest, Undrawn Interest Accrued
+
         public async Task<Transaction> AccruedValues (Transaction transaction)
         {
             //Calculate accrued values according to rate
@@ -121,6 +178,10 @@ namespace API.Services
 
         }
 
+
+        //ACCRUED
+        //Calculation of all the built up Accruels
+        //Cash Interest, PIK Interest, Undrawn Interest Accrued
 
         //Drawdown
         //calculation of the interests that are generated from the previous date
@@ -141,9 +202,6 @@ namespace API.Services
 
         //    }
         //}
-
-
-
 
         #region CALCULATIONS
         //Method called from TransactionsController--> Manages the additions of transactions being made
