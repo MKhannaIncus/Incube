@@ -9,19 +9,17 @@
               <div class="row align-items-center"> <!-- Aligns items vertically in the center -->
                 <div class="col-md-3">
                   <strong class="d-block text-uppercase">{{deal.deal_Name }}</strong>
-                  <p>{{ deal.deal_Id }}</p>
+                  <p>Deal ID: {{ deal.deal_Id }}</p>
                 </div>
                 <div class="col-md-3">
                   <strong class="d-block text-uppercase">Country</strong>
-                  <p>country</p> <!-- Assuming 'country' is part of your deal object -->
                 </div>
                 <div class="col-md-3">
                   <strong class="d-block text-uppercase">Sector</strong>
                   <p>{{ deal.sector }}</p> <!-- Assuming 'sector' is part of your deal object -->
                 </div>
                 <div class="col-md-3">
-                  <strong class="d-block text-uppercase">{{deal.investment_date}}</strong>
-                  <p>{{ deal.investment_date| date: 'mediumDate' }}</p> <!-- Formats the date -->
+                  <strong class="d-block text-uppercase">{{deal.investment_date| date}}</strong>
                 </div>
               </div>
             </div>

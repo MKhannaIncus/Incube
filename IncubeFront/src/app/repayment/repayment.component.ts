@@ -14,13 +14,17 @@ export class RepaymentComponent {
 
   constructor(private formBuilder: FormBuilder, public transactionsComponent: TransactionsComponent, public transactionsService: TransactionService) {
     this.repaymentForm = this.formBuilder.group({
-      repayment: ['', Validators.required]
+      repayment: ['', Validators.required],
+      // cashInterest: ['', Validators],
+      // pikInterest: ['', Validators],
+      // principal: ['', Validators],
+      // undrawnInterest: ['', Validators]
     });
   }
 
   onSubmit() {
     if (this.repaymentForm.valid) {
-      //console.log('Repayment Form Values:', this.repaymentForm.value);
+      console.log('Repayment Form Values:', this.repaymentForm.value);
       // Add logic to handle form submission, such as sending data to a service
       const repayment = this.repaymentForm.value.repayment;
       

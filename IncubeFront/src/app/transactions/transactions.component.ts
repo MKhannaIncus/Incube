@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Transaction } from '../_models/transactions';
 import { TransactionService } from '../_services/transactions.service';
 import { ActivatedRoute } from '@angular/router';
+import { DealService ,FacilityInformation } from '../_services/deal.service';
+import { Deal } from '../_models/deal';
 
 
 @Component({
@@ -11,14 +13,17 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class TransactionsComponent {
   transactions : Transaction[] = [];
+  dealInformation : Deal[] = [];
   public dealId!: number;
   model: any = {};
   popup =false;
   isRepayment: boolean = false;
   isDisbursement: boolean = false;
+  facilityInformation: FacilityInformation | undefined ;
 
 
-  constructor(private TransactionService: TransactionService, private route: ActivatedRoute){}
+
+  constructor(private TransactionService: TransactionService, private DealService: DealService, private route: ActivatedRoute){}
   
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -27,6 +32,8 @@ export class TransactionsComponent {
       if (dealIdParam) {
         this.dealId = +dealIdParam;
         this.transactionTable();
+        this.fetchDealDetails(this.dealId);
+        this.facilityStatus(this.dealId); // Added this line
       } else {
         console.error('dealIdParam is null or undefined');
       }
@@ -51,5 +58,23 @@ export class TransactionsComponent {
     });
   }
 
+  fetchDealDetails(dealId: number) {
+    this.DealService.dealInformation(dealId).subscribe(data => {
+      console.log("Deal:", this.dealInformation)
+      this.dealInformation = data;
+    },
+    error => {
+      console.error('Error', error);
+    });
+  }
+
+  facilityStatus(dealId: number) : void{
+    this.DealService.facilityStatus(dealId).subscribe(data => {
+      this.facilityInformation = data;
+    },
+    error => {
+      console.error('Error', error);
+    });
+  }
 
 }

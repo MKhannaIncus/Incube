@@ -22,13 +22,13 @@ namespace API.Entities
         public int? Asset_Id { get; set; }
 
         [MaxLength(255)]
-        public string Country { get; set; }
+        public string? Country { get; set; }
 
         [MaxLength(255)]
-        public string Sector { get; set; }
+        public string? Sector { get; set; }
 
         [MaxLength(255)]
-        public string Subsector { get; set; }
+        public string? Subsector { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? Investment_date { get; set; }
@@ -63,7 +63,7 @@ namespace API.Entities
         public int? Interest_Id { get; set; }
 
         [MaxLength(255)]
-        public string Amortization_type { get; set; }
+        public string? Amortization_type { get; set; }
 
         public int? Ownership_Id { get; set; }
 

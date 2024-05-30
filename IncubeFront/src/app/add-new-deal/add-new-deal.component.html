@@ -1,63 +1,77 @@
 <form [formGroup]="dealForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
-      <h3>Deal Details</h3>
-      
-      <label for="deal_Name">Deal Name:</label>
-      <input type="text" class="form-control" formControlName="deal_Name">
-      
-      <!-- <label for="fund">Fund:</label>
-      <input type="text" class="form-control" formControlName="fund">
-      
-      <label for="investment_date">Investment Date:</label>
-      <input type="date" class="form-control" formControlName="investment_date">
-      
-      <label for="borrowerOne">Borrower One:</label>
-      <input type="text" class="form-control" formControlName="borrowerOne">
-      
-      <label for="borrowerTwo">Borrower Two:</label>
-      <input type="text" class="form-control" formControlName="borrowerTwo">
-      
-      <label for="ownershipOne">Ownership One:</label>
-      <input type="text" class="form-control" formControlName="ownershipOne">
-      
-      <label for="percentOwnershipOne">Percent Ownership One:</label>
-      <input type="text" class="form-control" formControlName="percentOwnershipOne">
-      
-      <label for="typeInvestment">Type of Investment:</label>
-      <input type="text" class="form-control" formControlName="typeInvestment">
-      
-      <label for="typeInvestor">Type of Investor:</label>
-      <input type="text" class="form-control" formControlName="typeInvestor">
-      
-      <label for="strategy">Strategy:</label>
-      <input type="text" class="form-control" formControlName="strategy">
-      
-      <label for="sector">Sector:</label>
-      <input type="text" class="form-control" formControlName="sector">
-      
-      <label for="subSector">Sub-Sector:</label>
-      <input type="text" class="form-control" formControlName="subSector">
-      
-      <label for="navType">NAV Type:</label>
-      <input type="text" class="form-control" formControlName="navType">
-      
-      <label for="nationalAmount">National Amount:</label>
-      <input type="text" class="form-control" formControlName="nationalAmount">
-      
-      <label for="guarantee">Guarantee:</label>
-      <input type="text" class="form-control" formControlName="guarantee">
-      
-      <label for="description">Description:</label>
-      <textarea class="form-control" formControlName="description"></textarea>
-      
-      <label for="status">Status:</label>
-      <input type="text" class="form-control" formControlName="status">
-      
-      <label for="dealPerformance">Deal Performance:</label>
-      <input type="text" class="form-control" formControlName="dealPerformance"> -->
-      
-      <br>
-      <button type="submit" class="add-button btn btn-primary">Add</button>
+        <h3>Deal Details</h3>
+
+        <label for="deal_Id">Deal ID:</label>
+        <input type="number" class="form-control" formControlName="deal_Id" required>
+
+        <label for="deal_Name">Deal Name:</label>
+        <input type="text" class="form-control" formControlName="deal_Name" required>
+
+        <label for="client_Id">Client ID:</label>
+        <input type="number" class="form-control" formControlName="client_Id">
+
+        <label for="facility">Facility:</label>
+        <input type="number" class="form-control" formControlName="facility">
+
+        <label for="asset_Id">Asset ID:</label>
+        <input type="number" class="form-control" formControlName="asset_Id">
+
+        <label for="country">Country:</label>
+        <input type="text" class="form-control" formControlName="country">
+
+        <label for="sector">Sector:</label>
+        <input type="text" class="form-control" formControlName="sector">
+
+        <label for="subsector">Subsector:</label>
+        <input type="text" class="form-control" formControlName="subsector">
+
+        <label for="investment_date">Investment Date:</label>
+        <input type="date" class="form-control" formControlName="investment_date">
+
+        <label for="maturity_date">Maturity Date:</label>
+        <input type="date" class="form-control" formControlName="maturity_date">
+
+        <label for="opening_fee">Opening Fee:</label>
+        <input type="number" class="form-control" formControlName="opening_fee">
+
+        <label for="minimum_multiple">Minimum Multiple:</label>
+        <input type="number" class="form-control" formControlName="minimum_multiple">
+
+        <label for="IRR">IRR:</label>
+        <input type="number" class="form-control" formControlName="IRR">
+
+        <label for="MOIC">MOIC:</label>
+        <input type="number" class="form-control" formControlName="MOIC">
+
+        <label for="NAV">NAV:</label>
+        <input type="number" class="form-control" formControlName="NAV">
+
+        <label for="availability_period">Availability Period:</label>
+        <input type="number" class="form-control" formControlName="availability_period">
+
+        <label for="availability_fee">Availability Fee:</label>
+        <input type="number" class="form-control" formControlName="availability_fee">
+
+        <label for="intercompany_loan">Intercompany Loan:</label>
+        <input type="checkbox" class="form-control" formControlName="intercompany_loan">
+
+        <label for="entity_Id">Entity ID:</label>
+        <input type="number" class="form-control" formControlName="entity_Id">
+
+        <label for="interest_Id">Interest ID:</label>
+        <input type="number" class="form-control" formControlName="interest_Id">
+
+        <label for="amortization_type">Amortization Type:</label>
+        <input type="text" class="form-control" formControlName="amortization_type" >
+
+        <label for="ownership_Id">Ownership ID:</label>
+        <input type="number" class="form-control" formControlName="ownership_Id">
+
+        <label for="LTV_Entry">LTV Entry:</label>
+        <input type="number" class="form-control" formControlName="LTV_Entry">
+
+        <br>
+        <button type="submit" class="add-button btn btn-primary">Add</button>
     </div>
-  </form>
-  
+</form>

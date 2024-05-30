@@ -15,9 +15,31 @@ export class AddNewDealComponent {
   constructor(public dealService: DealService, private formBuilder: FormBuilder) {
     this.dealForm = this.formBuilder.group({
       deal_Id: [0], // Assuming 0 as default for new deals
-      deal_Name: ['', Validators.required]
+      deal_Name: ['', Validators.required],
+      client_Id: [null],
+      facility: [null],
+      asset_Id: [null],
+      country: [null],
+      sector: [null],
+      subsector: [null],
+      investment_date: [null],
+      maturity_date: [null],
+      opening_fee: [null],
+      minimum_multiple: [null],
+      IRR: [null],
+      MOIC: [null],
+      NAV: [null],
+      availability_period: [null],
+      availability_fee: [null],
+      intercompany_loan: [false],
+      entity_Id: [null],
+      interest_Id: [null],
+      amortization_type: [null],
+      ownership_Id: [null],
+      LTV_Entry: [null]
     });
   }
+
 
   onSubmit() {
       this.dealService.createDeal(this.dealForm.value).subscribe({

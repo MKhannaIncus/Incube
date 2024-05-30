@@ -112,6 +112,7 @@ namespace API.Services
 
             int? maxTransactionId = await _context.Transactions.MaxAsync(t => t.Transaction_Id);
             newTransaction.Transaction_Id = maxTransactionId + 1;
+            newTransaction.Amount_Due_EOP = newTransaction.Cash_Interest_EOP + newTransaction.PIK_Interest_EOP + newTransaction.Principal_EOP;
 
             _context.Transactions.Add(newTransaction);
             _context.SaveChanges();
@@ -154,6 +155,7 @@ namespace API.Services
                 //If more money is payed to the client- it is subtracted from the undrawn amount
                 transactionNext.Undrawn_Amount = transactionNext.Undrawn_Amount - transaction.Drawdown;
                 //Added to the amount due
+                
                 transactionNext.Principal_EOP = transaction.Principal_BOP + transaction.Drawdown;
                 transactionNext.Amount_Due_EOP = transactionNext.Amount_Due_BOP + transaction.Drawdown;
 
