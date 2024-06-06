@@ -1,6 +1,15 @@
-<main class="form-signin w-100 m-auto">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In</title>
+</head>
+<body>
+  <main class="form-signin w-100 m-auto">
     <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
-      <img class="image-container" src="\assets\incus_capital_logo.jfif">
+      <img class="image-container">
+      <div class="image-container">
+        <img src="\assets\TextIncusCapital.png" alt="Logo">
+      </div>  
       <h1 class="title">Please sign in</h1>
   
       <div class="form-floating">
@@ -30,3 +39,4 @@
       <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
     </form>
   </main>
+</body>

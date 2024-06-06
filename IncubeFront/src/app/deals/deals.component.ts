@@ -4,7 +4,7 @@ import { Data } from '@angular/router';
 import { Deal } from '../_models/deal';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-
+import { error } from 'jquery';
 
 
 @Component({
@@ -16,6 +16,9 @@ export class DealsComponent {
   model: any = {};
   deals : Deal[] = [];
   dealId!: number;
+  selectedFund: string = '';
+  selectedValue: number = 0;
+
 
   popup = false;
   
@@ -45,5 +48,31 @@ export class DealsComponent {
       this.dealService.getDeals(this.model).subscribe((data: Deal[]) => {
         this.deals = data;
       });
+    }
+
+  onFundChange(): void {
+    this.selectedValue = this.mapSelectedValue(this.selectedFund);
+    if (this.selectedFund) {
+      this.dealService.fundDeal(this.selectedValue).subscribe((data: Deal[]) => {
+        this.deals = data;
+      })
+      console.log(`You have selected: ${this.selectedFund}`);
+    } else {
+      console.error(error);
+    }
   }
+
+  mapSelectedValue(selectedFund: string): number {
+    if(this.selectedFund == "FundIII"){
+      this.selectedValue =3;
+    }else if(this.selectedFund == "FundIV"){
+      this.selectedValue =4;
+    }
+    else{
+      this.selectedValue = 0;
+    }
+
+    return this.selectedValue;
+  }
+  
 }

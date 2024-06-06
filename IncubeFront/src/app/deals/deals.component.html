@@ -1,8 +1,16 @@
 <body>
-  <div class="container mt-4">
+  <div class="container mt-4">   
     <div class="row">
       <div class="col-12">
         <div class="deals-list">
+
+          <label>Fund:</label>
+          <select id="fund-select" [(ngModel)]="selectedFund" (change)="onFundChange()">
+            <option value="">--Choose a fund--</option>
+            <option value="FundIII">Fund III</option>
+            <option value="FundIV">Fund IV</option>
+          </select>
+
           <!-- Loop through each deal and display it using Bootstrap's card component -->
           <div *ngFor="let deal of deals" class="card mb-3">
             <div class="card-body" (click)="pageRedirection(deal.deal_Id)">
@@ -49,3 +57,14 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.getElementById('fund-select').addEventListener('change', function() {
+      var selectedValue = this.value;
+      if (selectedValue) {
+        document.getElementById('selected-fund').innerText = 'You have selected: ' + selectedValue;
+      } else {
+        document.getElementById('selected-fund').innerText = '';
+      }
+    });
+  </script>

@@ -33,6 +33,10 @@ export class DealService {
   facilityStatus(dealId: number): Observable<FacilityInformation> {
     return this.http.get<FacilityInformation>(`${this.apiUrl}/FacilityInformation/${dealId}`);
   }
+
+  fundDeal(fundName: number): Observable<any[]> {
+    return this.http.get<Deal[]>(`${this.apiUrl}/DealbyFunds/${fundName}`);
+  }
   
 }
 
