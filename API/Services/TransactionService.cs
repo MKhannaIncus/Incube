@@ -135,6 +135,8 @@ namespace API.Services
                 else
                 {
                     transactionNext = new Transaction();
+                    transactionNext.Principal_EOP = transaction.Drawdown;
+                    transactionNext.Amount_Due_EOP = transaction.Drawdown;
                 }
 
                 // Get the most recent Transaction_Id and add one to it

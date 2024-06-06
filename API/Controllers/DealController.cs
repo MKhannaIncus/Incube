@@ -28,7 +28,6 @@ namespace API.Controllers
             return await _context.Deals.ToListAsync();
         }
 
-        
         [HttpGet("DealInformation/{dealId}")]
         public async Task<ActionResult<IEnumerable<DealDTO>>> GetDealDetails(int DealId)
         {
@@ -72,11 +71,12 @@ namespace API.Controllers
             return Ok(deal);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<IEnumerable<Deal>>> AddDeal()
-        //{
-        //    return;
-        //}
+        [HttpGet("DealbyFunds/{fundId}")]
+        public async Task<List<Deal>> GetDealsForFund(int FundId)
+        {
+            List<Deal> dealsFromFund = await _context.Deals.Where(t => t.Related_fund_id == FundId).OrderByDescending(t => t.Deal_Id).ToListAsync();
+            return dealsFromFund;
+        }
 
         [HttpPost]
         public async Task<ActionResult<Deal>> NewDeal(Deal deal)

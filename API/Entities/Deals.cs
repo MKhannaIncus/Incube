@@ -69,5 +69,7 @@ namespace API.Entities
 
         [Column(TypeName = "decimal(5, 2)")]
         public decimal? LTV_Entry { get; set; }
+
+        public int? Related_fund_id { get; set; }
     }
 }
