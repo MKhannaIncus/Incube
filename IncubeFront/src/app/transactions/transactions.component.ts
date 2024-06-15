@@ -4,6 +4,7 @@ import { TransactionService } from '../_services/transactions.service';
 import { ActivatedRoute } from '@angular/router';
 import { DealService ,FacilityInformation } from '../_services/deal.service';
 import { Deal } from '../_models/deal';
+import { BackgroundTaskService } from '../_services/background-task.service'; // Import the BackgroundTaskService
 
 
 @Component({

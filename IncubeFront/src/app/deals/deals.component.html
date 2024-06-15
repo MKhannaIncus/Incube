@@ -1,21 +1,31 @@
-<body>
+<body class ="style-page">
   <div class="container mt-4">   
     <div class="row">
       <div class="col-12">
         <div class="deals-list">
-
-          <label>Fund:</label>
-          <select id="fund-select" [(ngModel)]="selectedFund" (change)="onFundChange()">
-            <option value="">--Choose a fund--</option>
-            <option value="FundIII">Fund III</option>
-            <option value="FundIV">Fund IV</option>
-          </select>
-
+          <div>
+            <div class="row">
+              <div class="col">
+                  <select class="form-select" [(ngModel)]="selectedFund" (change)="onFundChange()">
+                      <option value="">--Choose a fund--</option>
+                      <option value="FundIII">Fund III</option>
+                      <option value="FundIV">Fund IV</option>
+                  </select>
+              </div>
+              <div class="col newDealButton">
+                  <button type="button" class="btn btn-primary" (click)="popup=true">New Deal</button>
+              </div>
+          </div>
+          </div>
           <!-- Loop through each deal and display it using Bootstrap's card component -->
           <div *ngFor="let deal of deals" class="card mb-3">
-            <div class="card-body" (click)="pageRedirection(deal.deal_Id)">
-              <div class="row align-items-center"> <!-- Aligns items vertically in the center -->
+            <div class="card-body floating-rectangle" (click)="pageRedirection(deal.deal_Id)">
+              <div class="rows-list row align-items-center"> <!-- Aligns items vertically in the center -->
                 <div class="col-md-3">
+                  <div class="deal-icon">
+                    <img [src]="deal.deal_Id % 2 === 0 ? 'assets/plane-svgrepo-com.svg' : 'assets/sun-svgrepo-com.svg'" alt="Deal Icon" class="icon-image"/>
+                  </div>
+
                   <strong class="d-block text-uppercase">{{deal.deal_Name }}</strong>
                   <p>Deal ID: {{ deal.deal_Id }}</p>
                 </div>
@@ -33,7 +43,6 @@
             </div>
           </div>
           <!-- Button to open the popup for a new deal -->
-          <button type="button" class="btn btn-primary mt-3" (click)="popup=true">New Deal</button>
         </div>
       </div>
     </div>

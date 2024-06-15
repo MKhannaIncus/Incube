@@ -1,3 +1,8 @@
+.style-page{
+  background-color: #EEEBE0; /* Light blue background color for the entire page */
+  color: #333;
+}
+
 .label{
   font-family: sans-serif;
   font-size: 1rem;
@@ -14,30 +19,15 @@
   border-radius: 0.25rem; /* Rounded corners */
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transitions for hover effects */
   /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
-  background-color: whitesmoke;
+  background-color: #EEEBE0;
 }
 
 .floating-rectangle:hover {
   transform: translateY(-5px); /* Slight upward lift on hover */
-  box-shadow: 0 10px 15px rgba(141, 133, 222, 0.2); /* Enhanced shadow for floating effect */
+  box-shadow: 0 10px 15px #EEEBE0; /* Enhanced shadow for floating effect */
   background-color: #040c13; 
   color: aliceblue;
 }
-
-/* Navigation pills customization */
-.nav-pills .nav-link {
-  background-color: #007bff; /* Bootstrap primary color */
-  color: white; /* Text color for better contrast */
-  border-radius: 0.25rem; /* Consistent rounded corners */
-}
-
-.nav-pills {
-  color: #0056b3; /* Darker shade on hover/active */
-}
-.nav-pills:hover {
-  color: azure; /* Darker shade on hover/active */
-}
-
 
 /* Title and description styles within deals */
 .deal-title {
@@ -104,4 +94,54 @@
 
 .newDealButton{
   margin-top: 1%;
+    display: flex;
+    justify-content: flex-end;
+    height: 80%;
+}
+
+.form-select {
+  width: 40%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  appearance: none;
+  margin-bottom: 35px;
+}
+
+
+.form-select:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+.deal-icon {
+  width: 70px;
+  height: 70px;
+  background-color: #0056b3; /* Blue background for the icon circle */
+  border-radius: 50%; /* Makes the div a circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -30px; /* Adjust this value to position the icon */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.icon-image {
+  width: 70%; /* Ensure the image fits well within the circle */
+  height: 70%; /* Ensure the image fits well within the circle */
+  object-fit: cover; /* Ensures the image covers the circle while maintaining aspect ratio */
+  filter: invert(100%); /* Invert the colors to make the image white */
+}
+
+.rows-list{
+  margin-left: 3%;
 }
