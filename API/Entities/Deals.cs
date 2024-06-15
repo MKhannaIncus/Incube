@@ -71,5 +71,9 @@ namespace API.Entities
         public decimal? LTV_Entry { get; set; }
 
         public int? Related_fund_id { get; set; }
+
+        public int? Cash_Interest_Period { get; set; }
+        public int? PIK_Interest_Period { get; set; }
+
     }
 }
