@@ -18,6 +18,17 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityServices(builder.Configuration);
 
+
+// Register the BackgroundTaskService
+builder.Services.AddHostedService<BackgroundTaskService>();
+
+// Register the BackgroundTaskService as a singleton for dependency injection
+builder.Services.AddSingleton<BackgroundTaskService>();
+builder.Services.AddHostedService<BackgroundTaskService>(provider => provider.GetService<BackgroundTaskService>());
+
+//builder.Services.AddHostedService<API.Services.BackgroundTaskService>();
+
+
 var app = builder.Build();
 
 // app.UseAuthorization();
