@@ -29,6 +29,7 @@ namespace API.Entities
 
         [MaxLength(255)]
         public string? Subsector { get; set; }
+        public string? Status {  get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? Investment_date { get; set; }
@@ -44,12 +45,17 @@ namespace API.Entities
 
         [Column(TypeName = "decimal(5, 2)")]
         public decimal? IRR { get; set; }
+        public decimal? Underwriting_IRR { get; set; }
+
 
         [Column(TypeName = "decimal(5, 2)")]
         public decimal? MOIC { get; set; }
+        public decimal? Underwriting_MOIC { get; set; }
 
         [Column(TypeName = "decimal(15, 2)")]
         public decimal? NAV { get; set; }
+        public decimal? Underwriting_NAV { get; set; }
+
 
         public int? Availability_period { get; set; }
 
@@ -74,6 +80,10 @@ namespace API.Entities
 
         public int? Cash_Interest_Period { get; set; }
         public int? PIK_Interest_Period { get; set; }
+
+        public string? Comments {  get; set; }
+
+        public int? Drawdown {  get; set; }
 
     }
 }

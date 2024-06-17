@@ -1,12 +1,14 @@
 ﻿using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace API.Controllers
 {
@@ -14,7 +16,7 @@ namespace API.Controllers
     public class DealController : BaseApiController
     {
         private readonly DataContext _context;
-
+        private TransactionService transactionService;
         public DealController(DataContext context)
         {
             _context = context;
@@ -34,14 +36,19 @@ namespace API.Controllers
             var dealDetails = await _context.Deals.Where(t => t.Deal_Id == DealId).
                 Select( t=> new DealDTO
                 {
+                    Comments = t.Comments,
                     Investment_date = t.Investment_date,
                     Maturity_date = t.Maturity_date,
                     Facility = t.Facility,
                     Opening_fee = t.Opening_fee,
                     Availability_fee = t.Availability_fee,
                     Minimum_multiple =t.Minimum_multiple,
+                    MOIC = t.MOIC,
                     IRR = t.IRR,
-                    NAV = t.NAV
+                    NAV = t.NAV,
+                    Underwriting_MOIC = t.Underwriting_MOIC,
+                    Underwriting_IRR = t.Underwriting_IRR,
+                    Underwriting_NAV = t.Underwriting_NAV
                 }).ToListAsync();
 
             return Ok(dealDetails);
@@ -96,9 +103,9 @@ namespace API.Controllers
                 Maturity_date = deal.Maturity_date,
                 Opening_fee = deal.Opening_fee,
                 Minimum_multiple = deal.Minimum_multiple,
-                IRR = deal.IRR,
-                MOIC = deal.MOIC,
-                NAV = deal.NAV,
+                Underwriting_IRR = deal.Underwriting_IRR,
+                Underwriting_MOIC = deal.Underwriting_MOIC,
+                Underwriting_NAV = deal.Underwriting_NAV,
                 Availability_period = deal.Availability_period,
                 Availability_fee = deal.Availability_fee,
                 Intercompany_loan = deal.Intercompany_loan,
@@ -109,6 +116,7 @@ namespace API.Controllers
                 LTV_Entry = deal.LTV_Entry
             };
 
+            transactionService.FirstTransaction(newDeal);
             _context.Deals.Add(newDeal);
             await _context.SaveChangesAsync();
 

@@ -3,8 +3,10 @@ using API.Entities;
 using API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using SQLitePCL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,10 +17,14 @@ namespace API.Services
     public class TransactionService : ITransactionService
     {
         private readonly DataContext _context;
+        private readonly ILogger<BackgroundTaskService> _logger;
+        public readonly Deal deal;
 
-        public TransactionService(DataContext context)
+        public TransactionService(ILogger<BackgroundTaskService> logger, DataContext context)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         //public List<int> Projections()
@@ -169,11 +175,67 @@ namespace API.Services
             return transactionNext;
         }
 
+        public async Task<Transaction> FirstTransaction (Deal deal)
+        {
+            Transaction transaction = new Transaction();
+            transaction.Related_Deal_Id = deal.Deal_Id;
+            transaction.Amount_Due_BOP = 0;
+            transaction.Principal_BOP = 0;
+            transaction.Cash_Interest_BOP = 0;
+            transaction.Undrawn_Amount = deal.Facility;
+            transaction.Drawdown = deal.Drawdown;
+            transaction.Principal_EOP = deal.Drawdown;
+            transaction.Amount_Due_EOP = deal.Drawdown;
+
+            _context.Transactions.Add(transaction);
+            await _context.SaveChangesAsync();
+            return transaction;
+
+        }
 
         public async Task<Transaction> AccruedValues (Transaction transaction)
         {
             //Calculate accrued values according to rate
             //Cash interest is calfculated on the principal payed in the beginning of time or principal in that moment(if the client has already payed?)
+
+            //if last recorded entry is greater than amount of time --  calculate values
+            //var mostRecentTransactionDate = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).Select(t => t.Transaction_Date).FirstOrDefaultAsync();
+            //var cashInterestPeriod = await _context.Transactions.Where
+
+
+            var relatedDealId = transaction.Related_Deal_Id;
+            int? cashInterestPeriod =  _context.Deals.Where(d => d.Deal_Id == relatedDealId).Select(d => d.Cash_Interest_Period).FirstOrDefault();
+
+            _logger.LogInformation("Testing");
+
+            if (cashInterestPeriod != null)
+            {
+                var timePassed = DateTime.Now.AddMonths(-cashInterestPeriod.Value);
+
+                //calculating most recent transaction
+                var mostRecentTransactionDate = await _context.Transactions.Where(t => t.Related_Deal_Id == relatedDealId)
+                                                                            .OrderByDescending(t => t.Transaction_Date)
+                                                                            .ThenByDescending(t => t.Transaction_Id)
+                                                                            .Select(t => t.Transaction_Date)
+                                                                            .FirstOrDefaultAsync();
+
+                if (mostRecentTransactionDate > timePassed)
+                {
+                    // The most recent transaction date is within the interest period
+                    Console.WriteLine("The most recent transaction date is within the calculated interest period.");
+                }
+                else
+                {
+                    // The most recent transaction date is not within the interest period
+                    //if it is out of the interest period, accrued values need to be calculated
+                    Console.WriteLine("The most recent transaction date is not within the calculated interest period.");
+                }
+
+            }
+            //Getting how long it has passed
+
+
+
             transaction.Cash_Interest_Accrued = transaction.Principal_BOP * (transaction.Cash_Interest_Rate / 100);
             transaction.PIK_Interest_Accrued = transaction.Amount_Due_BOP * (transaction.Cash_Interest_Rate / 100);
             transaction.Undrawn_Interest_Accrued = transaction.Undrawn_Amount * (transaction.Undrawn_Interest_Accrued / 100);
@@ -182,6 +244,13 @@ namespace API.Services
 
         }
 
+
+        //public async Task<int> NAVCalculations (Transaction transaction)
+        //{
+        //    //Current value of deal= (amount due BOP + cash interest generated) - (cash interest payed)
+        //    //Amount of due BOP+ 
+
+        //}
 
         //ACCRUED
         //Calculation of all the built up Accruels
