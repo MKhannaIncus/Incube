@@ -19,6 +19,10 @@ namespace API.DTOs
         public decimal? IRR { get; set; }
         public decimal? MOIC { get; set; }
         public decimal? NAV { get; set; }
+        public decimal? Underwriting_IRR { get; set; }
+        public decimal? Underwriting_MOIC { get; set; }
+        public decimal? Underwriting_NAV { get; set; }
+
         public int? Availability_period { get; set; }
         public decimal? Availability_fee { get; set; }
         public bool? Intercompany_loan { get; set; }
@@ -27,5 +31,8 @@ namespace API.DTOs
         public string Amortization_type { get; set; }
         public int? Ownership_Id { get; set; }
         public decimal? LTV_Entry { get; set; }
+        public string? Comments { get; set; }
+        public int? Drawdown {  get; set; }
+
     }
 }
