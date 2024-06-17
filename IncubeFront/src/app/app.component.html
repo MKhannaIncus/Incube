@@ -21,6 +21,11 @@
     <!-- </div>
   </div> -->
 <!-- </nav> -->
-  
+<nav *ngIf="showNavbar" class="navbar">
+  <div class="logo">
+    <img src="assets/TextIncusCapital.png" alt="Incus Capital">
+  </div>
+</nav>
+
   <!-- Dynamic Content Area -->
   <router-outlet></router-outlet>

@@ -7,6 +7,7 @@ export interface Deal {
   country: string;
   sector: string;
   subsector: string;
+  status: string;
   investment_date?: Date;
   maturity_date?: Date;
   opening_fee?: number;
@@ -14,6 +15,9 @@ export interface Deal {
   IRR?: number;
   MOIC?: number;
   NAV?: number;
+  underwriting_IRR?: number;
+  underwriting_MOIC?: number;
+  underwriting_NAV?: number;
   availability_period?: number;
   availability_fee?: number;
   intercompany_loan?: boolean;
@@ -22,4 +26,5 @@ export interface Deal {
   amortization_type: string;
   ownership_Id?: number;
   LTV_Entry?: number;
+  comments?: string
 }

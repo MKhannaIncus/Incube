@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DealService } from '../_services/deal.service';
 import { Data } from '@angular/router';
 import { Deal } from '../_models/deal';
@@ -10,7 +10,7 @@ import { error } from 'jquery';
 @Component({
   selector: 'app-deals',
   templateUrl: './deals.component.html',
-  styleUrls: ['./deals.component.css']
+  styleUrls: ['./deals.component.css'],
 })
 export class DealsComponent {
   model: any = {};
@@ -74,5 +74,17 @@ export class DealsComponent {
 
     return this.selectedValue;
   }
-  
+
+  getStatusClass(status: string): string{
+    switch (status) {
+      case 'on-track':
+        return 'on-track';
+      case 'pending':
+        return 'pending';
+      case 'waiting-for':
+        return 'waiting-for';
+      default:
+        return '';
+    }
+  }  
 }

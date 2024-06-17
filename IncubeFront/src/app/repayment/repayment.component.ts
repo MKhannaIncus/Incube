@@ -4,6 +4,7 @@ import { TransactionsComponent } from '../transactions/transactions.component';
 import { TransactionService } from '../_services/transactions.service';
 import { Transaction } from '../_models/transactions';
 
+
 @Component({
   selector: 'app-repayment',
   templateUrl: './repayment.component.html',
@@ -12,7 +13,9 @@ import { Transaction } from '../_models/transactions';
 export class RepaymentComponent {
   repaymentForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, public transactionsComponent: TransactionsComponent, public transactionsService: TransactionService) {
+  constructor(private formBuilder: FormBuilder, 
+    public transactionsComponent: TransactionsComponent, 
+    public transactionsService: TransactionService) {
     this.repaymentForm = this.formBuilder.group({
       repayment: ['', Validators.required],
       // cashInterest: ['', Validators],
@@ -43,4 +46,8 @@ export class RepaymentComponent {
       })
   }
   }
+    // public onClick(id: number): void{
+    //     this.modalService.close();
+    //     //Your code goes here
+    // }
 }

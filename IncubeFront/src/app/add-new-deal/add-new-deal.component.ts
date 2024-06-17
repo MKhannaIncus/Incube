@@ -11,6 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class AddNewDealComponent {
   dealForm: FormGroup;
+  isPopupVisible = false;
 
   constructor(public dealService: DealService, private formBuilder: FormBuilder) {
     this.dealForm = this.formBuilder.group({
@@ -26,9 +27,9 @@ export class AddNewDealComponent {
       maturity_date: [null],
       opening_fee: [null],
       minimum_multiple: [null],
-      IRR: [null],
-      MOIC: [null],
-      NAV: [null],
+      underwriting_IRR: [null],
+      underwriting_MOIC: [null],
+      underwriting_NAV: [null],
       availability_period: [null],
       availability_fee: [null],
       intercompany_loan: [false],
@@ -54,6 +55,19 @@ export class AddNewDealComponent {
           // Handle errors, possibly show user feedback
         }
       })
+      if (this.dealForm.valid) {
+        // Handle form submission
+        this.isPopupVisible = false;
+      }
   }
+
+  openPopup() {
+    this.isPopupVisible = true;
+  }
+
+  closePopup() {
+    this.isPopupVisible = false;
+  }
+  
 
 }

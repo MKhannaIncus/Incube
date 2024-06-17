@@ -1,5 +1,5 @@
 .style-page{
-  background-color: #EEEBE0; /* Light blue background color for the entire page */
+  background-color: rgb(238, 235, 224, 0.3); /* Light blue background color for the entire page */
   color: #333;
 }
 
@@ -7,7 +7,6 @@
   font-family: sans-serif;
   font-size: 1rem;
 }
-
 
 .deals-list{
   padding: 3%;
@@ -19,7 +18,7 @@
   border-radius: 0.25rem; /* Rounded corners */
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transitions for hover effects */
   /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
-  background-color: #EEEBE0;
+  background-color: rgba(38, 90, 166, 0.2);
 }
 
 .floating-rectangle:hover {
@@ -92,11 +91,28 @@
   }
 }
 
-.newDealButton{
+/* Custom styles for the New Deal button */
+.new-deal-button {
+  background-color: #050A4B; /* Dark blue background color */
+  color: white; /* White text color */
+  border: none; /* Remove default border */
+  border-radius: 0; /* Make the button rectangular */
+  padding: 10px 20px; /* Add padding for better appearance */
+  height: 80%;
+  font-size: 1rem; /* Set font size */
+  cursor: pointer; /* Change cursor to pointer */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.new-deal-button:hover {
+  background-color: #beaf86; /* Darker background color on hover */
+}
+
+/* Ensure proper alignment and spacing */
+.newDealButton {
+  display: flex;
+  justify-content: flex-end;
   margin-top: 1%;
-    display: flex;
-    justify-content: flex-end;
-    height: 80%;
 }
 
 .form-select {
@@ -124,7 +140,7 @@
 .deal-icon {
   width: 70px;
   height: 70px;
-  background-color: #0056b3; /* Blue background for the icon circle */
+  background-color: #050a4b; /* Blue background for the icon circle */
   border-radius: 50%; /* Makes the div a circle */
   display: flex;
   align-items: center;
@@ -144,4 +160,42 @@
 
 .rows-list{
   margin-left: 3%;
+}
+
+.mat-form-field .mat-form-field-label {
+  color: #0056b3; /* Label color */
+}
+
+::ng-deep .mat-select-trigger {
+  background-color: #0056b3 !important; /* Trigger background color */
+  color: white !important; /* Trigger text color */
+  border-radius: 4px !important;
+  padding: 8px !important;
+}
+
+::ng-deep .mat-select-panel {
+  background-color: #e3f2fd !important; /* Dropdown panel background color */
+  color: #333 !important; /* Dropdown panel text color */
+  border-radius: 4px !important;
+}
+
+::ng-deep .mat-option {
+  background-color: #e3f2fd !important; /* Option background color */
+  color: #333 !important; /* Option text color */
+  border-bottom: 1px solid #ddd !important;
+}
+
+::ng-deep .mat-option:hover {
+  background-color: #bbdefb !important; /* Customize hover background color */
+}
+
+::ng-deep .mat-option.mat-selected {
+  background-color: #0056b3 !important; /* Selected option background color */
+  color: white !important; /* Selected option text color */
+}
+.status-rectangle {
+  height: 40px;
+  margin-right: 10px;
+  color: wheat;
+  background-color: black;
 }

@@ -1,28 +1,75 @@
-.add-button{
-    margin-top: 1.5%;
+/* Form container */
+.form-group {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-textarea {
-    width: 100%; /* Make textarea take the full container width */
-    height: 150px; /* Set a fixed height */
-    padding: 10px; /* Add some padding inside the text area */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    border: 2px solid #ccc; /* Add a border */
-    border-radius: 4px; /* Optional: round the borders */
-    background-color: #f8f8f8; /* Change background color */
-    resize: none; /* Disable resizing */
+/* Labels */
+label {
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: 600;
+  color: #495057;
 }
-.form-group {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  label {
-    display: block;
-    margin: 12px 0 6px;
-    font-weight: bold;
-    color: #333;
-  }
+
+/* Headings */
+h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+/* Input fields */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0 12px;
+  box-sizing: border-box;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  transition: border-color 0.3s;
+}
+
+/* Focused input fields */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Textarea */
+textarea {
+  height: 150px;
+  resize: none;
+}
+
+/* Button */
+button[type="submit"] {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Button hover */
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}

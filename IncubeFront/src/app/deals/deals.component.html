@@ -1,19 +1,22 @@
 <body class ="style-page">
-  <div class="container mt-4">   
+  <div class="container mt-4">
     <div class="row">
       <div class="col-12">
         <div class="deals-list">
           <div>
             <div class="row">
-              <div class="col">
-                  <select class="form-select" [(ngModel)]="selectedFund" (change)="onFundChange()">
-                      <option value="">--Choose a fund--</option>
-                      <option value="FundIII">Fund III</option>
-                      <option value="FundIV">Fund IV</option>
-                  </select>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Choose a Fund</mat-label>
+                  <mat-select [(value)]="selectedFund" (selectionChange)="onFundChange()">
+                    <mat-option value="">--Choose a fund--</mat-option>
+                    <mat-option value="FundIII">Fund III</mat-option>
+                    <mat-option value="FundIV">Fund IV</mat-option>
+                  </mat-select>
+                </mat-form-field>
               </div>
               <div class="col newDealButton">
-                  <button type="button" class="btn btn-primary" (click)="popup=true">New Deal</button>
+                <button type="button" class="btn new-deal-button" (click)="popup=true">New Deal</button>
               </div>
           </div>
           </div>
@@ -25,19 +28,14 @@
                   <div class="deal-icon">
                     <img [src]="deal.deal_Id % 2 === 0 ? 'assets/plane-svgrepo-com.svg' : 'assets/sun-svgrepo-com.svg'" alt="Deal Icon" class="icon-image"/>
                   </div>
-
                   <strong class="d-block text-uppercase">{{deal.deal_Name }}</strong>
                   <p>Deal ID: {{ deal.deal_Id }}</p>
                 </div>
                 <div class="col-md-3">
-                  <strong class="d-block text-uppercase">Country</strong>
-                </div>
-                <div class="col-md-3">
-                  <strong class="d-block text-uppercase">Sector</strong>
-                  <p>{{ deal.sector }}</p> <!-- Assuming 'sector' is part of your deal object -->
-                </div>
-                <div class="col-md-3">
                   <strong class="d-block text-uppercase">{{deal.investment_date| date}}</strong>
+                </div>
+                <div class="col-md-6 status">
+                  <div [ngClass]="getStatusClass(deal.status)" class="status-rectangle"></div>
                 </div>
               </div>
             </div>
@@ -54,7 +52,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add New Deal</h5>
+
             <button type="button" class="close" (click)="popup = false">
               <span aria-hidden="true">&times;</span>
             </button>

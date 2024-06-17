@@ -1,10 +1,21 @@
 <div class="view container-fluid mt-4">
   <!-- Summary Cards -->
   <div class="row mb-3">
-    <div class="col-md-6">
-      <div class="card text-white bg-primary mb-3">
+    <div class ="col-md-6">
+      <div class="card text-white">
         <div class="card-body">
           <h5 class="card-title">Deal Information</h5>
+          <td *ngFor="let deal of dealInformation" class="card-text">{{deal.comments}}</td>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <div class="card text-white">
+        <div class="card-body">
+          <h5 class="card-title">Basics</h5>
           <div class="table-responsive">
             <div class="table-responsive">
               <table class="table table-hover w-100">
@@ -34,12 +45,16 @@
                     <td *ngFor="let deal of dealInformation">{{ deal.minimum_multiple }}</td>
                   </tr>
                   <tr>
-                    <th>IRR</th>
-                    <td *ngFor="let deal of dealInformation">{{ deal.IRR }}</td>
+                    <th>Underwriting IRR</th>
+                    <td *ngFor="let deal of dealInformation">{{ deal.underwriting_IRR }}</td>
                   </tr>
                   <tr>
-                    <th>NAV</th>
-                    <td *ngFor="let deal of dealInformation">{{ deal.NAV }}</td>
+                    <th>Underwriting NAV</th>
+                    <td *ngFor="let deal of dealInformation">{{ deal.underwriting_NAV }}</td>
+                  </tr>
+                  <tr>
+                    <th>Underwriting MOIC</th>
+                    <td *ngFor="let deal of dealInformation">{{ deal.underwriting_MOIC }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -50,7 +65,7 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="card text-white bg-success mb-3">
+      <div class="card text-white mb-3">
         <div class="card-body">
           <h5 class="card-title">Facility Information</h5>
           <div class="table-responsive">
@@ -72,7 +87,7 @@
         </div>
       </div>
     </div>
-
+  </div>
   <!-- Transactions Table -->
   <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
@@ -166,4 +181,3 @@
       </div>
     </div>
   </div>
-</div>
