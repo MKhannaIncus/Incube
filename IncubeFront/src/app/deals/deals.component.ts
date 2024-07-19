@@ -75,16 +75,24 @@ export class DealsComponent {
     return this.selectedValue;
   }
 
-  getStatusClass(status: string): string{
+  getStatusClass(status: string): string {
+    let className = '';
     switch (status) {
-      case 'on-track':
-        return 'on-track';
-      case 'pending':
-        return 'pending';
-      case 'waiting-for':
-        return 'waiting-for';
+      case 'On track':
+        className = 'On-track';
+        break;
+      case 'Coming up':
+        className = 'default';
+        break;
+      case 'Pending':
+        className = 'pending';
+        break;
+      // Add more cases as needed
       default:
-        return '';
+        className = 'default-class';
+        break;
     }
-  }  
+    console.log(`Status: ${status}, Class: ${className}`);
+    return className;
+  } 
 }

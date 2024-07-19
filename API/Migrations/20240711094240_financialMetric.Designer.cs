@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240711094240_financialMetric")]
+    partial class financialMetric
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,75 +165,6 @@ namespace API.Migrations
                     b.HasKey("Deal_Id");
 
                     b.ToTable("deal", "incus_capital");
-                });
-
-            modelBuilder.Entity("API.Entities.FinancialMetrics", b =>
-                {
-                    b.Property<int>("Metrics_id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Accrued_Cash_Interest")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Accrued_Pik_Interest")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Accrued_Undrawn_Interest")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("Deal_Id1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Deal_id")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Facility")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Interest_Generated")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Interest_Payed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav_irr")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav_moic")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav_profit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total_Collections")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total_Debt")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total_Invested")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("Transaction_Id1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Transaction_id")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Undrawn_Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Metrics_id");
-
-                    b.HasIndex("Deal_Id1");
-
-                    b.HasIndex("Transaction_Id1");
-
-                    b.ToTable("financial_metrics");
                 });
 
             modelBuilder.Entity("API.Entities.Fund", b =>
@@ -388,21 +322,6 @@ namespace API.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("transactions", "incus_capital");
-                });
-
-            modelBuilder.Entity("API.Entities.FinancialMetrics", b =>
-                {
-                    b.HasOne("API.Entities.Deal", "Deal_Id")
-                        .WithMany()
-                        .HasForeignKey("Deal_Id1");
-
-                    b.HasOne("API.Entities.Transaction", "Transaction_Id")
-                        .WithMany()
-                        .HasForeignKey("Transaction_Id1");
-
-                    b.Navigation("Deal_Id");
-
-                    b.Navigation("Transaction_Id");
                 });
 #pragma warning restore 612, 618
         }

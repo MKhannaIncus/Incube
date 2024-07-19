@@ -1,4 +1,5 @@
-﻿using API.Data;
+﻿using API.Controllers;
+using API.Data;
 using API.Entities;
 using API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -26,14 +27,6 @@ namespace API.Services
             _logger = logger;
 
         }
-
-        //public List<int> Projections()
-        //{
-        //    var deals = _context.Deals.ToList();
-
-        //    return deals;
-        //}
-
 
         //REPAYMENT
         //When a new transaction is added and Calculate button is Clicked --> amount divided between - Cash Interest, PIK Interest, Principal, Fees
@@ -134,21 +127,36 @@ namespace API.Services
             if (transaction.Drawdown!= null)
             {
 
-                if(_context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).Count()  > 0)
+                if(transaction.Drawdown >0 && _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).Count()  > 0)
                 {
                     transactionNext = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
+                    transactionNext.Drawdown = transaction.Drawdown;
+                    //transactionNext.Related_Deal_Id = transaction.Related_Deal_Id;
+                    //If more money is payed to the client- it is subtracted from the undrawn amount
+                    transactionNext.Undrawn_Amount = transactionNext.Undrawn_Amount - transaction.Drawdown;
+                    //Added to the amount due
+
+                    transactionNext.Principal_EOP = transaction.Principal_BOP + transaction.Drawdown;
+                    transactionNext.Amount_Due_EOP = transactionNext.Amount_Due_BOP + transaction.Drawdown;
+                    transaction.Transaction_Date = DateTime.Today;
+
+
                 }
                 else
                 {
+                    decimal? facility = _context.Deals.Where(t => t.Deal_Id == transaction.Related_Deal_Id).Select(t => t.Facility).FirstOrDefault();
                     transactionNext = new Transaction();
+                    transactionNext.Undrawn_Amount = facility - transaction.Drawdown;
+                    transactionNext.Related_Deal_Id = transaction.Related_Deal_Id;
                     transactionNext.Principal_EOP = transaction.Drawdown;
                     transactionNext.Amount_Due_EOP = transaction.Drawdown;
+                    transaction.Transaction_Date = DateTime.Today;
                 }
 
                 // Get the most recent Transaction_Id and add one to it
                 int? maxTransactionId = await _context.Transactions.MaxAsync(t => t.Transaction_Id);
 
-                if(transactionNext.Transaction_Id != null)
+                if(maxTransactionId != null)
                 {
                     transactionNext.Transaction_Id = maxTransactionId + 1;
                 }
@@ -156,16 +164,6 @@ namespace API.Services
                 {
                     transaction.Transaction_Id = 1;
                 }
-
-
-                transactionNext.Drawdown = transaction.Drawdown;
-                transactionNext.Related_Deal_Id = transaction.Related_Deal_Id;
-                //If more money is payed to the client- it is subtracted from the undrawn amount
-                transactionNext.Undrawn_Amount = transactionNext.Undrawn_Amount - transaction.Drawdown;
-                //Added to the amount due
-                
-                transactionNext.Principal_EOP = transaction.Principal_BOP + transaction.Drawdown;
-                transactionNext.Amount_Due_EOP = transactionNext.Amount_Due_BOP + transaction.Drawdown;
 
 
                 _context.Transactions.Add(transactionNext);
@@ -178,6 +176,7 @@ namespace API.Services
         public async Task<Transaction> FirstTransaction (Deal deal)
         {
             Transaction transaction = new Transaction();
+            transaction.Transaction_Id = 140;
             transaction.Related_Deal_Id = deal.Deal_Id;
             transaction.Amount_Due_BOP = 0;
             transaction.Principal_BOP = 0;
@@ -190,7 +189,6 @@ namespace API.Services
             _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
             return transaction;
-
         }
 
         public async Task<Transaction> AccruedValues (Transaction transaction)
@@ -244,6 +242,172 @@ namespace API.Services
 
         }
 
+        public async Task<Transaction> AccruedCash(Transaction mostRecentTransaction, Deal deal)
+        {
+            Transaction transactionCreatedCash = new Transaction();
+
+            transactionCreatedCash.Occurred = false;
+            transactionCreatedCash.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
+            transactionCreatedCash.Principal_BOP = mostRecentTransaction.Amount_Due_EOP;
+            transactionCreatedCash.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+            transactionCreatedCash.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+            transactionCreatedCash.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
+
+            transactionCreatedCash.Cash_Interest_Accrued = (transactionCreatedCash.Amount_Due_BOP * deal.Cash_Interest_Period.Value) + transactionCreatedCash.Amount_Due_BOP;
+            transactionCreatedCash.Principal_EOP = transactionCreatedCash.Principal_BOP;
+            transactionCreatedCash.Cash_Interest_EOP = transactionCreatedCash.Cash_Interest_BOP + transactionCreatedCash.Cash_Interest_Accrued;
+            transactionCreatedCash.PIK_Interest_EOP = transactionCreatedCash.PIK_Interest_BOP;
+            transactionCreatedCash.Undrawn_Interest_EOP = transactionCreatedCash.Undrawn_Interest_BOP;
+            transactionCreatedCash.Amount_Due_EOP = transactionCreatedCash.Amount_Due_BOP + transactionCreatedCash.Cash_Interest_Accrued;
+
+            //needs to BE PERSISTED INTO THE DATABASE
+
+            return transactionCreatedCash;
+
+        }
+
+        public async Task<Transaction> AccruedPIK(Transaction capitalizedTransaction)
+        {
+            Transaction transactionCreatedPIK = new Transaction();
+
+            transactionCreatedPIK.Amount_Due_BOP = capitalizedTransaction.Amount_Due_EOP;
+            transactionCreatedPIK.Principal_BOP = capitalizedTransaction.Principal_EOP;
+            transactionCreatedPIK.Cash_Interest_BOP = capitalizedTransaction.Cash_Interest_EOP;
+            transactionCreatedPIK.PIK_Interest_BOP = capitalizedTransaction.PIK_Interest_EOP;
+            transactionCreatedPIK.Undrawn_Interest_BOP = capitalizedTransaction.Undrawn_Interest_EOP;
+
+            transactionCreatedPIK.Cash_Interest_EOP = transactionCreatedPIK.Cash_Interest_BOP;
+            transactionCreatedPIK.PIK_Interest_Accrued = (transactionCreatedPIK.Amount_Due_BOP * deal.PIK_Interest_Period.Value) + transactionCreatedPIK.Amount_Due_BOP;
+            transactionCreatedPIK.PIK_Interest_EOP = transactionCreatedPIK.PIK_Interest_Accrued;
+            transactionCreatedPIK.Undrawn_Interest_EOP = transactionCreatedPIK.Undrawn_Interest_BOP;
+            transactionCreatedPIK.Amount_Due_EOP = transactionCreatedPIK.Amount_Due_BOP + transactionCreatedPIK.PIK_Interest_Accrued;
+
+            return transactionCreatedPIK;
+
+        }
+
+        public async Task<Transaction> Accrued(Deal deal)
+        {
+            Transaction transactionCreatedCash = new Transaction();
+            Transaction transactionCreatedPIK = new Transaction();
+            //Get most recent transaction -- first by date and then by ID
+            var mostRecentTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == deal.Deal_Id)
+                                                                    .OrderByDescending(t => t.Transaction_Date)
+                                                                    .ThenByDescending(t => t.Transaction_Id)
+                                                                    .FirstOrDefaultAsync();
+            if(mostRecentTransaction!= null)
+            {
+                DateTime lastTransaction = mostRecentTransaction.Transaction_Date;
+
+                if (lastTransaction != null && deal.Cash_Interest_Period != null)
+                {
+                    //CASH INTEREST
+                    //If more time than the cash interest period has passed, cash interest is accrued
+                    if (lastTransaction.Month > deal.Cash_Interest_Period)
+                    {
+                        //Seperate function for creating the given transaction CASH
+                        transactionCreatedCash = await AccruedCash(mostRecentTransaction, deal);
+                        transactionCreatedCash.Occurred = false;
+                        transactionCreatedCash.Accrued = true;
+                        //needs to be created in the database
+
+                    }
+                    //PIK INTEREST
+                    else if (lastTransaction.Month > deal.PIK_Interest_Period)
+                    {
+                        //Create capitalized input
+                        Transaction capitalizedTransaction = Capitalized(deal, mostRecentTransaction);
+                        //Seperate function for creating the given transaction for PIK
+                        transactionCreatedPIK = await AccruedPIK(capitalizedTransaction);
+                        transactionCreatedCash.Occurred = false;
+                        transactionCreatedPIK.Accrued = true;
+                        //needs to be created in the database
+                    }
+                }
+            }
+
+            return transactionCreatedCash;
+        }
+
+
+        public Transaction Capitalized(Deal deal, Transaction latestTransaction)
+        { 
+            Transaction transactionCapitalized = new Transaction();
+
+            transactionCapitalized = latestTransaction;
+            transactionCapitalized.Amount_Due_BOP = latestTransaction.Amount_Due_EOP;
+            transactionCapitalized.Principal_BOP = latestTransaction.Amount_Due_EOP;
+            transactionCapitalized.Cash_Interest_BOP = latestTransaction.Cash_Interest_EOP;
+            transactionCapitalized.PIK_Interest_BOP = latestTransaction.PIK_Interest_EOP;
+            transactionCapitalized.Undrawn_Interest_BOP = latestTransaction.Undrawn_Interest_EOP;
+            transactionCapitalized.PIK_Interest_Accrued = 0;
+            transactionCapitalized.Capitalized = transactionCapitalized.PIK_Interest_BOP;
+            transactionCapitalized.PIK_Interest_EOP = 0;
+            transactionCapitalized.Amount_Due_EOP = transactionCapitalized.Amount_Due_BOP + transactionCapitalized.Capitalized;
+
+            //Needs to be created in the database
+            return transactionCapitalized; 
+        }
+
+        //public async Task<List<Transaction>> Projections(Deal deal)
+        //{
+        //    List<Transaction> createdProjections = new List<Transaction>();
+
+        //    //Get most recent transaction -- first by date and then by ID
+        //    var mostRecentTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == deal.Deal_Id)
+        //                                                            .OrderByDescending(t => t.Transaction_Date)
+        //                                                            .ThenByDescending(t => t.Transaction_Id)
+        //                                                            .FirstOrDefaultAsync();
+        //    if (mostRecentTransaction != null)
+        //    {
+
+
+
+
+        //    }
+
+        //}
+
+
+        //Recieves transaction as it is called from a transaction method
+        public async Task<FinancialMetrics> MetricsCalculations (int dealId)
+        {
+            FinancialMetrics newMetrics = new FinancialMetrics();
+
+            //Calculate all the different values in the metrics that will have the value changed. 
+            //newMetrics.Transaction_Id = transaction.Transaction_Id;
+            newMetrics.Total_Collections = 0;
+            newMetrics.Total_Invested = 0;
+            newMetrics.Accrued_Cash_Interest = 0;
+            newMetrics.Accrued_Pik_Interest = 0;
+            newMetrics.Accrued_Undrawn_Interest = 0;
+
+            //In an list retrieve all the values in transactions
+            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => t.Related_Deal_Id == dealId)
+                .OrderByDescending(t => t.Transaction_Id).ToListAsync();
+
+            foreach(Transaction transaction in transactionForDeal)
+            {
+                newMetrics.Total_Collections += transaction.Repayment;
+                newMetrics.Total_Invested += transaction.Drawdown;
+                newMetrics.Accrued_Cash_Interest += transaction.Cash_Interest_Accrued;
+                newMetrics.Accrued_Pik_Interest += transaction.PIK_Interest_Accrued;
+                newMetrics.Accrued_Undrawn_Interest += transaction.Undrawn_Interest_Accrued;
+            }
+
+            newMetrics.Interest_Generated = newMetrics.Accrued_Cash_Interest + newMetrics.Accrued_Pik_Interest + newMetrics.Accrued_Undrawn_Interest;
+
+            Transaction mostRecentTransaction = transactionForDeal.FirstOrDefault();
+            newMetrics.Nav = mostRecentTransaction.Amount_Due_EOP;
+            newMetrics.Nav_profit = newMetrics.Nav + newMetrics.Total_Collections - newMetrics.Total_Invested;
+            newMetrics.Nav_moic = newMetrics.Nav_profit / newMetrics.Total_Invested;
+            
+            //newMetrics.Total_Debt = mostRecentTransaction.Principal_EOP + mostRecentTransaction.eop
+
+
+            return newMetrics;
+        }
+        
 
         //public async Task<int> NAVCalculations (Transaction transaction)
         //{

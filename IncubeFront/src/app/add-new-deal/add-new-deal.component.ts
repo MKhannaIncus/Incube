@@ -17,6 +17,7 @@ export class AddNewDealComponent {
     this.dealForm = this.formBuilder.group({
       deal_Id: [0], // Assuming 0 as default for new deals
       deal_Name: ['', Validators.required],
+      related_fund_id: [null],
       client_Id: [null],
       facility: [null],
       asset_Id: [null],
@@ -37,7 +38,8 @@ export class AddNewDealComponent {
       interest_Id: [null],
       amortization_type: [null],
       ownership_Id: [null],
-      LTV_Entry: [null]
+      LTV_Entry: [null],
+      comments: [null]
     });
   }
 
@@ -55,10 +57,6 @@ export class AddNewDealComponent {
           // Handle errors, possibly show user feedback
         }
       })
-      if (this.dealForm.valid) {
-        // Handle form submission
-        this.isPopupVisible = false;
-      }
   }
 
   openPopup() {

@@ -1,5 +1,5 @@
 <body class ="style-page">
-  <div class="container mt-4">
+  <div class="container">
     <div class="row">
       <div class="col-12">
         <div class="deals-list">
@@ -34,9 +34,11 @@
                 <div class="col-md-3">
                   <strong class="d-block text-uppercase">{{deal.investment_date| date}}</strong>
                 </div>
-                <div class="col-md-6 status">
-                  <div [ngClass]="getStatusClass(deal.status)" class="status-rectangle"></div>
+
+                <div class="col-md-6">
+                  <div [ngClass]="getStatusClass(deal.status)" class="status-rectangle debug">{{ deal.status }}</div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -48,6 +50,7 @@
 
 
     <!-- Popup Overlay for adding a new deal -->
+    <div *ngIf="popup" class="overlay">
     <div class="modal fade show" *ngIf="popup" style="display: block;" aria-hidden="!popup" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -62,6 +65,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 

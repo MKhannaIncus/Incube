@@ -13,6 +13,7 @@ public class DataContext : DbContext
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Fund> Funds { get; set; }
     
+    public DbSet<FinancialMetrics> FinancialMetrics { get; set; }
 
     #endregion
 }

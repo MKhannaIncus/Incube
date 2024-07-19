@@ -38,5 +38,7 @@ namespace API.Entities
         public decimal? Undrawn_Interest_EOP { get; set; }
         public decimal? Amount_Due_EOP { get; set; }
         public decimal? Drawdown { get; set; }
+        public Boolean? Projection { get; set; }
+        public Boolean? Accrued { get; set; }
     }
 }

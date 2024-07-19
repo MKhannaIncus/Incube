@@ -24,7 +24,8 @@ namespace API.Controllers
             _transactionService = transactionService;  
             _context = context;
         }
-        
+
+
         //All transactionsse
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Entities.Transaction>>> GetTransactions()
@@ -46,6 +47,7 @@ namespace API.Controllers
         public async Task<List<Transaction>> GetTransactionsForDeals(int DealId)
         {
             List<Transaction> transactionForDeal = await _context.Transactions.Where(t => t.Related_Deal_Id == DealId).ToListAsync();
+
 
             return transactionForDeal;
         }

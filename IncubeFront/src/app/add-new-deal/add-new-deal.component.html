@@ -6,12 +6,12 @@
       <input type="text" class="form-control" formControlName="deal_Name" required>
 
       <label for="deal_Name">Fund:</label>
-      <input type="text" class="form-control" formControlName="Fund" required>
+      <input type="text" class="form-control" formControlName="related_fund_id" required>
       
       <label for="client_Name">Client Name:</label>
       <input type="text" class="form-control" formControlName="client_Name" required>
       
-      <label for="country">Country:</label>
+      <!-- <label for="country">Country:</label>
       <input type="text" class="form-control" formControlName="country" required>
       
       <label for="sector">Sector:</label>
@@ -19,7 +19,7 @@
       
       <label for="subsector">Subsector:</label>
       <input type="text" class="form-control" formControlName="subsector" required>
-      
+       -->
       <label for="investment_date">Investment Date:</label>
       <input type="date" class="form-control" formControlName="investment_date" required>
       
@@ -43,37 +43,29 @@
       <input type="number" class="form-control" formControlName="minimum_multiple" required>
       
       <label for="Underwriting IRR">Underwriting IRR:</label>
-      <input type="number" class="form-control" formControlName="Underwriting_IRR" required>
+      <input type="number" class="form-control" formControlName="underwriting_IRR" required>
       
       <label for="Underwriting MOIC">Underwriting MOIC:</label>
-      <input type="number" class="form-control" formControlName="Underwriting_MOIC" required>
+      <input type="number" class="form-control" formControlName="underwriting_MOIC" required>
       
       <label for="Underwriting NAV">Underwriting NAV:</label>
-      <input type="number" class="form-control" formControlName="Underwriting_NAV" required>
+      <input type="number" class="form-control" formControlName="underwriting_NAV" required>
       
       <h3>Interest Rates</h3>
       
       <label for="cash_interest_rate">Cash Interest Rate:</label>
       <input type="number" class="form-control" formControlName="cash_interest_rate" required>
       
-      <label for="cash_rate">Rate:</label>
-      <input type="number" class="form-control" formControlName="cash_rate" required>
       
       <label for="pik_interest_rate">PIK Interest Rate:</label>
       <input type="number" class="form-control" formControlName="pik_interest_rate" required>
       
-      <label for="pik_rate">Rate:</label>
-      <input type="number" class="form-control" formControlName="pik_rate" required>
-      
       <label for="undrawn_interest_rate">Undrawn Interest Rate:</label>
       <input type="number" class="form-control" formControlName="undrawn_interest_rate" required>
       
-      <label for="undrawn_rate">Rate:</label>
-      <input type="number" class="form-control" formControlName="undrawn_rate" required>
-      
       <label for="interest_period">Interest Period:</label>
       <input type="text" class="form-control" formControlName="interest_period" required>
-      
+
       <button type="submit" class="btn btn-primary mt-3">Add</button>
     </div>
   </form>

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using API.Data;
+using API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -56,12 +58,17 @@ namespace API.Services
                 var context = scope.ServiceProvider.GetRequiredService<DataContext>();
                 var transactionService = scope.ServiceProvider.GetRequiredService<TransactionService>();
 
-                var transaction = await context.Transactions.Where(t => t.Related_Deal_Id == 2).FirstOrDefaultAsync();
+                //Periodically pass through all the different deals and calculated the accrued related to any deal if necessary
+                List<Deal> deals = new List<Deal>();
+                deals = await context.Deals.ToListAsync();
 
-                if (transaction != null)
+                if (deals != null)
                 {
-                    var updatedTransaction = await transactionService.AccruedValues(transaction);
-                    // Process the updated transaction as needed
+                    foreach( var deal in deals) { 
+                    
+                    //var dealAccruedComplete = await transactionService.Accrued(deal);
+
+                    }
                 }
             }
 

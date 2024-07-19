@@ -26,5 +26,6 @@ export interface Deal {
   amortization_type: string;
   ownership_Id?: number;
   LTV_Entry?: number;
-  comments?: string
+  comments?: string,
+  related_fund_id?: number
 }

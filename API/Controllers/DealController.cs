@@ -2,13 +2,16 @@
 using API.DTOs;
 using API.Entities;
 using API.Services;
+using API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace API.Controllers
 {
@@ -20,6 +23,7 @@ namespace API.Controllers
         public DealController(DataContext context)
         {
             _context = context;
+            transactionService = new TransactionService( null,_context );
         }
 
         // Corrected GetDeal method
@@ -85,6 +89,7 @@ namespace API.Controllers
             return dealsFromFund;
         }
 
+
         [HttpPost]
         public async Task<ActionResult<Deal>> NewDeal(Deal deal)
         {
@@ -113,12 +118,18 @@ namespace API.Controllers
                 Interest_Id = deal.Interest_Id,
                 Amortization_type = deal.Amortization_type,
                 Ownership_Id = deal.Ownership_Id,
-                LTV_Entry = deal.LTV_Entry
+                LTV_Entry = deal.LTV_Entry,
+                Comments = deal.Comments
             };
 
-            transactionService.FirstTransaction(newDeal);
+            //transactionService.FirstTransaction(newDeal);
             _context.Deals.Add(newDeal);
             await _context.SaveChangesAsync();
+
+            Entities.Transaction transaction = new Entities.Transaction();
+            transaction.Drawdown = 0;
+            transaction.Related_Deal_Id = newDeal.Deal_Id;
+            transactionService.NewTransaction_Disbursement(transaction);
 
             return newDeal;
         }

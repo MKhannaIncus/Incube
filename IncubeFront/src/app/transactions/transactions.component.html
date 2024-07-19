@@ -1,6 +1,8 @@
-<div class="view container-fluid mt-4">
+<body class ="style-page">
+<div class="view container-fluid">
+
   <!-- Summary Cards -->
-  <div class="row mb-3">
+  <div class="box1 row mb-3">
     <div class ="col-md-6">
       <div class="card text-white">
         <div class="card-body">
@@ -11,14 +13,12 @@
 
     </div>
   </div>
+
+  <!--Deal Information Table-->
   <div class="row mb-3">
-    <div class="col-md-6">
-      <div class="card text-white">
-        <div class="card-body">
-          <h5 class="card-title">Basics</h5>
-          <div class="table-responsive">
-            <div class="table-responsive">
-              <table class="table table-hover w-100">
+    <div class="box2 col-md-6">
+          <div class="description-container">
+              <div class="w-100 content">
                 <tbody>
                   <tr>
                     <th>Investment Date</th>
@@ -30,19 +30,19 @@
                   </tr>
                   <tr>
                     <th>Facility</th>
-                    <td *ngFor="let deal of dealInformation">{{ deal.facility }}</td>
+                    <td *ngFor="let deal of dealInformation">{{ deal.facility | number:'1.0-0'}}</td>
                   </tr>
                   <tr>
                     <th>Opening Fee</th>
-                    <td *ngFor="let deal of dealInformation">{{ deal.opening_fee }}</td>
+                    <td *ngFor="let deal of dealInformation">{{ deal.opening_fee | number:'1.0-0' }}</td>
                   </tr>
                   <tr>
                     <th>Availability Fee</th>
-                    <td *ngFor="let deal of dealInformation">{{ deal.availability_fee }}</td>
+                    <td *ngFor="let deal of dealInformation">{{ deal.availability_fee | number:'1.0-0'}}</td>
                   </tr>
                   <tr>
                     <th>Minimum Multiple</th>
-                    <td *ngFor="let deal of dealInformation">{{ deal.minimum_multiple }}</td>
+                    <td *ngFor="let deal of dealInformation">{{ deal.minimum_multiple }}x</td>
                   </tr>
                   <tr>
                     <th>Underwriting IRR</th>
@@ -50,21 +50,19 @@
                   </tr>
                   <tr>
                     <th>Underwriting NAV</th>
-                    <td *ngFor="let deal of dealInformation">{{ deal.underwriting_NAV }}</td>
+                    <td *ngFor="let deal of dealInformation">{{ deal.underwriting_NAV | number:'1.0-0'}}</td>
                   </tr>
                   <tr>
                     <th>Underwriting MOIC</th>
                     <td *ngFor="let deal of dealInformation">{{ deal.underwriting_MOIC }}</td>
                   </tr>
                 </tbody>
-              </table>
-            </div>
-            
+              </div>
           </div>
-        </div>
-      </div>
     </div>
-    <div class="col-md-6">
+
+<!--Facility Table-->
+    <div class="box4 col-md-6">
       <div class="card text-white mb-3">
         <div class="card-body">
           <h5 class="card-title">Facility Information</h5>
@@ -88,13 +86,14 @@
       </div>
     </div>
   </div>
+
   <!-- Transactions Table -->
-  <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
-      <div class="d-flex align-items-center">
-        <h2 class="mb-0 mr-3 headingPadding">Transactions</h2>
-        <button class="btn btn-light text-dark" (click)="togglePopup('repayment')">Repayment</button>
-        <button class="btn btn-light text-dark" (click)="togglePopup('disbursement')">Disbursement</button>
+  <div class="card mb-4  background-table-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div class="col d-flex align-items-center">
+        <h2 class="col mb-0 mr-3 headingPadding header-title">Transactions</h2>
+        <button class=".btn new-transaction-button" (click)="togglePopup('repayment')">Repayment</button>
+        <button class=".btn new-transaction-button margin-right" (click)="togglePopup('disbursement')">Disbursement</button>
       </div>
     </div>
     <div class="table-responsive w-100">
@@ -102,7 +101,6 @@
         <thead class="thead-dark">
           <tr>
             <th rowspan="2">Transaction ID</th>
-            <th rowspan="2">Related Deal ID</th>
             <th rowspan="2">Transaction Date</th>
             <th colspan="4" class="group-header">BOP</th>
             <th rowspan="2">Undrawn Amount</th>
@@ -113,27 +111,26 @@
             <th rowspan="2">Amount Due EOP</th>
           </tr>
           <tr>
-            <th>Amount due BOP</th>
-            <th>Principal BOP</th>
-            <th>Cash Interest BOP</th>
-            <th>PIK Interest BOP</th>
-            <th>Cash Interest Accrued</th>
-            <th>PIK Interest Accrued</th>
-            <th>Undrawn Interest Accrued</th>
-            <th>Repayment Cash Interest</th>
-            <th>Repayment PIK Interest</th>
-            <th>Repayment Principal</th>
-            <th>Repayment Undrawn Fees</th>
-            <th>Principal EOP</th>
-            <th>Cash Interest EOP</th>
-            <th>PIK Interest EOP</th>
-            <th>Undrawn Interest EOP</th>
+            <th>Total Amount</th>
+            <th>Principal</th>
+            <th>Cash Interest</th>
+            <th>PIK Interest</th>
+            <th>Cash Interest</th>
+            <th>PIK Interest</th>
+            <th>Undrawn Interest</th>
+            <th>Cash Interest</th>
+            <th>PIK Interest</th>
+            <th>Principal</th>
+            <th>Undrawn Fees</th>
+            <th>Principal</th>
+            <th>Cash Interest</th>
+            <th>PIK Interest</th>
+            <th>Undrawn Interest</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let transaction of transactions">
             <td>{{ transaction.transaction_Id }}</td>
-            <td>{{ transaction.related_Deal_Id }}</td>
             <td>{{ transaction.transaction_Date | date }}</td>
             <td>{{ transaction.amount_Due_BOP | number:'1.0-0' }}</td>
             <td>{{ transaction.principal_BOP | number:'1.0-0'  }}</td>
@@ -143,10 +140,10 @@
             <td>{{ transaction.cash_Interest_Accrued | number:'1.0-0' }}</td>
             <td>{{ transaction.piK_Interest_Accrued | number:'1.0-0' }}</td>
             <td>{{ transaction.undrawn_Interest_Accrued | number:'1.0-0' }}</td>
-            <td>{{ transaction.repayment_CashInterest| number:'1.0-0'  }}</td>
-            <td>{{ transaction.repayment_PIKInterest | number:'1.0-0' }}</td>
-            <td>{{ transaction.repayment_Principal | number:'1.0-0' }}</td>
-            <td>{{ transaction.repayment_UndrawnFees | number:'1.0-0'  }}</td>
+            <td>({{ transaction.repayment_CashInterest| number:'1.0-0'  }})</td>
+            <td>({{ transaction.repayment_PIKInterest | number:'1.0-0' }})</td>
+            <td>({{ transaction.repayment_Principal | number:'1.0-0' }})</td>
+            <td>({{ transaction.repayment_UndrawnFees | number:'1.0-0'}})</td>
             <td>{{ transaction.capitalized| number:'1.0-0'  }}</td>
             <td>{{ transaction.principal_EOP | number:'1.0-0' }}</td>
             <td>{{ transaction.cash_Interest_EOP | number:'1.0-0' }}</td>
@@ -180,4 +177,5 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
