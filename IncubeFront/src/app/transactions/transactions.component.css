@@ -1,97 +1,26 @@
-.style-page{
-background-color:rgb(238, 235, 224, 0.15);
+/* Page style */
+.style-page {
+  background-color: rgba(238, 235, 224, 0.15);
 }
-
-.view{
+.view {
   padding: 3%;
-
-  }
-  
-  .tableView {
-      font-family: Arial, Helvetica, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-  }
-  
-  td, th {
-      text-align: left;
-      padding: 15px;
-    }
-  
-    .table-hover tbody tr:hover {
-      background-color: #f2f2f2;
-    }
-  
-  
-    .table-bordered {
-      border: 2px solid rgb(196, 195, 195); /* Darker border color */
-    }
-    
-    .table-bordered thead th {
-      border-bottom-width: 2px;
-    }
-    
-    .table-bordered td, .table-bordered th {
-      border: 1px solid rgb(196, 195, 195, 0.4); /* Darker border color for table cells */
-    }
-    
-    .card-header {
-      color: black; /* White text color */
-    }
-    
-    .btn-light {
-      background-color: #f8f9fa; /* Light background for buttons */
-      color: #343a40; /* Dark text color for buttons */
-      border-color: #343a40; /* Dark border color for buttons */
-      padding: 2%;
-    }
-    
-    .btn-light:hover {
-      background-color: #e2e6ea; /* Slightly darker background on hover */
-    }
-    
-    .headingPadding{
-      flex-direction: right;
-      margin-right: 20%;
-    }
-  
-    .buttons-heading {
-      margin-right: 10px; /* Adjust spacing between buttons */
-    }
-  
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1050; /* Ensure it appears above other content */
-    }
-    
-    .modal-dialog {
-      z-index: 1060; /* Ensure it appears above the overlay */
-    }
-
+}
 
 /* Heading styles */
 h5.card-title {
-  font-size: 1.5rem; /* Adjust this size as needed */
+  font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.75rem;
 }
-h2{
-  font-size: 1.5rem; /* Adjust this size as needed */
+
+h2 {
+  font-size: 1.5rem;
   margin-bottom: 0.75rem;
   color: white;
 }
 
-/* Ensure other headings are consistent */
 h3, h4, h5, h6 {
-  font-size: 1.25rem; /* Adjust this size as needed */
+  font-size: 1.25rem;
   margin-bottom: 0.75rem;
   color: #bf4000;
 }
@@ -100,95 +29,24 @@ h3, h4, h5, h6 {
 .card-body {
   color: black;
 }
- 
-.new-transaction-button{
-  width: 10%;
-  justify-content: center;
-  background-color: white; /* Dark blue background color */
-  color: black; /* White text color */
-  border: none; /* Remove default border */
-  border-radius: 0.5; /* Make the button rectangular */
-  padding: 10px 20px; /* Add padding for better appearance */
-  height: 80%;
-  font-size: 1rem; /* Set font size */
-  cursor: pointer; /* Change cursor to pointer */
-  transition: background-color 0.3s ease; /* Smooth transition for background color */
-  display: flex;
-  margin-left:2%;
-  border-radius: 5px;
-  border-color: black;
-  border-width: 10%;
 
-}
-
-.margin-right{
-  margin-right: 3%;
-}
-
-
-.btn {
-  padding: 5px 20px;
-  font-size: 1em;
-}
-
-.new-transaction-button:hover {
-  background-color: black; /* Darker background color on hover */
-  color: white;
-}
-
-.background-table-header{
-  background-color: #265aa6;
-  justify-content: space-between;
-}
-
-.group-header{
-  justify-content: center;
-  text-align: center;
-}
-
-.description-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 20px auto;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.header {
-  background-color: #d3c1a0;
-  color: white;
-  font-weight: bold;
+/* Card container styles */
+.card-container {
   padding: 10px;
 }
 
-.content {
-  padding: 20px;
-  background-color: #f9f9f9;
-  color: #333;
-  font-size: 14px;
-  line-height: 1.6;
+.card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
 }
 
-.box1 {
-  grid-column-start: 1;
-  grid-column-end: 4;
-  grid-row-start: 1;
-  grid-row-end: 2;
-  background-color: yellow;
-}
-.box2 {
-  grid-column-start: 1;
-  grid-row-start: 2;
-  grid-row-end: 4;
-  background-color: orange;
-
-}
-.box4 {
-  grid-column-start: 2;
-  grid-row-start: 2;
-  grid-row-end: 4;
-  background-color: blue;
-
+.card-title {
+  font-weight: bold;
+  color: #a73a00;
 }
 
+.card-text {
+  color: black;
+}
