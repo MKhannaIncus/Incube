@@ -32,6 +32,11 @@ export class TransactionService{
         return this.http.post<Transaction>(`${this.apiUrl}/NewTransactionRepayment`, model);
     }
 
+    getProjections(dealId:number): Observable<Transaction[]>{
+        const params = new HttpParams().set('dealId', dealId.toString());
+        return this.http.get<Transaction[]>(`${this.apiUrl}/Projections/${dealId}`);
+    }
+
 
 
 

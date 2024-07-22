@@ -266,7 +266,7 @@ namespace API.Services
 
         }
 
-        public async Task<Transaction> AccruedPIK(Transaction capitalizedTransaction)
+        public async Task<Transaction> AccruedPIK(Transaction capitalizedTransaction, Deal deal)
         {
             Transaction transactionCreatedPIK = new Transaction();
 
@@ -318,7 +318,7 @@ namespace API.Services
                         //Create capitalized input
                         Transaction capitalizedTransaction = Capitalized(deal, mostRecentTransaction);
                         //Seperate function for creating the given transaction for PIK
-                        transactionCreatedPIK = await AccruedPIK(capitalizedTransaction);
+                        transactionCreatedPIK = await AccruedPIK(capitalizedTransaction, deal);
                         transactionCreatedCash.Occurred = false;
                         transactionCreatedPIK.Accrued = true;
                         //needs to be created in the database
@@ -329,6 +329,49 @@ namespace API.Services
             return transactionCreatedCash;
         }
 
+
+        public async Task<List<Transaction>> Projections(int dealId)
+        {
+            List<Transaction> transactionProjected = new List<Transaction>();
+            Transaction transactionCreatedCash = new Transaction();
+            Transaction transactionCreatedPIK = new Transaction();
+            Deal deal= _context.Deals.Where(t => t.Deal_Id == dealId).FirstOrDefaultAsync().Result;
+
+
+            //Get most recent transaction -- first by date and then by ID
+            var mostRecentTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == deal.Deal_Id)
+                                                                    .OrderByDescending(t => t.Transaction_Date)
+                                                                    .ThenByDescending(t => t.Transaction_Id)
+                                                                    .FirstOrDefaultAsync();
+
+            if(mostRecentTransaction != null) {
+                DateTime lastTransaction = mostRecentTransaction.Transaction_Date;
+
+                DateTime presentCalculatedTime = lastTransaction;
+
+                while( presentCalculatedTime < deal.Maturity_date)
+                {
+                    transactionCreatedCash = await AccruedCash(mostRecentTransaction, deal);
+                    transactionCreatedCash.Occurred = false;
+                    transactionCreatedCash.Projection = true;
+
+                    transactionCreatedPIK = await AccruedPIK(mostRecentTransaction, deal);
+                    transactionCreatedPIK.Occurred = false;
+                    transactionCreatedPIK.Projection = true;
+
+
+
+                    transactionProjected.Add(transactionCreatedCash);
+                    transactionProjected.Add(transactionCreatedPIK);
+
+                    presentCalculatedTime = presentCalculatedTime.AddMonths(3);
+                    //presentCalculatedTime = presentCalculatedTime + deal.Cash_Interest_Period.Value;
+                }
+
+            }
+            return transactionProjected;
+
+        }
 
         public Transaction Capitalized(Deal deal, Transaction latestTransaction)
         { 
@@ -370,6 +413,7 @@ namespace API.Services
 
 
         //Recieves transaction as it is called from a transaction method
+
         public async Task<FinancialMetrics> MetricsCalculations (int dealId)
         {
             FinancialMetrics newMetrics = new FinancialMetrics();

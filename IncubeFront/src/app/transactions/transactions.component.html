@@ -87,13 +87,36 @@
       <div class="col-12 col-md-6">
         <div class="card-container box1">
           <div class="card">
-            <div class="card-header">Loan Data</div>
-            <div class="card-body">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim id est laborum.</p>
+            <div class="card-header">Deal Data</div>
+            <div class="card-body w-100 content">
+              <table class="table">
+                <tbody *ngFor="let deal of dealInformation">
+                    <tr>
+                        <th>Investment Date</th>
+                        <td>{{ deal.investment_date | date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Maturity Date</th>
+                        <td>{{ deal.maturity_date | date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Facility</th>
+                        <td>{{ deal.facility | number:'1.0-0' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Opening Fee</th>
+                        <td>{{ deal.opening_fee | number:'1.0-0' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Availability Fee</th>
+                        <td>{{ deal.availability_fee | number:'1.0-0' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Minimum Multiple</th>
+                        <td>{{ deal.minimum_multiple }}x</td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
           </div>
         </div>
@@ -130,7 +153,14 @@
           <div class="card">
             <div class="card-header"> Returns </div>
             <div class="card-body">
-              <p>.</p>
+              <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Investment Date</th>
+                        <td>{{ metrics?.accrued_Cash_Interest}}</td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
           </div>
         </div>
@@ -172,8 +202,101 @@
       </div>
     
     </div>
+
+    
   
   </div>
+
+<!-- Transactions Table -->
+<div class="card mb-4  background-table-header">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="col d-flex align-items-center">
+      <h2 class="col mb-0 mr-3 headingPadding header-title">Transactions</h2>
+      <button class=".btn new-transaction-button" (click)="togglePopup('repayment')">Repayment</button>
+      <button class=".btn new-transaction-button margin-right" (click)="togglePopup('disbursement')">Disbursement</button>
+    </div>
+  </div>
+  <div class="table-responsive w-100">
+    <table class="table table-hover table-bordered w-100" align="left">
+      <thead class="thead-dark">
+        <tr>
+          <th rowspan="2">Transaction ID</th>
+          <th rowspan="2">Transaction Date</th>
+          <th colspan="4" class="group-header">BOP</th>
+          <th rowspan="2">Undrawn Amount</th>
+          <th colspan="3" class="group-header">Accrued</th>
+          <th colspan="4" class="group-header">Repayments</th>
+          <th rowspan="2">Capitalized</th>
+          <th colspan="4" class="group-header">EOP</th>
+          <th rowspan="2">Amount Due EOP</th>
+        </tr>
+        <tr>
+          <th>Total Amount</th>
+          <th>Principal</th>
+          <th>Cash Interest</th>
+          <th>PIK Interest</th>
+          <th>Cash Interest</th>
+          <th>PIK Interest</th>
+          <th>Undrawn Interest</th>
+          <th>Cash Interest</th>
+          <th>PIK Interest</th>
+          <th>Principal</th>
+          <th>Undrawn Fees</th>
+          <th>Principal</th>
+          <th>Cash Interest</th>
+          <th>PIK Interest</th>
+          <th>Undrawn Interest</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of transactions">
+          <td>{{ transaction.transaction_Id }}</td>
+          <td>{{ transaction.transaction_Date | date }}</td>
+          <td>{{ transaction.amount_Due_BOP | number:'1.0-0' }}</td>
+          <td>{{ transaction.principal_BOP | number:'1.0-0'  }}</td>
+          <td>{{ transaction.cash_Interest_BOP }}</td>
+          <td>{{ transaction.piK_Interest_BOP }}</td>
+          <td>{{ transaction.undrawn_Amount | number:'1.0-0' }}</td>
+          <td>{{ transaction.cash_Interest_Accrued | number:'1.0-0' }}</td>
+          <td>{{ transaction.piK_Interest_Accrued | number:'1.0-0' }}</td>
+          <td>{{ transaction.undrawn_Interest_Accrued | number:'1.0-0' }}</td>
+          <td>({{ transaction.repayment_CashInterest| number:'1.0-0'  }})</td>
+          <td>({{ transaction.repayment_PIKInterest | number:'1.0-0' }})</td>
+          <td>({{ transaction.repayment_Principal | number:'1.0-0' }})</td>
+          <td>({{ transaction.repayment_UndrawnFees | number:'1.0-0'}})</td>
+          <td>{{ transaction.capitalized| number:'1.0-0'  }}</td>
+          <td>{{ transaction.principal_EOP | number:'1.0-0' }}</td>
+          <td>{{ transaction.cash_Interest_EOP | number:'1.0-0' }}</td>
+          <td>{{ transaction.piK_Interest_EOP| number:'1.0-0'  }}</td>
+          <td>{{ transaction.undrawn_Interest_EOP | number:'1.0-0'  }}</td>
+          <td>{{ transaction.amount_Due_EOP| number:'1.0-0'  }}</td>
+        </tr>
+        <tr *ngFor="let projection of projections | slice: 0:transactions.length">
+          <td></td>
+          <td></td>
+          <td>{{ projection.amount_Due_BOP | number:'1.0-0' }}</td>
+          <td>{{ projection.principal_BOP | number:'1.0-0' }}</td>
+          <td>{{ projection.cash_Interest_BOP }}</td>
+          <td>{{ projection.piK_Interest_BOP }}</td>
+          <td>{{ projection.undrawn_Amount | number:'1.0-0' }}</td>
+          <td>{{ projection.cash_Interest_Accrued | number:'1.0-0' }}</td>
+          <td>{{ projection.piK_Interest_Accrued | number:'1.0-0' }}</td>
+          <td>{{ projection.undrawn_Interest_Accrued | number:'1.0-0' }}</td>
+          <td>({{ projection.repayment_CashInterest | number:'1.0-0' }})</td>
+          <td>({{ projection.repayment_PIKInterest | number:'1.0-0' }})</td>
+          <td>({{ projection.repayment_Principal | number:'1.0-0' }})</td>
+          <td>({{ projection.repayment_UndrawnFees | number:'1.0-0' }})</td>
+          <td>{{ projection.capitalized | number:'1.0-0' }}</td>
+          <td>{{ projection.principal_EOP | number:'1.0-0' }}</td>
+          <td>{{ projection.cash_Interest_EOP | number:'1.0-0' }}</td>
+          <td>{{ projection.piK_Interest_EOP | number:'1.0-0' }}</td>
+          <td>{{ projection.undrawn_Interest_EOP | number:'1.0-0' }}</td>
+          <td>{{ projection.amount_Due_EOP | number:'1.0-0' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

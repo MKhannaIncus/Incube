@@ -87,6 +87,16 @@ namespace API.Controllers
         }
 
 
+        [HttpGet("Projections/{dealId}")]
+        public async Task<ActionResult<List<Transaction>>> GetProjections(int dealId)
+        {
+            List<Transaction> projectionTransactions = new List<Transaction>();
+            projectionTransactions = await _transactionService.Projections(dealId);
+            return projectionTransactions;
+
+        }
+
+
         //[HttpPost("PeriodicAccrued")]
         //public Task<Transaction> Periodic_Accrued(Transaction transaction)
         //{
