@@ -26,6 +26,19 @@ export interface Deal {
   amortization_type: string;
   ownership_Id?: number;
   LTV_Entry?: number;
-  comments?: string,
-  related_fund_id?: number
+  comments?: string;
+  related_fund_id?: number;
+  first_CashInterest_Period_Rate?: number;
+  first_CashInterest_Period_EndPeriods?: Date;
+  second_CashInterest_Period_Rate?: number;
+  second_CashInterest_Period_EndPeriods?: Date;
+  third_CashInterest_Period_Rate?: number;
+  third_CashInterest_Period_EndPeriods?: Date;
+  first_PIKInterest_Period_Rate?: number;
+  first_PIKInterest_Period_EndPeriods?: Date;
+  second_PIKInterest_Period_Rate?: number;
+  second_PIKInterest_Period_EndPeriods?: Date;
+  third_PIKInterest_Period_Rate?: number;
+  third_PIKInterest_Period_EndPeriods?: Date;
+
 }

@@ -60,7 +60,7 @@ namespace API.Services
 
                 //Periodically pass through all the different deals and calculated the accrued related to any deal if necessary
                 List<Deal> deals = new List<Deal>();
-                deals = await context.Deals.ToListAsync();
+                //deals = await context.Deals.ToListAsync();
 
                 if (deals != null)
                 {

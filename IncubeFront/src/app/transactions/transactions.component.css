@@ -33,11 +33,13 @@ h3, h4, h5, h6 {
 /* Card container styles */
 .card-container {
   padding: 10px;
+  margin-bottom: 20px; /* Add space between cards */
+
 }
 
 .card {
   background-color: white;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   overflow: hidden;
   width: 100%;
 }
@@ -49,4 +51,104 @@ h3, h4, h5, h6 {
 
 .card-text {
   color: black;
+}
+
+.card-header {
+  background-color: #bf4000;
+  color: white;
+}
+
+.data {
+  background-color: #beaf86;
+  color: white;
+
+}
+
+.left-column {
+  background-color: #050A4B; /* Blue background */
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+.right-column {
+  background-color: #d5e4f3; /* Light background */
+  padding: 20px;
+}
+
+
+/* Transactions Table*/
+.tableView {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+.table-header {
+  background-color: #a73a00;
+  color: white;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+td, th {
+  text-align: left;
+  padding: 15px;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f2f2f2;
+}
+
+
+.table-bordered {
+  border: 2px solid rgb(196, 195, 195); /* Darker border color */
+}
+
+.table-bordered thead th {
+  border-bottom-width: 2px;
+}
+
+.table-bordered td, .table-bordered th {
+  border: 1px solid rgb(196, 195, 195, 0.4); /* Darker border color for table cells */
+}
+.table-hover tbody tr:hover {
+  background-color: #f2f2f2;
+}
+
+.table-bordered {
+  border: 2px solid #ccc;
+}
+
+.table-bordered thead th {
+  border-bottom-width: 2px;
+}
+
+.table-bordered td, .table-bordered th {
+  border: 1px solid #ccc;
+}
+
+.table-projected {
+  background-color: #FEE2E2; /* Blue background for projected rows */
+  color: #7F1D1D; /* Optional: white text color for better contrast */
+}
+
+/*Buttons*/
+.button-group {
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  padding: 5px 20px;
+  font-size: 1em;
+  color: #050A4B;
+  background-color: #f8f9fa; /* Light background color for the button */
+  border: 1px solid #050A4B; /* Border to match text color */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.btn:hover {
+  background-color: #e2e6ea; /* Slightly darker background on hover */
 }

@@ -91,7 +91,7 @@ export class TransactionsComponent {
 
   financialMetrics(dealId: number) : void{
     this.FinancialMetrics.getFinancialMetrics(dealId).subscribe(data => {
-      this.metrics = data;
+      this.metrics = data; // Wrap the data in an array
     },
     error => {
       console.error('Error', error);

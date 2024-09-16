@@ -34,5 +34,18 @@ namespace API.DTOs
         public string? Comments { get; set; }
         public int? Drawdown {  get; set; }
 
+        public decimal? First_CashInterest_Period_Rate { get; set; }
+        public DateTime? First_CashInterest_Period_EndPeriods { get; set; }
+        public decimal? Second_CashInterest_Period_Rate { get; set; }
+        public DateTime? Second_CashInterest_Period_EndPeriods { get; set; }
+        public decimal? Third_CashInterest_Period_Rate { get; set; }
+        public DateTime? Third_CashInterest_Period_EndPeriods { get; set; }
+        public decimal? First_PIKInterest_Period_Rate { get; set; }
+        public DateTime? First_PIKInterest_Period_EndPeriods { get; set; }
+        public decimal? Second_PIKInterest_Period_Rate { get; set; }
+        public DateTime? Second_PIKInterest_Period_EndPeriods { get; set; }
+        public decimal? Third_PIKInterest_Period_Rate { get; set; }
+        public DateTime? Third_PIKInterest_Period_EndPeriods { get; set; }
+
     }
 }

@@ -16,12 +16,13 @@ import { AddNewDealComponent } from './add-new-deal/add-new-deal.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { DisbursementComponent } from './disbursement/disbursement.component';
 import { RepaymentComponent } from './repayment/repayment.component';
+import { DealDataComponent } from './deal-data/deal-data.component';
 
 //responsable for loading the webpage
 
 @NgModule({ //decorator
   declarations: [ //new components
-    AppComponent, LoginPageComponent, DealsComponent, AddNewDealComponent, TransactionsComponent, DisbursementComponent, RepaymentComponent
+    AppComponent, LoginPageComponent, DealsComponent, AddNewDealComponent, TransactionsComponent, DisbursementComponent, RepaymentComponent, DealDataComponent
   ],
   imports: [
     BrowserModule,

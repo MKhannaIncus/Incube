@@ -7,7 +7,7 @@ export interface FinancialMetrics{
     nav_irr: number;
     nav_moic: number;
     nav_profit: number;
-    total_Collection: number;
+    total_Collections: number;
     total_Invested: number;
     interest_Generated: number;
     accrued_Cash_Interest: number;
