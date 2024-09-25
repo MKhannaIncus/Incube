@@ -204,7 +204,7 @@ namespace API.Services
 
 
             var relatedDealId = transaction.Related_Deal_Id;
-            int? cashInterestPeriod = _context.Deals.Where(d => d.Deal_Id == relatedDealId).Select(d => d.Cash_Interest_Period).FirstOrDefault();
+            int? cashInterestPeriod = _context.Deals.Where(d => string.Equals(d.Deal_Id, relatedDealId)).Select(d => d.Cash_Interest_Period).FirstOrDefault();
 
             _logger.LogInformation("Testing");
 
@@ -213,7 +213,7 @@ namespace API.Services
                 var timePassed = DateTime.Now.AddMonths(-cashInterestPeriod.Value);
 
                 //calculating most recent transaction
-                var mostRecentTransactionDate = await _context.Transactions.Where(t => t.Related_Deal_Id == relatedDealId)
+                var mostRecentTransactionDate = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id, relatedDealId))
                                                                             .OrderByDescending(t => t.Transaction_Date)
                                                                             .ThenByDescending(t => t.Transaction_Id)
                                                                             .Select(t => t.Transaction_Date)
@@ -334,12 +334,12 @@ namespace API.Services
         }
 
 
-        public async Task<List<Transaction>> Projections(int dealId)
+        public async Task<List<Transaction>> Projections(string dealId)
         {
             List<Transaction> transactionProjected = new List<Transaction>();
             Transaction transactionCreatedCash = new Transaction();
             Transaction transactionCreatedPIK = new Transaction();
-            Deal deal = _context.Deals.Where(t => t.Deal_Id == dealId).FirstOrDefaultAsync().Result;
+            Deal deal = _context.Deals.Where(t => string.Equals(t.Deal_Id , dealId)).FirstOrDefaultAsync().Result;
 
 
             //Get most recent transaction -- first by date and then by ID
@@ -430,7 +430,7 @@ namespace API.Services
 
         //Recieves transaction as it is called from a transaction method
 
-        public async Task<FinancialMetrics> MetricsCalculations(int dealId)
+        public async Task<FinancialMetrics> MetricsCalculations(string dealId)
         {
             FinancialMetrics newMetrics = new FinancialMetrics();
 
@@ -445,10 +445,10 @@ namespace API.Services
             newMetrics.Interest_Payed = 0;
 
             //In an list retrieve all the values in transactions
-            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => t.Related_Deal_Id == dealId)
+            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id,dealId))
                 .OrderByDescending(t => t.Transaction_Id).ToListAsync();
 
-            Deal dealRelated = await _context.Deals.Where(t => t.Deal_Id == dealId).FirstAsync();
+            Deal dealRelated = await _context.Deals.Where(t => string.Equals(t.Deal_Id, dealId)).FirstAsync();
 
             foreach (Transaction transaction in transactionForDeal)
             {

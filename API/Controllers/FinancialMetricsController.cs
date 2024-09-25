@@ -1,7 +1,6 @@
 ﻿using API.Controllers;
 using API.Data;
 using API.Entities;
-using API.Migrations;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +37,7 @@ using System.Threading.Tasks;
     /**DIFFERNT GET METHODS -- to be able to access the information more easily when making tables in the deal screen**/
         //UNDERWRITING NAV VALUES & ACTUAL NAV Values
     [HttpGet("NAV/{dealId}")]
-    public async Task<ActionResult<FinancialMetrics>> GetNAVValues(int dealID)
+    public async Task<ActionResult<FinancialMetrics>> GetNAVValues(string dealID)
     {
         FinancialMetrics metrics = await _transactionService.MetricsCalculations(dealID);
 

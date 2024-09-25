@@ -8,45 +8,66 @@ namespace API.Entities
     {
         [Key]
         [Column("cash_rec_id")]
-        public int? CashRec_Id { get; set; }
+        public int? CashRec_Id { get; set; }  // Nullable integer for the primary key
 
         [Column("fund")]
-        public string? Fund { get; set; }
+        public string? Fund { get; set; }  // All varchar columns are string and nullable
 
-        [Column("projection_date")]
-        public DateTime? ProjectionDate { get; set; }
+        [Column("type")]
+        public string? Type { get; set; }
 
-        [Column("investment_name")]
-        public string InvestmentName { get; set; }
+        [Column("subtype")]
+        public string? SubType { get; set; }
 
-        [Column("date")]
-        public DateTime? Date { get; set; }
+        [Column("counterparty")]
+        public string? Counterparty { get; set; }
 
-        [Column("amount")]
-        public decimal Amount { get; set; } 
+        [Column("project")]
+        public string? Project { get; set; }
 
-        [Column("master_fund")]
-        public string MasterFund { get; set; }
+        [Column("included_in_loan_template")]
+        public string? IncludedInLoanTemplate { get; set; }
 
-        [Column("sc_fund")]
-        public string SCFund { get; set; }
+        [Column("type_included_in_loan_template")]
+        public string? TypeIncludedInLoanTemplate { get; set; }
 
-        [Column("coinvestors")]
-        public string CoInvestors { get; set; }
+        [Column("error")]
+        public string? Error { get; set; }
 
-        [Column("movement_type")]
-        public string MovementType { get; set; }
+        [Column("project_exits")]
+        public string? ProjectExits { get; set; }
 
-        [Column("subtype_movement")]
-        public string SubTypeMovement { get; set; }
+        [Column("loan_template")]
+        public string? LoanTemplate { get; set; }
 
-        [Column("investment_code")]
-        public string InvestmentCode { get; set; }
+        [Column("account")]
+        public string? Account { get; set; }
 
-        [Column("closed")]
-        public bool Closed { get; set; }
+        [Column("account_holder")]
+        public string? AccountHolder { get; set; }
 
-        [Column("deal_status")]
-        public string DealStatus { get; set; }
+        [Column("bank")]
+        public string? Bank { get; set; }
+
+        [Column("entry_date")]
+        public string? EntryDate { get; set; }  // Dates are also varchar
+
+        [Column("value_date")]
+        public string? ValueDate { get; set; }
+
+        [Column("transaction_amount")]
+        public string? TransactionAmount { get; set; }  // Transaction amount as string (varchar)
+
+        [Column("transaction_currency")]
+        public string? TransactionCurrency { get; set; }
+
+        [Column("counterparty_name")]
+        public string? CounterpartyName { get; set; }
+
+        [Column("transaction_motivation")]
+        public string? TransactionMotivation { get; set; }  // Text field for longer input
+
+        [Column("comments")]
+        public string? Comments { get; set; }  // Text field for longer input
     }
 }

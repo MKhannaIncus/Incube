@@ -46,7 +46,7 @@ namespace API.Controllers
         [HttpGet("TransactionsFromDeal/{DealId}")]
         public async Task<List<Transaction>> GetTransactionsForDeals(int DealId)
         {
-            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => t.Related_Deal_Id == DealId).ToListAsync();
+            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id,DealId)).ToListAsync();
 
 
             return transactionForDeal;
@@ -88,7 +88,7 @@ namespace API.Controllers
 
 
         [HttpGet("Projections/{dealId}")]
-        public async Task<ActionResult<List<Transaction>>> GetProjections(int dealId)
+        public async Task<ActionResult<List<Transaction>>> GetProjections(string dealId)
         {
             List<Transaction> projectionTransactions = new List<Transaction>();
             projectionTransactions = await _transactionService.Projections(dealId);

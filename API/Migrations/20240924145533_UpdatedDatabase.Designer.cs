@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240711110939_financialData")]
-    partial class financialData
+    [Migration("20240924145533_UpdatedDatabase")]
+    partial class UpdatedDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,13 +58,80 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("API.Entities.CashRec", b =>
+                {
+                    b.Property<int?>("CashRec_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("cash_rec_id");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<bool>("Closed")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("closed");
+
+                    b.Property<string>("CoInvestors")
+                        .HasColumnType("longtext")
+                        .HasColumnName("coinvestors");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date");
+
+                    b.Property<string>("DealStatus")
+                        .HasColumnType("longtext")
+                        .HasColumnName("deal_status");
+
+                    b.Property<string>("Fund")
+                        .HasColumnType("longtext")
+                        .HasColumnName("fund");
+
+                    b.Property<string>("InvestmentCode")
+                        .HasColumnType("longtext")
+                        .HasColumnName("investment_code");
+
+                    b.Property<string>("InvestmentName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("investment_name");
+
+                    b.Property<string>("MasterFund")
+                        .HasColumnType("longtext")
+                        .HasColumnName("master_fund");
+
+                    b.Property<string>("MovementType")
+                        .HasColumnType("longtext")
+                        .HasColumnName("movement_type");
+
+                    b.Property<DateTime?>("ProjectionDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("projection_date");
+
+                    b.Property<string>("SCFund")
+                        .HasColumnType("longtext")
+                        .HasColumnName("sc_fund");
+
+                    b.Property<string>("SubTypeMovement")
+                        .HasColumnType("longtext")
+                        .HasColumnName("subtype_movement");
+
+                    b.HasKey("CashRec_Id");
+
+                    b.ToTable("CashRecs");
+                });
+
             modelBuilder.Entity("API.Entities.Deal", b =>
                 {
-                    b.Property<int>("Deal_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Deal_Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Amortization_type")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Asset_Class")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -77,8 +144,19 @@ namespace API.Migrations
                     b.Property<int?>("Availability_period")
                         .HasColumnType("int");
 
+                    b.Property<string>("Capital_Repayment")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<int?>("Cash_Interest_Period")
                         .HasColumnType("int");
+
+                    b.Property<string>("Client")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Client_Country_Code")
+                        .HasMaxLength(3)
+                        .HasColumnType("varchar(3)");
 
                     b.Property<int?>("Client_Id")
                         .HasColumnType("int");
@@ -90,7 +168,18 @@ namespace API.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("Country_Code")
+                        .HasMaxLength(3)
+                        .HasColumnType("varchar(3)");
+
+                    b.Property<string>("Coupon")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Deal_Name")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Deal_Source")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -103,8 +192,40 @@ namespace API.Migrations
                     b.Property<decimal?>("Facility")
                         .HasColumnType("decimal(15, 2)");
 
+                    b.Property<DateTime?>("First_CashInterest_Period_EndPeriods")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal?>("First_CashInterest_Period_Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("First_PIKInterest_Period_EndPeriods")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal?>("First_PIKInterest_Period_Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Fund")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("General_Investment_Code")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("General_Investment_Name")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Grouping")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<decimal?>("IRR")
                         .HasColumnType("decimal(5, 2)");
+
+                    b.Property<string>("Instrument")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool?>("Intercompany_loan")
                         .HasColumnType("tinyint(1)");
@@ -112,11 +233,18 @@ namespace API.Migrations
                     b.Property<int?>("Interest_Id")
                         .HasColumnType("int");
 
+                    b.Property<string>("Interest_Rate")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime?>("Investment_date")
                         .HasColumnType("date");
 
                     b.Property<decimal?>("LTV_Entry")
                         .HasColumnType("decimal(5, 2)");
+
+                    b.Property<string>("Loan_Type")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<decimal?>("MOIC")
                         .HasColumnType("decimal(5, 2)");
@@ -133,34 +261,100 @@ namespace API.Migrations
                     b.Property<decimal?>("Opening_fee")
                         .HasColumnType("decimal(15, 2)");
 
+                    b.Property<string>("Origination")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<int?>("Ownership_Id")
                         .HasColumnType("int");
 
                     b.Property<int?>("PIK_Interest_Period")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("Percent_Coinvestors")
+                        .HasColumnType("decimal(5, 2)");
+
+                    b.Property<decimal?>("Percent_Master_Fund")
+                        .HasColumnType("decimal(5, 2)");
+
+                    b.Property<string>("Product")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("Realization_Date")
+                        .HasColumnType("date");
+
                     b.Property<int?>("Related_fund_id")
                         .HasColumnType("int");
+
+                    b.Property<string>("Repeat_Counterparty")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("Second_CashInterest_Period_EndPeriods")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal?>("Second_CashInterest_Period_Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("Second_PIKInterest_Period_EndPeriods")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal?>("Second_PIKInterest_Period_Rate")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Sector")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("Seniority")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Sponsorship")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Status")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Strategy")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Subsector")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<decimal?>("Underwriting_IRR")
+                    b.Property<string>("Thematic_vs_Opportunistic")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Theme")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("Third_CashInterest_Period_EndPeriods")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal?>("Third_CashInterest_Period_Rate")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("Third_PIKInterest_Period_EndPeriods")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal?>("Third_PIKInterest_Period_Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Underwriting_IRR")
+                        .HasColumnType("decimal(5, 2)");
 
                     b.Property<decimal?>("Underwriting_MOIC")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(5, 2)");
 
                     b.Property<decimal?>("Underwriting_NAV")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(15, 2)");
 
                     b.HasKey("Deal_Id");
 
@@ -173,65 +367,52 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Accrued_Cash_Interest")
+                    b.Property<decimal?>("Accrued_Cash_Interest")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Accrued_Pik_Interest")
+                    b.Property<decimal?>("Accrued_Pik_Interest")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Accrued_Undrawn_Interest")
+                    b.Property<decimal?>("Accrued_Undrawn_Interest")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("Deal_Id1")
+                    b.Property<decimal?>("Facility")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Interest_Generated")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Interest_Payed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Nav")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Nav_irr")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Nav_moic")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Nav_profit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Total_Collections")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Total_Debt")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Total_Invested")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("Transaction_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Deal_id")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Facility")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Interest_Generated")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Interest_Payed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav_irr")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav_moic")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Nav_profit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total_Collections")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total_Debt")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total_Invested")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("Transaction_Id1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Transaction_id")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Undrawn_Amount")
+                    b.Property<decimal?>("Undrawn_Amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Metrics_id");
-
-                    b.HasIndex("Deal_Id1");
-
-                    b.HasIndex("Transaction_Id1");
 
                     b.ToTable("financial_metrics");
                 });
@@ -307,6 +488,9 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<bool?>("Accrued")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<decimal?>("Amount_Due_BOP")
                         .HasColumnType("decimal(18,2)");
 
@@ -352,8 +536,11 @@ namespace API.Migrations
                     b.Property<decimal?>("Principal_EOP")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("Related_Deal_Id")
-                        .HasColumnType("int");
+                    b.Property<bool?>("Projection")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Related_Deal_Id")
+                        .HasColumnType("longtext");
 
                     b.Property<decimal?>("Repayment")
                         .HasColumnType("decimal(18,2)");
@@ -391,21 +578,6 @@ namespace API.Migrations
                     b.HasKey("Transaction_Id");
 
                     b.ToTable("transactions", "incus_capital");
-                });
-
-            modelBuilder.Entity("API.Entities.FinancialMetrics", b =>
-                {
-                    b.HasOne("API.Entities.Deal", "Deal_Id")
-                        .WithMany()
-                        .HasForeignKey("Deal_Id1");
-
-                    b.HasOne("API.Entities.Transaction", "Transaction_Id")
-                        .WithMany()
-                        .HasForeignKey("Transaction_Id1");
-
-                    b.Navigation("Deal_Id");
-
-                    b.Navigation("Transaction_Id");
                 });
 #pragma warning restore 612, 618
         }

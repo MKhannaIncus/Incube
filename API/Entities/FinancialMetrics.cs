@@ -10,18 +10,18 @@ namespace API.Entities
         [Key]
         public int Metrics_id { get; set; }
 
-        [ForeignKey("Deal")]
+        //[ForeignKey("Deal")]
         //public int Deal_id { get; set; }
         //public Deal Deal_Id { get; set; }
 
-        public int? Deal_Id { get; set; }
-        public Deal Deal { get; set; }
+        //public string? Deal_Id { get; set; }
+        //public Deal Deal { get; set; }
 
-        [ForeignKey("Transaction")]
+        //[ForeignKey("Transaction")]
         //public int Transaction_id { get; set; }
         //public Transaction Transaction_Id { get; set; }
         public int? Transaction_Id { get; set; }
-        public Transaction Transaction { get; set; }
+        //public Transaction Transaction { get; set; }
 
         public decimal? Nav { get; set; }
         public decimal? Nav_irr { get; set; }

@@ -8,8 +8,8 @@ namespace API.Entities
     public class Deal
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Deal_Id { get; set; }
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string? Deal_Id { get; set; }
 
         [MaxLength(255)]
         public string Deal_Name { get; set; }
@@ -76,7 +76,6 @@ namespace API.Entities
 
         public int? Interest_Id { get; set; }
 
-        [MaxLength(255)]
         public string? Amortization_type { get; set; }
 
         public int? Ownership_Id { get; set; }
@@ -153,7 +152,7 @@ namespace API.Entities
         public string? Strategy { get; set; }
 
         [MaxLength(255)]
-        public string? Grouping { get; set; }
+        public string? Deal_Grouping { get; set; }
 
         [MaxLength(255)]
         public string? Loan_Type { get; set; }
@@ -164,11 +163,10 @@ namespace API.Entities
         [MaxLength(255)]
         public string? Capital_Repayment { get; set; }
 
-        [Column(TypeName = "decimal(5, 2)")]
+
         public string? Coupon { get; set; }                              
 
-        [Column(TypeName = "decimal(5, 2)")]
-        public decimal? Interest_Rate { get; set; }
+        public string? Interest_Rate { get; set; }
 
         [MaxLength(255)]
         public string? Thematic_vs_Opportunistic { get; set; }

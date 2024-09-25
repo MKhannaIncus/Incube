@@ -46,7 +46,7 @@ namespace API.Controllers
         [HttpGet("DealInformation/{dealId}")]
         public async Task<ActionResult<IEnumerable<DealDTO>>> GetDealDetails(int DealId)
         {
-            var dealDetails = await _context.Deals.Where(t => t.Deal_Id == DealId).
+            var dealDetails = await _context.Deals.Where(t => string.Equals(t.Deal_Id,DealId)).
                 Select(t => new DealDTO
                 {
                     Comments = t.Comments,
@@ -82,10 +82,10 @@ namespace API.Controllers
 
         }
         [HttpGet("FacilityInformation/{dealId}")]
-        public async Task<ActionResult<FacilityInformationDTO>> GetFacilityDetails(int DealId)
+        public async Task<ActionResult<FacilityInformationDTO>> GetFacilityDetails(string DealId)
         {
             var deal = await _context.Deals
-                .Where(d => d.Deal_Id == DealId)
+                .Where(d=> string.Equals(DealId, d.Deal_Id))
                 .Select(d => new FacilityInformationDTO
                 {
                     Facility = d.Facility,
@@ -164,34 +164,45 @@ namespace API.Controllers
             try
             {
                 List<List<string>> result = excelReader.ReadExcel(filepath, "Projections");
+
                 foreach (List<string> column in result.Skip(3))
                 {
+                    // Check for non-empty required fields
                     if (!(string.IsNullOrEmpty(column[1]) || string.IsNullOrEmpty(column[2]) || string.IsNullOrEmpty(column[3])))
                     {
-                            var cashRec = new CashRec
-                            {
-                                Fund = column[1], // Fund III
-                                ProjectionDate = DateTime.ParseExact(column[2].ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture), // 31/12/2019
-                                InvestmentName = column[3], // Alcantara
-                                Date = DateTime.ParseExact(column[4].ToString(), "dd MMM yy", CultureInfo.InvariantCulture),
-                                Amount = (column[5] =="-" || column[5] == "") ? 0 : decimal.Parse(column[5], NumberStyles.AllowParentheses | NumberStyles.AllowThousands | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture), // (19,000,001)
-                                MasterFund = column[6] == "-" ? null : column[6], // "-"
-                                SCFund = column[7] == "-" ? null : column[7], // "-"
-                                CoInvestors = column[8] == "-" ? null : column[8], // "-"
-                                MovementType = column[9], // Investment
-                                SubTypeMovement = column[10],
-                                InvestmentCode = column[11], // INV3-009
-                                Closed = column[12] == "Cost" ? true : false, // Closed status
-                                DealStatus = column[13] // Deal Status, "On track"
+                        var cashRec = new CashRec
+                        {
+                            Fund = string.IsNullOrEmpty(column[1]) ? null : column[1], // Fund, nullable
+                            Type = string.IsNullOrEmpty(column[2]) ? null : column[2], // Type, nullable
+                            SubType = string.IsNullOrEmpty(column[3]) ? null : column[3], // SubType, nullable
+                            Counterparty = string.IsNullOrEmpty(column[4]) ? null : column[4], // Counterparty, nullable
+                            Project = string.IsNullOrEmpty(column[5]) ? null : column[5], // Project, nullable
+                            IncludedInLoanTemplate = string.IsNullOrEmpty(column[6]) ? null : column[6], // Included in Loan Template
+                            TypeIncludedInLoanTemplate = string.IsNullOrEmpty(column[7]) ? null : column[7], // Type included in Loan Template
+                            Error = string.IsNullOrEmpty(column[8]) ? null : column[8], // Error, nullable
+                            ProjectExits = string.IsNullOrEmpty(column[9]) ? null : column[9], // Project Exits, nullable
+                            LoanTemplate = string.IsNullOrEmpty(column[10]) ? null : column[10], // Loan Template, nullable
+                            Account = string.IsNullOrEmpty(column[11]) ? null : column[11], // Account, nullable
+                            AccountHolder = string.IsNullOrEmpty(column[12]) ? null : column[12], // Account Holder, nullable
+                            Bank = string.IsNullOrEmpty(column[13]) ? null : column[13], // Bank, nullable
+                            EntryDate = string.IsNullOrEmpty(column[14]) ? null : column[14], // Entry Date as varchar
+                            ValueDate = string.IsNullOrEmpty(column[15]) ? null : column[15], // Value Date as varchar
+                            TransactionAmount = string.IsNullOrEmpty(column[16]) ? null : column[16], // Transaction Amount as varchar
+                            TransactionCurrency = string.IsNullOrEmpty(column[17]) ? null : column[17], // Transaction Currency
+                            CounterpartyName = string.IsNullOrEmpty(column[18]) ? null : column[18], // Counterparty Name, nullable
+                            TransactionMotivation = string.IsNullOrEmpty(column[19]) ? null : column[19], // Text field
+                            Comments = string.IsNullOrEmpty(column[20]) ? null : column[20] // Text field
+                        };
 
-                            };
                         visualizeValues.Add(cashRec);
 
+                        // Save each cashRec to the database
                         _context.CashRecs.Add(cashRec);
                         await _context.SaveChangesAsync();
                     }
-
                 }
+
+
                 return visualizeValues;
             }
             catch (FileNotFoundException ex)
@@ -211,21 +222,21 @@ namespace API.Controllers
             {
                 List<List<string>> result = excelReader.ReadExcel(filepath, "Deals");
 
-                foreach(List<string> column in result)
+                foreach(List<string> column in result.Skip(3))
                 {
-                    var Deal = new Deal
+                    var createdDeal = new Deal
                     {
                         Fund = column[1] == "-" ? null : column[1], // Fund as a string
-                        Deal_Id = column[2] == "-" ? 0 : (int.TryParse(column[2], out int dealId) ? dealId : 0), // Deal_Id: Investment Code
+                        Deal_Id = column[2] == "-" ? null : column[2], // Deal_Id: Investment Code
                         General_Investment_Code = column[3] == "-" ? null : column[3], // General Investment Code
-                        Deal_Name = column[4], // Deal Name
+                        Deal_Name = column[4] == "-" ? null : column[4], // Deal Name
                         General_Investment_Name = column[5] == "-" ? null : column[5], // General Investment Name
-                        Client_Id = column[6] == "-" ? (int?)null : (int.TryParse(column[6], out int clientId) ? clientId : (int?)null), // Client
-                        Investment_date = column[7] == "-" ? (DateTime?)null : (DateTime.TryParse(column[7], out DateTime investmentDate) ? investmentDate : (DateTime?)null), // Investment Date
-                        Realization_Date = column[8] == "-" ? (DateTime?)null : (DateTime.TryParse(column[8], out DateTime realizationDate) ? realizationDate : (DateTime?)null), // Realization Date
-                        Facility = column[9] == "-" ? (decimal?)null : (decimal.TryParse(column[9], out decimal facility) ? facility : (decimal?)null), // Facility
-                        Percent_Master_Fund = column[10] == "-" ? (decimal?)null : (decimal.TryParse(column[10], out decimal percentMasterFund) ? percentMasterFund : (decimal?)null), // % Master Fund
-                        Percent_Coinvestors = column[11] == "-" ? (decimal?)null : (decimal.TryParse(column[11], out decimal percentCoinvestors) ? percentCoinvestors : (decimal?)null), // % Coinvestors
+                        Client = column[6] == "-" ? null : column[6], //
+                        Investment_date = column[7] == "-" ? (DateTime?)null : (DateTime.TryParseExact(column[7], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime investment_date)? investment_date: (DateTime ?)null),
+                        Realization_Date = column[8] == "-"? (DateTime?)null: (DateTime.TryParseExact(column[8], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime realizationDate)? realizationDate: (DateTime?)null), // Realization Date
+                        Facility = (column[9] == "-" || string.IsNullOrWhiteSpace(column[9])) ? 0 : (decimal.TryParse(column[9].Trim(), NumberStyles.AllowParentheses | NumberStyles.AllowThousands | NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal facilityValue) ? facilityValue : 0),
+                        Percent_Master_Fund = column[10] == "-" ? (decimal?)null : (decimal.TryParse(column[10], out decimal percentMasterFund) ? percentMasterFund * 100 : (decimal?)null),
+                        Percent_Coinvestors = column[11] == "-" ? (decimal?)null : (decimal.TryParse(column[11], out decimal percentCoinvestors) ? percentCoinvestors * 100 : (decimal?)null), // % Coinvestors
                         Country_Code = column[12] == "-" ? null : column[12], // Country Code
                         Country = column[13] == "-" ? null : column[13], // Country
                         Client_Country_Code = column[14] == "-" ? null : column[14], // Client Country Code
@@ -233,26 +244,28 @@ namespace API.Controllers
                         Product = column[16] == "-" ? null : column[16], // Product
                         Sector = column[17], // Sector
                         Subsector = column[18] == "-" ? null : column[18], // Subsector
-                        Underwriting_IRR = column[19] == "-" ? (decimal?)null : (decimal.TryParse(column[19], out decimal underwritingIRR) ? underwritingIRR : (decimal?)null), // Underwriting IRR
+                        Underwriting_IRR = column[19] == "-"? (decimal?)null : (decimal.TryParse(column[19], out decimal underwritingIRR) ? underwritingIRR * 100 : (decimal?)null),
                         Underwriting_MOIC = column[20] == "-" ? (decimal?)null : (decimal.TryParse(column[20], out decimal underwritingMOIC) ? underwritingMOIC : (decimal?)null), // Underwriting MOIC
                         Strategy = column[21] == "-" ? null : column[21], // Strategy
-                        Grouping = column[22] == "-" ? null : column[22], // Grouping
+                        Deal_Grouping = column[22] == "-" ? null : column[22], // Grouping
                         Loan_Type = column[23] == "-" ? null : column[23], // Loan Type
                         Seniority = column[24] == "-" ? null : column[24], // Seniority
                         Capital_Repayment = column[25] == "-" ? null : column[25], // Capital Repayment
                         Coupon = column[26] == "-" ? null : column[26], // Coupon
-                        Interest_Rate = column[27] == "-" ? (decimal?)null : (decimal.TryParse(column[27], out decimal interestRate) ? interestRate : (decimal?)null), // Interest Rate
+                        Interest_Rate = column[27] == "-" ? null : column[27], // Interest Rate
                         Thematic_vs_Opportunistic = column[28] == "-" ? null : column[28], // Thematic vs Opportunistic
                         Theme = column[29] == "-" ? null : column[29], // Theme
                         Origination = column[30] == "-" ? null : column[30], // Origination
                         Sponsorship = column[31] == "-" ? null : column[31], // Sponsorship
                         Repeat_Counterparty = column[32] == "-" ? null : column[32], // Repeat Counterparty
                         Deal_Source = column[33] == "-" ? null : column[33], // Deal Source
-                        Instrument = column[34] == "-" ? null : column[34] // Instrument
+                        Instrument = column[34] == "-" ? null : column[34] // Instrument,
                     };
 
-                    dealList.Add(Deal);
+                    dealList.Add(createdDeal);
 
+                    _context.Deals.Add(createdDeal);
+                    await _context.SaveChangesAsync();
                 }
 
                 return dealList;

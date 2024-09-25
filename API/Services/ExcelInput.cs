@@ -151,13 +151,34 @@ public class ExcelReader
 
                         if (cell.Value is DateTime dateValue)
                         {
+
                             // Format DateTime as per your requirement, e.g., "yyyy-MM-dd"
                             rowTraversed.Add(dateValue.ToString("yyyy-MM-dd"));
                         }
                         else if (cell.Value is double || cell.Value is int)
                         {
-                            // If the value is numeric
-                            rowTraversed.Add(cell.Value.ToString());
+                            double numericValue = Convert.ToDouble(cell.Value);
+
+                            DateTime possibleDate = DateTime.MinValue;
+
+                            if (numericValue >= 1 && numericValue <= 2958465) // This range filters out non-date numbers
+                            {
+                                possibleDate = DateTime.FromOADate(Convert.ToDouble(cell.Value));
+
+                            }
+                            //// If the value is numeric
+                            //rowTraversed.Add(cell.Value.ToString());
+
+                            if (possibleDate.Year >= 1980 && possibleDate.Year <= 2080)
+                            {
+                                rowTraversed.Add(possibleDate.ToString("yyyy-MM-dd"));
+                            }
+                            else
+                            {
+                                // If the numeric value isn't a valid date, treat it as a number
+                                rowTraversed.Add(cell.Value.ToString());
+                            }
+
                         }
                         else
                         {

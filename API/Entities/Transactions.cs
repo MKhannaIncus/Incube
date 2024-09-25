@@ -10,7 +10,7 @@ namespace API.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? Transaction_Id { get; set; }
-        public int? Related_Deal_Id { get; set; }
+        public string? Related_Deal_Id { get; set; }
         [Column(TypeName = "date")]
         public DateTime Transaction_Date { get; set; }
         public bool? Occurred { get; set; }
