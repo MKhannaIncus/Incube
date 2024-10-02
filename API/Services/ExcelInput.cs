@@ -122,8 +122,10 @@ public class ExcelReader
         FileInfo fileInfo = new FileInfo( _filePath );
         
         //Open the file in read-only mode
-        FileStream stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        
+        //FileStream stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        FileStream stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+
 
         using (ExcelPackage package = new ExcelPackage(fileInfo))
         {
@@ -145,17 +147,18 @@ public class ExcelReader
                 {
                     List<string> rowTraversed = new List<string>();
 
-                    for(int column = startColumn; column <= endColumn; column++ )
+                    for(int column = startColumn; column <= endColumn; column++)
                     {
                         var cell = worksheetProjection.Cells[row, column];
+                        var cellValue = cell.Value;
 
-                        if (cell.Value is DateTime dateValue)
+                        if (cellValue is DateTime dateValue)
                         {
 
                             // Format DateTime as per your requirement, e.g., "yyyy-MM-dd"
                             rowTraversed.Add(dateValue.ToString("yyyy-MM-dd"));
                         }
-                        else if (cell.Value is double || cell.Value is int)
+                        else if (cellValue is double || cell.Value is int)
                         {
                             double numericValue = Convert.ToDouble(cell.Value);
 
@@ -168,8 +171,10 @@ public class ExcelReader
                             }
                             //// If the value is numeric
                             //rowTraversed.Add(cell.Value.ToString());
-
-                            if (possibleDate.Year >= 1980 && possibleDate.Year <= 2080)
+                            //The cash rec only contains investments from the year 2017 to 2024
+                            //if (possibleDate.Year >= 2017 && possibleDate.Year <= 2024)
+                            //Column 17 is transaction ammount and cannot be date
+                            if(column != 17 && (possibleDate.Year >= 2017 && possibleDate.Year <= 2024))
                             {
                                 rowTraversed.Add(possibleDate.ToString("yyyy-MM-dd"));
                             }

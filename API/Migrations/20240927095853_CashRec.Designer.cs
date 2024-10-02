@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240927095853_CashRec")]
+    partial class CashRec
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("API.Entities.Cash_Rec", b =>
+            modelBuilder.Entity("API.Entities.CashRec", b =>
                 {
                     b.Property<int?>("CashRec_Id")
                         .ValueGeneratedOnAdd()
@@ -144,7 +147,7 @@ namespace API.Migrations
 
                     b.HasKey("CashRec_Id");
 
-                    b.ToTable("Cash_Rec");
+                    b.ToTable("CashRecs");
                 });
 
             modelBuilder.Entity("API.Entities.Deal", b =>
@@ -536,9 +539,6 @@ namespace API.Migrations
                     b.Property<decimal?>("Cash_Interest_Rate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Deal_Name")
-                        .HasColumnType("longtext");
-
                     b.Property<decimal?>("Drawdown")
                         .HasColumnType("decimal(18,2)");
 
@@ -585,7 +585,7 @@ namespace API.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Transaction_Date")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("date");
 
                     b.Property<decimal?>("Undrawn_Amount")
                         .HasColumnType("decimal(18,2)");

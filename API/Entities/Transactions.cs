@@ -11,7 +11,8 @@ namespace API.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? Transaction_Id { get; set; }
         public string? Related_Deal_Id { get; set; }
-        [Column(TypeName = "date")]
+
+        public string? Deal_Name { get; set; }
         public DateTime Transaction_Date { get; set; }
         public bool? Occurred { get; set; }
         public decimal? Amount_Due_BOP { get; set; }
@@ -39,6 +40,7 @@ namespace API.Entities
         public decimal? Amount_Due_EOP { get; set; }
         public decimal? Drawdown { get; set; }
         public Boolean? Projection { get; set; }
+        
         public Boolean? Accrued { get; set; }
     }
 }

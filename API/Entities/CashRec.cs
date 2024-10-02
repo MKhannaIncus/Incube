@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Entities
 {
-    public class CashRec
+    public class Cash_Rec
     {
         [Key]
         [Column("cash_rec_id")]

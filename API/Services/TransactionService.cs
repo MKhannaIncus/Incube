@@ -1,6 +1,7 @@
 ﻿using API.Controllers;
 using API.Data;
 using API.Entities;
+using API.Migrations;
 using API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -175,24 +176,6 @@ namespace API.Services
             return transactionNext;
         }
 
-        public async Task<Transaction> FirstTransaction(Deal deal)
-        {
-            Transaction transaction = new Transaction();
-            transaction.Transaction_Id = 140;
-            transaction.Related_Deal_Id = deal.Deal_Id;
-            transaction.Amount_Due_BOP = 0;
-            transaction.Principal_BOP = 0;
-            transaction.Cash_Interest_BOP = 0;
-            transaction.Undrawn_Amount = deal.Facility;
-            transaction.Drawdown = deal.Drawdown;
-            transaction.Principal_EOP = deal.Drawdown;
-            transaction.Amount_Due_EOP = deal.Drawdown;
-
-            _context.Transactions.Add(transaction);
-            await _context.SaveChangesAsync();
-            return transaction;
-        }
-
         public async Task<Transaction> AccruedValues(Transaction transaction)
         {
             //Calculate accrued values according to rate
@@ -332,7 +315,6 @@ namespace API.Services
 
             return transactionCreatedCash;
         }
-
 
         public async Task<List<Transaction>> Projections(string dealId)
         {
@@ -547,6 +529,156 @@ namespace API.Services
         //Principial EOP
 
         //Amount due EOP
+
+        #endregion
+
+
+        #region INJECT VALUES
+        public async Task<Transaction> FirstTransaction(Deal deal)
+        {
+            Transaction transaction = new Transaction();
+            transaction.Transaction_Id = 140;
+            transaction.Related_Deal_Id = deal.Deal_Id;
+            transaction.Amount_Due_BOP = 0;
+            transaction.Principal_BOP = 0;
+            transaction.Cash_Interest_BOP = 0;
+            transaction.Undrawn_Amount = deal.Facility;
+            transaction.Drawdown = deal.Drawdown;
+            transaction.Principal_EOP = deal.Drawdown;
+            transaction.Amount_Due_EOP = deal.Drawdown;
+
+            _context.Transactions.Add(transaction);
+            await _context.SaveChangesAsync();
+            return transaction;
+        }
+
+        public async Task<Transaction> ProcessTransaction(Deal deal, Transaction mostRecentTransaction, Transaction newTransaction, Cash_Rec movement)
+        {
+            // Set the BOP values from the most recent transaction
+            //newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
+            //newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
+            //newTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+            //newTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+
+            if (!decimal.TryParse(movement.TransactionAmount, out decimal transactionAmount))
+            {
+                throw new Exception("Invalid transaction amount in CashRec");
+            }
+
+            // Handle Collection
+            if (movement.Type == "Collection")
+            {
+                newTransaction.Repayment = transactionAmount;
+
+                if (movement.SubType == "Interest")
+                {
+                    newTransaction.Repayment_CashInterest = transactionAmount;
+                    newTransaction.Amount_Due_EOP = newTransaction.Amount_Due_BOP - transactionAmount;
+                }
+                else if (movement.SubType == "Principal")
+                {
+                    newTransaction.Repayment_Principal = transactionAmount;
+                    newTransaction.Principal_EOP = newTransaction.Principal_BOP - transactionAmount;
+                    newTransaction.Amount_Due_EOP = newTransaction.Amount_Due_BOP - transactionAmount;
+                }
+            }
+            // Handle Investment
+            else if (movement.Type == "Investment")
+            {
+                newTransaction.Drawdown = transactionAmount;
+                newTransaction.Undrawn_Amount = deal.Facility - transactionAmount;
+                newTransaction.Principal_EOP = newTransaction.Principal_BOP + transactionAmount;
+                newTransaction.Amount_Due_EOP = newTransaction.Amount_Due_BOP + transactionAmount;
+            }
+
+            return newTransaction;
+        }
+
+
+        public async Task<List<Transaction>> TransactionsFromCashRec()
+        {
+            List<Transaction> transactionsCreated = new List<Transaction>();
+
+            //Retrieve all the information from CASH_REC database 
+            //all data where -> deal_name is present in the DEAL database
+            var dealProjects = await _context.Deals.Select(d => d.Deal_Name).ToListAsync();
+
+            List<Cash_Rec> dealsCashRec = await _context.Cash_Rec
+                .Where(t => dealProjects.Contains(t.Project))
+                .ToListAsync();
+
+            foreach (Cash_Rec movement in dealsCashRec)
+            {
+                Transaction newTransaction = new Transaction();
+
+                if (!decimal.TryParse(movement.TransactionAmount, out decimal movementDecimal))
+                {
+                    // Handle invalid transaction amount gracefully
+                    Console.WriteLine("Invalid transaction amount for CashRec with ID: " + movement.Project);
+                    continue;
+                }
+
+                // Check if there is a related deal
+                var dealRelated = await _context.Deals
+                    .Where(t => t.Deal_Name == movement.Project)
+                    .FirstOrDefaultAsync();
+
+                if (dealRelated == null)
+                {
+                    Console.WriteLine("No deal found for project: " + movement.Project);
+                    continue; // Skip if no deal is found
+                }
+
+                // Retrieve most recent transaction for this deal
+                //var mostRecentTransaction = await _context.Transactions
+                //    .Where(t => t.Deal_Name == movement.Project)
+                //    .OrderByDescending(t => t.Transaction_Date)
+                //    .ThenByDescending(t => t.Transaction_Id)
+                //    .FirstOrDefaultAsync();
+
+                var mostRecentTransaction = transactionsCreated
+                    .Where(t => t.Deal_Name == movement.Project)
+                    .OrderByDescending(t => t.Transaction_Date)
+                    .ThenByDescending(t => t.Transaction_Id)
+                    .FirstOrDefault();
+
+                newTransaction.Deal_Name = movement.Project;
+                DateTime.TryParse(movement.ValueDate, out DateTime value_date);
+                newTransaction.Transaction_Date = value_date;
+
+                if (mostRecentTransaction == null)
+                {
+                    // First transaction setup
+                    newTransaction.Amount_Due_BOP = 0;
+                    newTransaction.Principal_BOP = 0;
+                    newTransaction.Cash_Interest_BOP = 0;
+                    newTransaction.PIK_Interest_BOP = 0;
+                    newTransaction.Undrawn_Interest_BOP = 0;
+                    newTransaction.Principal_EOP = movementDecimal;
+                    newTransaction.Undrawn_Amount = dealRelated.Facility - newTransaction.Principal_EOP;
+                    newTransaction.Drawdown = movementDecimal;
+                    newTransaction.Amount_Due_EOP = newTransaction.Principal_EOP;
+
+                }
+                else
+                {
+                    newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
+                    newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
+                    newTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+                    newTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+                    // Process posterior transaction
+                    newTransaction = await ProcessTransaction(dealRelated, mostRecentTransaction, newTransaction, movement);
+                }
+                _context.Transactions.Add(newTransaction);
+                await _context.SaveChangesAsync();
+
+                transactionsCreated.Add(newTransaction);
+
+            }
+
+
+            return transactionsCreated;
+        }
 
         #endregion
     }

@@ -15,7 +15,7 @@ public class DataContext : DbContext
     
     public DbSet<FinancialMetrics> FinancialMetrics { get; set; }
 
-    public DbSet<CashRec> CashRecs { get; set; }
+    public DbSet<Cash_Rec> Cash_Rec { get; set; }
 
     #endregion
 }

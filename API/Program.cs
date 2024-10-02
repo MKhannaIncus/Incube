@@ -34,7 +34,22 @@ var app = builder.Build();
 // app.UseAuthorization();
 
 //Configre the HTTP 
-app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
+// Add this in ConfigureServices method (for .NET 5 and below) or in the builder (for .NET 6 and above)
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAngularOrigin",
+//        policy =>
+//        {
+//            policy.WithOrigins("http://192.168.1.169:4200") // Replace with your Angular frontend IP and port
+//                .AllowAnyHeader()
+//                .AllowAnyMethod();
+//        });
+//});
+
+// Use the CORS policy in Configure method (for .NET 5 and below) or after app creation (for .NET 6 and above)
+app.UseCors("AllowAngularOrigin");
+
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod());
 
 //middleware-
 //asks if the token is valid

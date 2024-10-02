@@ -43,10 +43,10 @@ namespace API.Controllers
             return await _context.Deals.ToListAsync();
         }
 
-        [HttpGet("DealInformation/{dealId}")]
-        public async Task<ActionResult<IEnumerable<DealDTO>>> GetDealDetails(int DealId)
+        [HttpGet("DealInformation/{dealName}")]
+        public async Task<ActionResult<IEnumerable<DealDTO>>> GetDealDetails(string DealName)
         {
-            var dealDetails = await _context.Deals.Where(t => string.Equals(t.Deal_Id,DealId)).
+            var dealDetails = await _context.Deals.Where(t => string.Equals(t.Deal_Name, DealName)).
                 Select(t => new DealDTO
                 {
                     Comments = t.Comments,
@@ -81,16 +81,16 @@ namespace API.Controllers
 
 
         }
-        [HttpGet("FacilityInformation/{dealId}")]
-        public async Task<ActionResult<FacilityInformationDTO>> GetFacilityDetails(string DealId)
+        [HttpGet("FacilityInformation/{dealName}")]
+        public async Task<ActionResult<FacilityInformationDTO>> GetFacilityDetails(string dealName)
         {
             var deal = await _context.Deals
-                .Where(d=> string.Equals(DealId, d.Deal_Id))
+                .Where(d => string.Equals(dealName, d.Deal_Name))
                 .Select(d => new FacilityInformationDTO
                 {
                     Facility = d.Facility,
                     UndrawnAmount = _context.Transactions
-                        .Where(t => t.Related_Deal_Id == DealId)
+                        .Where(t => t.Deal_Name == dealName)
                         .OrderByDescending(t => t.Transaction_Date)
                         .Select(t => t.Undrawn_Amount)
                         .FirstOrDefault()
@@ -156,51 +156,48 @@ namespace API.Controllers
         }
 
         [HttpGet("readCashRecExcel")]
-        public async Task<List<CashRec>> ReadExcelCashRec()
+        public async Task<List<Cash_Rec>> ReadExcelCashRec()
         {
-            string filepath = @"I:\Finance\Funds\Reporting\.Databases\Fund III\Fund III - Investments.xlsx";
-            List<CashRec> visualizeValues = new List<CashRec>();
+            string filepath = @"I:\Finance\Funds\Banks\Cash rec\Cash rec.xlsx";
+            List<Cash_Rec> visualizeValues = new List<Cash_Rec>();
 
             try
             {
-                List<List<string>> result = excelReader.ReadExcel(filepath, "Projections");
+                List<List<string>> result = excelReader.ReadExcel(filepath, "Cash_Rec");
 
                 foreach (List<string> column in result.Skip(3))
                 {
-                    // Check for non-empty required fields
-                    if (!(string.IsNullOrEmpty(column[1]) || string.IsNullOrEmpty(column[2]) || string.IsNullOrEmpty(column[3])))
+                    var cashRec = new Cash_Rec
                     {
-                        var cashRec = new CashRec
-                        {
-                            Fund = string.IsNullOrEmpty(column[1]) ? null : column[1], // Fund, nullable
-                            Type = string.IsNullOrEmpty(column[2]) ? null : column[2], // Type, nullable
-                            SubType = string.IsNullOrEmpty(column[3]) ? null : column[3], // SubType, nullable
-                            Counterparty = string.IsNullOrEmpty(column[4]) ? null : column[4], // Counterparty, nullable
-                            Project = string.IsNullOrEmpty(column[5]) ? null : column[5], // Project, nullable
-                            IncludedInLoanTemplate = string.IsNullOrEmpty(column[6]) ? null : column[6], // Included in Loan Template
-                            TypeIncludedInLoanTemplate = string.IsNullOrEmpty(column[7]) ? null : column[7], // Type included in Loan Template
-                            Error = string.IsNullOrEmpty(column[8]) ? null : column[8], // Error, nullable
-                            ProjectExits = string.IsNullOrEmpty(column[9]) ? null : column[9], // Project Exits, nullable
-                            LoanTemplate = string.IsNullOrEmpty(column[10]) ? null : column[10], // Loan Template, nullable
-                            Account = string.IsNullOrEmpty(column[11]) ? null : column[11], // Account, nullable
-                            AccountHolder = string.IsNullOrEmpty(column[12]) ? null : column[12], // Account Holder, nullable
-                            Bank = string.IsNullOrEmpty(column[13]) ? null : column[13], // Bank, nullable
-                            EntryDate = string.IsNullOrEmpty(column[14]) ? null : column[14], // Entry Date as varchar
-                            ValueDate = string.IsNullOrEmpty(column[15]) ? null : column[15], // Value Date as varchar
-                            TransactionAmount = string.IsNullOrEmpty(column[16]) ? null : column[16], // Transaction Amount as varchar
-                            TransactionCurrency = string.IsNullOrEmpty(column[17]) ? null : column[17], // Transaction Currency
-                            CounterpartyName = string.IsNullOrEmpty(column[18]) ? null : column[18], // Counterparty Name, nullable
-                            TransactionMotivation = string.IsNullOrEmpty(column[19]) ? null : column[19], // Text field
-                            Comments = string.IsNullOrEmpty(column[20]) ? null : column[20] // Text field
-                        };
+                        Fund = string.IsNullOrEmpty(column[1]) ? null : column[1], // Fund, nullable
+                        Type = string.IsNullOrEmpty(column[2]) ? null : column[2], // Type, nullable
+                        SubType = string.IsNullOrEmpty(column[3]) ? null : column[3], // SubType, nullable
+                        Counterparty = string.IsNullOrEmpty(column[4]) ? null : column[4], // Counterparty, nullable
+                        Project = string.IsNullOrEmpty(column[5]) ? null : column[5], // Project, nullable
+                        IncludedInLoanTemplate = string.IsNullOrEmpty(column[6]) ? null : column[6], // Included in Loan Template
+                        TypeIncludedInLoanTemplate = string.IsNullOrEmpty(column[7]) ? null : column[7], // Type included in Loan Template
+                        Error = string.IsNullOrEmpty(column[8]) ? null : column[8], // Error, nullable
+                        ProjectExits = string.IsNullOrEmpty(column[9]) ? null : column[9], // Project Exits, nullable
+                        LoanTemplate = string.IsNullOrEmpty(column[10]) ? null : column[10], // Loan Template, nullable
+                        Account = string.IsNullOrEmpty(column[11]) ? null : column[11], // Account, nullable
+                        AccountHolder = string.IsNullOrEmpty(column[12]) ? null : column[12], // Account Holder, nullable
+                        Bank = string.IsNullOrEmpty(column[13]) ? null : column[13], // Bank, nullable
+                        EntryDate = string.IsNullOrEmpty(column[14]) ? null : column[14], // Entry Date as varchar
+                        ValueDate = string.IsNullOrEmpty(column[15]) ? null : column[15], // Value Date as varchar
+                        TransactionAmount = string.IsNullOrEmpty(column[16]) ? null : column[16], // Transaction Amount as varchar
+                        TransactionCurrency = string.IsNullOrEmpty(column[17]) ? null : column[17], // Transaction Currency
+                        CounterpartyName = string.IsNullOrEmpty(column[18]) ? null : column[18], // Counterparty Name, nullable
+                        TransactionMotivation = string.IsNullOrEmpty(column[19]) ? null : column[19], // Text field
+                        Comments = string.IsNullOrEmpty(column[20]) ? null : column[20] // Text field
+                    };
 
-                        visualizeValues.Add(cashRec);
-
-                        // Save each cashRec to the database
-                        _context.CashRecs.Add(cashRec);
-                        await _context.SaveChangesAsync();
-                    }
+                    visualizeValues.Add(cashRec);
+                    
+                    // Save each cashRec to the database
+                    _context.Cash_Rec.Add(cashRec);
+                    await _context.SaveChangesAsync();
                 }
+
 
 
                 return visualizeValues;
@@ -222,7 +219,7 @@ namespace API.Controllers
             {
                 List<List<string>> result = excelReader.ReadExcel(filepath, "Deals");
 
-                foreach(List<string> column in result.Skip(3))
+                foreach (List<string> column in result.Skip(3))
                 {
                     var createdDeal = new Deal
                     {
@@ -232,8 +229,8 @@ namespace API.Controllers
                         Deal_Name = column[4] == "-" ? null : column[4], // Deal Name
                         General_Investment_Name = column[5] == "-" ? null : column[5], // General Investment Name
                         Client = column[6] == "-" ? null : column[6], //
-                        Investment_date = column[7] == "-" ? (DateTime?)null : (DateTime.TryParseExact(column[7], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime investment_date)? investment_date: (DateTime ?)null),
-                        Realization_Date = column[8] == "-"? (DateTime?)null: (DateTime.TryParseExact(column[8], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime realizationDate)? realizationDate: (DateTime?)null), // Realization Date
+                        Investment_date = column[7] == "-" ? (DateTime?)null : (DateTime.TryParseExact(column[7], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime investment_date) ? investment_date : (DateTime?)null),
+                        Realization_Date = column[8] == "-" ? (DateTime?)null : (DateTime.TryParseExact(column[8], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime realizationDate) ? realizationDate : (DateTime?)null), // Realization Date
                         Facility = (column[9] == "-" || string.IsNullOrWhiteSpace(column[9])) ? 0 : (decimal.TryParse(column[9].Trim(), NumberStyles.AllowParentheses | NumberStyles.AllowThousands | NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal facilityValue) ? facilityValue : 0),
                         Percent_Master_Fund = column[10] == "-" ? (decimal?)null : (decimal.TryParse(column[10], out decimal percentMasterFund) ? percentMasterFund * 100 : (decimal?)null),
                         Percent_Coinvestors = column[11] == "-" ? (decimal?)null : (decimal.TryParse(column[11], out decimal percentCoinvestors) ? percentCoinvestors * 100 : (decimal?)null), // % Coinvestors
@@ -244,7 +241,7 @@ namespace API.Controllers
                         Product = column[16] == "-" ? null : column[16], // Product
                         Sector = column[17], // Sector
                         Subsector = column[18] == "-" ? null : column[18], // Subsector
-                        Underwriting_IRR = column[19] == "-"? (decimal?)null : (decimal.TryParse(column[19], out decimal underwritingIRR) ? underwritingIRR * 100 : (decimal?)null),
+                        Underwriting_IRR = column[19] == "-" ? (decimal?)null : (decimal.TryParse(column[19], out decimal underwritingIRR) ? underwritingIRR * 100 : (decimal?)null),
                         Underwriting_MOIC = column[20] == "-" ? (decimal?)null : (decimal.TryParse(column[20], out decimal underwritingMOIC) ? underwritingMOIC : (decimal?)null), // Underwriting MOIC
                         Strategy = column[21] == "-" ? null : column[21], // Strategy
                         Deal_Grouping = column[22] == "-" ? null : column[22], // Grouping
@@ -269,7 +266,8 @@ namespace API.Controllers
                 }
 
                 return dealList;
-            } catch (FileNotFoundException ex)
+            }
+            catch (FileNotFoundException ex)
             {
                 return null;
             }

@@ -44,9 +44,9 @@ namespace API.Controllers
 
         //Get all transactions based on a certain deal
         [HttpGet("TransactionsFromDeal/{DealId}")]
-        public async Task<List<Transaction>> GetTransactionsForDeals(int DealId)
+        public async Task<List<Transaction>> GetTransactionsForDeals(string DealId)
         {
-            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id,DealId)).ToListAsync();
+            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Deal_Name,DealId)).ToListAsync();
 
 
             return transactionForDeal;
@@ -94,6 +94,14 @@ namespace API.Controllers
             projectionTransactions = await _transactionService.Projections(dealId);
             return projectionTransactions;
 
+        }
+
+        [HttpGet("Projections/CashRecTransfer")]
+        public async Task<List<Transaction>> TransferCashRecToTransactions()
+        {
+            List < Transaction > result = await _transactionService.TransactionsFromCashRec();
+
+            return result;
         }
 
 
