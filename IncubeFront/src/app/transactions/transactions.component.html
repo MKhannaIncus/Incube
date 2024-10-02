@@ -363,10 +363,10 @@
   <div class="mb-4 bg-light tableView">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h2 class="mb-0">Transactions</h2>
-      <div>
+      <!-- <div>
         <button class="btn btn-primary mr-2" (click)="togglePopup('repayment')">Repayment</button>
         <button class="btn btn-secondary" (click)="togglePopup('disbursement')">Disbursement</button>
-      </div>
+      </div> -->
     </div>
     <div class="table-responsive">
       <table class="table-hover table-bordered">
@@ -412,10 +412,10 @@
             <td>{{ transaction.cash_Interest_Accrued | number:'1.0-0' }}</td>
             <td>{{ transaction.piK_Interest_Accrued | number:'1.0-0' }}</td>
             <td>{{ transaction.undrawn_Interest_Accrued | number:'1.0-0' }}</td>
-            <td>({{ transaction.repayment_CashInterest | number:'1.0-0' }})</td>
-            <td>({{ transaction.repayment_PIKInterest | number:'1.0-0' }})</td>
-            <td>({{ transaction.repayment_Principal | number:'1.0-0' }})</td>
-            <td>({{ transaction.repayment_UndrawnFees | number:'1.0-0' }})</td>
+            <td>{{ transaction.repayment_CashInterest | number:'1.0-0' }}</td>
+            <td>{{ transaction.repayment_PIKInterest | number:'1.0-0' }}</td>
+            <td>{{ transaction.repayment_Principal | number:'1.0-0' }}</td>
+            <td>{{ transaction.repayment_UndrawnFees | number:'1.0-0' }}</td>
             <td>{{ transaction.capitalized | number:'1.0-0' }}</td>
             <td>{{ transaction.principal_EOP | number:'1.0-0' }}</td>
             <td>{{ transaction.cash_Interest_EOP | number:'1.0-0' }}</td>

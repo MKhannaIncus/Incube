@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'login', component: LoginPageComponent }, 
   { path: 'new-deal', component: AddNewDealComponent }, 
   { path: '', redirectTo: '/login', pathMatch: 'full' }, 
-  { path: 'deal-transaction/:dealId', component: TransactionsComponent},
+  { path: 'deal-transaction/:deal_Name', component: TransactionsComponent},
   { path: 'deal-data', component: DealDataComponent},
   // { path: '', redirectTo: '/deals', pathMatch: 'full' }, // Redirect empty path to '/deals'
 ];
@@ -22,3 +22,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+

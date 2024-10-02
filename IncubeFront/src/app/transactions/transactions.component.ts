@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Transaction } from '../_models/transactions';
 import { TransactionService } from '../_services/transactions.service';
 import { ActivatedRoute } from '@angular/router';
-import { DealService ,FacilityInformation } from '../_services/deal.service';
+import { DealService, FacilityInformation } from '../_services/deal.service';
 import { Deal } from '../_models/deal';
-import { BackgroundTaskService } from '../_services/background-task.service'; // Import the BackgroundTaskService
 import { FinancialMetrics } from '../_models/financialMetrics';
 import { FinancialMetricsService } from '../_services/financial-metrics.service';
 
@@ -13,37 +12,43 @@ import { FinancialMetricsService } from '../_services/financial-metrics.service'
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.css']
 })
-export class TransactionsComponent {
-  transactions : Transaction[] = [];
-  projections : Transaction[]=[];
-  dealInformation : Deal[] = [];
-  public dealId!: number;
+export class TransactionsComponent implements OnInit {
+  transactions: Transaction[] = [];
+  projections: Transaction[] = [];
+  dealInformation: Deal[] = [];
+  public deal_Name!: string; // Changed from dealId to deal_Name
   model: any = {};
-  popup =false;
+  popup = false;
   isRepayment: boolean = false;
   isDisbursement: boolean = false;
-  facilityInformation: FacilityInformation | undefined ;
+  facilityInformation: FacilityInformation | undefined;
   metrics: FinancialMetrics | undefined;
 
+  constructor(
+    private transactionService: TransactionService,
+    private dealService: DealService,
+    private financialMetricsService: FinancialMetricsService,
+    private route: ActivatedRoute
+  ) {}
 
-  constructor(private TransactionService: TransactionService, private DealService: DealService, private FinancialMetrics: FinancialMetricsService, private route: ActivatedRoute){}
-  
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const dealIdParam = params.get('dealId');
-      console.log('dealIdParam from URL:', dealIdParam); // Debug log
-      if (dealIdParam) {
-        this.dealId = +dealIdParam;
-        this.transactionTable();
-        this.projectionsTable();
-        this.fetchDealDetails(this.dealId);
-        this.facilityStatus(this.dealId);
-        this.financialMetrics(this.dealId);
+      const dealNameParam = params.get('deal_Name');  // Get deal_Name from the route parameters
+      console.log('dealNameParam from URL:', dealNameParam);  // Debug log
+  
+      if (dealNameParam) {
+        this.deal_Name = dealNameParam;  // Assign dealName to the class property
+        this.transactionTable();         // Fetch transactions using dealName
+        this.projectionsTable();         // Fetch projections using dealName
+        this.fetchDealDetails(this.deal_Name);  // Fetch deal details using dealName
+        this.facilityStatus(this.deal_Name);    // Fetch facility status using dealName
+        // this.financialMetrics(this.deal_Name);  // Fetch financial metrics using dealName
       } else {
-        console.error('dealIdParam is null or undefined');
+        console.error('dealNameParam is null or undefined');
       }
     });
   }
+  
 
   togglePopup(type: string): void {
     this.popup = true;
@@ -57,45 +62,49 @@ export class TransactionsComponent {
     this.isDisbursement = false;
   }
   
-  transactionTable(){
-    this.TransactionService.getDealsTransactions(this.dealId).subscribe((data: Transaction[]) =>{
+  // Use deal_Name instead of dealId for transactions
+  transactionTable() {
+    this.transactionService.getDealsTransactions(this.deal_Name).subscribe((data: Transaction[]) => {
       this.transactions = data;
+    }, error => {
+      console.error('Error fetching transactions', error);
     });
   }
 
-  projectionsTable(){
-    this.TransactionService.getProjections(this.dealId).subscribe((data: Transaction[]) =>{
+  // Use deal_Name instead of dealId for projections
+  projectionsTable() {
+    this.transactionService.getProjections(this.deal_Name).subscribe((data: Transaction[]) => {
       this.projections = data;
+    }, error => {
+      console.error('Error fetching projections', error);
     });
-    console.log("TEST");
   }
 
-  fetchDealDetails(dealId: number) {
-    this.DealService.dealInformation(dealId).subscribe(data => {
-      console.log("Deal:", this.dealInformation)
+  // Use deal_Name instead of dealId for fetching deal details
+  fetchDealDetails(deal_Name: string) {
+    this.dealService.dealInformation(deal_Name).subscribe(data => {
+      console.log("Deal:", data);
       this.dealInformation = data;
-    },
-    error => {
-      console.error('Error', error);
+    }, error => {
+      console.error('Error fetching deal details', error);
     });
   }
 
-  facilityStatus(dealId: number) : void{
-    this.DealService.facilityStatus(dealId).subscribe(data => {
+  // Use deal_Name instead of dealId for facility status
+  facilityStatus(deal_Name: string): void {
+    this.dealService.facilityStatus(deal_Name).subscribe(data => {
       this.facilityInformation = data;
-    },
-    error => {
-      console.error('Error', error);
+    }, error => {
+      console.error('Error fetching facility status', error);
     });
   }
 
-  financialMetrics(dealId: number) : void{
-    this.FinancialMetrics.getFinancialMetrics(dealId).subscribe(data => {
-      this.metrics = data; // Wrap the data in an array
-    },
-    error => {
-      console.error('Error', error);
-    });
-  }
-
+  // // Use deal_Name instead of dealId for financial metrics
+  // financialMetrics(deal_Name: string): void {
+  //   this.financialMetricsService.getFinancialMetricsByName(deal_Name).subscribe(data => {
+  //     this.metrics = data;
+  //   }, error => {
+  //     console.error('Error fetching financial metrics', error);
+  //   });
+  // }
 }

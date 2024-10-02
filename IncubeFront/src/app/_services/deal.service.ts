@@ -26,12 +26,12 @@ export class DealService {
     return this.http.post<Deal>(this.apiUrl, model);
   }
 
-  dealInformation(dealId: number): Observable<any[]> {
-    return this.http.get<Deal[]>(`${this.apiUrl}/DealInformation/${dealId}`);
+  dealInformation(deal_Name: string): Observable<any[]> {
+    return this.http.get<Deal[]>(`${this.apiUrl}/DealInformation/${deal_Name}`);
   }
 
-  facilityStatus(dealId: number): Observable<FacilityInformation> {
-    return this.http.get<FacilityInformation>(`${this.apiUrl}/FacilityInformation/${dealId}`);
+  facilityStatus(deal_Name: string): Observable<FacilityInformation> {
+    return this.http.get<FacilityInformation>(`${this.apiUrl}/FacilityInformation/${deal_Name}`);
   }
 
   fundDeal(fundName: number): Observable<any[]> {

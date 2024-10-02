@@ -1,6 +1,7 @@
 export interface Transaction {
    transaction_Id: number;
-   related_Deal_Id: number;
+   related_Deal_Id: string;
+   deal_Name: string;
    transaction_Date: Date;
     occurred?: boolean;
     amount_Due_BOP?: number;

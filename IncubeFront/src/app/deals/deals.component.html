@@ -1,4 +1,4 @@
-<body class ="style-page">
+<body>
   <div class="container">
     <div class="row">
       <div class="col-12">
@@ -18,26 +18,42 @@
               <div class="col newDealButton">
                 <button type="button" class="btn new-deal-button" (click)="popup=true">New Deal</button>
               </div>
-          </div>
+            </div>
           </div>
           <!-- Loop through each deal and display it using Bootstrap's card component -->
           <div *ngFor="let deal of deals" class="card mb-3">
-            <div class="card-body floating-rectangle" (click)="pageRedirection(deal.deal_Id)">
+            <div class="card-body floating-rectangle" (click)="pageRedirection(deal.deal_Name)">
               <div class="rows-list row align-items-center"> <!-- Aligns items vertically in the center -->
-                <div class="col-md-3">
-                  <div class="deal-icon">
+                <div class="col-md-6">
+                  <!-- <div class="deal-icon">
                     <img [src]="deal.deal_Id % 2 === 0 ? 'assets/plane-svgrepo-com.svg' : 'assets/sun-svgrepo-com.svg'" alt="Deal Icon" class="icon-image"/>
+                  </div> -->
+                  <div class="deal-icon" [ngClass]="{
+                    'consumer-staples': deal.sector === 'Consumer Staples',
+                    'RE-Hospitality': deal.sector === 'RE Hospitality',
+                    'RE-Offices': deal.sector === 'RE Offices',
+                    'Materials': deal.sector === 'Materials',
+                    'Energy': deal.sector === 'Energy',
+                    'RE-Residentials': deal.sector === 'RE Residentials',
+                    'RE-Retail': deal.sector === 'RE Retail',
+                    'Industrials': deal.sector === 'Industrials',
+                    'Transport': deal.sector === 'Transport',
+                    'Utilities': deal.sector === 'Utilities',
+                  }">
+                    <img [src]="getIconForSector(deal.sector)" alt="Deal Icon" class="icon-image" />
+
                   </div>
+
                   <strong class="d-block text-uppercase">{{deal.deal_Name }}</strong>
                   <p>Deal ID: {{ deal.deal_Id }}</p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                   <strong class="d-block text-uppercase">{{deal.investment_date| date}}</strong>
                 </div>
 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                   <div [ngClass]="getStatusClass(deal.status)" class="status-rectangle debug">{{ deal.status }}</div>
-                </div>
+                </div> -->
 
               </div>
             </div>
@@ -51,26 +67,26 @@
 
     <!-- Popup Overlay for adding a new deal -->
     <div *ngIf="popup" class="overlay">
-    <div class="modal fade show" *ngIf="popup" style="display: block;" aria-hidden="!popup" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div class="modal fade show" *ngIf="popup" style="display: block;" aria-hidden="!popup" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
 
-            <button type="button" class="close" (click)="popup = false">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <app-add-new-deal></app-add-new-deal> <!-- Ensure this component is declared and imported correctly -->
+              <button type="button" class="close" (click)="popup = false">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <app-add-new-deal></app-add-new-deal> <!-- Ensure this component is declared and imported correctly -->
+            </div>
           </div>
         </div>
       </div>
     </div>
-    </div>
   </div>
 
   <script>
-    document.getElementById('fund-select').addEventListener('change', function() {
+    document.getElementById('fund-select').addEventListener('change', function () {
       var selectedValue = this.value;
       if (selectedValue) {
         document.getElementById('selected-fund').innerText = 'You have selected: ' + selectedValue;

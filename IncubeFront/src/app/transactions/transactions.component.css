@@ -1,10 +1,12 @@
 /* Page style */
-.style-page {
-  background-color: rgba(238, 235, 224, 0.15);
+.body {
+  background-color: red !important;
 }
 .view {
   padding: 3%;
 }
+
+
 
 /* Heading styles */
 h5.card-title {

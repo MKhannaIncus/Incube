@@ -1,5 +1,5 @@
 .style-page{
-  background-color: rgb(238, 235, 224, 0.15); /* Light blue background color for the entire page */
+  background-color: rgb(37, 3, 233); /* Light blue background color for the entire page */
   color: #333;
 }
 
@@ -140,7 +140,7 @@
 .deal-icon {
   width: 70px;
   height: 70px;
-  background-color: #050a4b; /* Blue background for the icon circle */
+  background-color: #050a4b; /*Blue background for the icon circle*/
   border-radius: 50%; /* Makes the div a circle */
   display: flex;
   align-items: center;
@@ -157,6 +157,47 @@
   object-fit: cover; /* Ensures the image covers the circle while maintaining aspect ratio */
   filter: invert(100%); /* Invert the colors to make the image white */
 }
+
+.consumer-staples {
+  background-color: #BEAF86; /* Muted yellow */
+}
+
+.RE-Hospitality {
+  background-color: #265AA6; /* Muted dark blue */
+}
+
+.RE-Offices {
+  background-color: #2D2125; /* Neutral dark tone */
+}
+
+.Materials {
+  background-color: #BF4000; /* Subdued orange */
+}
+
+.Energy {
+  background-color: #BF4000; /* Soft beige */
+}
+
+.RE-Residentials {
+  background-color: #4C77A6; /* Light blue */
+}
+
+.RE-Retail {
+  background-color: #B3B0A9; /* Warm light gray */
+}
+
+.Industrials {
+  background-color: #7B6C53; /* Muted brown */
+}
+
+.Transport {
+  background-color: #D48B40; /* Softer orange */
+}
+
+.Utilities {
+  background-color: #A1B3C5; /* Light blue-gray */
+}
+
 
 .rows-list{
   margin-left: 3%;

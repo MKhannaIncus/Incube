@@ -33,7 +33,7 @@ export class RepaymentComponent {
       
       const transaction = {
         Transaction_Date : new Date(),
-        Related_Deal_Id: this.transactionsComponent.dealId,
+        Related_Deal_Id: this.transactionsComponent.deal_Name,
         Repayment: repayment
       };
       

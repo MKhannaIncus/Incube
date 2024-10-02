@@ -14,41 +14,42 @@ import { error } from 'jquery';
 })
 export class DealsComponent {
   model: any = {};
-  deals : Deal[] = [];
+  deals: Deal[] = [];
   dealId!: number;
   selectedFund: string = '';
   selectedValue: number = 0;
 
 
   popup = false;
-  
-  constructor(private dealService: DealService, private route: ActivatedRoute, private router: Router){}
 
-  ngOnInit(): void{
+  constructor(private dealService: DealService, private route: ActivatedRoute, private router: Router) { }
+
+  ngOnInit(): void {
     this.deal();
 
   }
-
   // Method to handle click events
   // deal() {
   //   this.dealService.getDeals(this.model).subscribe((data: Deal[]) => {
   //     this.deals = data;
   //   });
-    // or perform other actions related to the deal
-    pageRedirection(dealId:number): void {
-      if (dealId !== undefined && dealId !== null) {
-        console.log('redirectin with dealId:', dealId);
-        this.router.navigate(['/deal-transaction', dealId]);
-      } else {
-        console.error('dealId is undefined or null:', dealId);
-      }
+  // or perform other actions related to the deal
+  // Method to redirect to the deal transaction page using deal_Name
+  pageRedirection(deal_Name: string): void {
+    if (deal_Name) {
+      console.log('Redirecting with deal_Name:', deal_Name);
+      this.router.navigate(['/deal-transaction', deal_Name]); // Navigate using deal_Name
+    } else {
+      console.error('deal_Name is undefined or empty:', deal_Name);
     }
+  }
 
-    deal() {
-      this.dealService.getDeals(this.model).subscribe((data: Deal[]) => {
-        this.deals = data;
-      });
-    }
+
+  deal() {
+    this.dealService.getDeals(this.model).subscribe((data: Deal[]) => {
+      this.deals = data;
+    });
+  }
 
   onFundChange(): void {
     this.selectedValue = this.mapSelectedValue(this.selectedFund);
@@ -63,12 +64,12 @@ export class DealsComponent {
   }
 
   mapSelectedValue(selectedFund: string): number {
-    if(this.selectedFund == "FundIII"){
-      this.selectedValue =3;
-    }else if(this.selectedFund == "FundIV"){
-      this.selectedValue =4;
+    if (this.selectedFund == "FundIII") {
+      this.selectedValue = 3;
+    } else if (this.selectedFund == "FundIV") {
+      this.selectedValue = 4;
     }
-    else{
+    else {
       this.selectedValue = 0;
     }
 
@@ -94,5 +95,33 @@ export class DealsComponent {
     }
     console.log(`Status: ${status}, Class: ${className}`);
     return className;
-  } 
+  }
+
+getIconForSector(sector: string): string {
+  switch (sector) {
+    case 'Consumer Staples':
+      return 'assets/consumer-staples.svg';
+    case 'RE Hospitality':
+      return 'assets/hospitality.svg';
+    case 'RE Offices':
+      return 'assets/offices.svg';
+    case 'Materials':
+      return 'assets/material.svg';
+    case 'Energy':
+      return 'assets/green-energy.svg';
+    case 'RE Residential':
+      return 'assets/residential.svg';
+    case 'RE Retail':
+      return 'assets/retail.svg';
+    case 'Industrials':
+      return 'assets/industrial.svg';
+    case 'Transport':
+      return 'assets/transport.svg';
+    case 'Utilities':
+      return 'assets/utilities.svg';
+    default:
+      return 'assets/default-icon.svg';
+  }
+}
+
 }
