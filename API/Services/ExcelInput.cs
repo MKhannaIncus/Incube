@@ -174,7 +174,7 @@ public class ExcelReader
                             //The cash rec only contains investments from the year 2017 to 2024
                             //if (possibleDate.Year >= 2017 && possibleDate.Year <= 2024)
                             //Column 17 is transaction ammount and cannot be date
-                            if(column != 17 && (possibleDate.Year >= 2017 && possibleDate.Year <= 2024))
+                            if(possibleDate.Year >= 2017 && possibleDate.Year <= 2035)
                             {
                                 rowTraversed.Add(possibleDate.ToString("yyyy-MM-dd"));
                             }

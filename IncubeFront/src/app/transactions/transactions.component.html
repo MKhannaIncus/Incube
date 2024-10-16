@@ -10,366 +10,352 @@
 </head>
 
 <body class="style-page">
-  <div class="view">
-    <div class="row mb-3">
-      <!-- Description Card -->
-      <div class="col-12 col-md-6">
-        <div class="card-container box1">
-          <div class="card">
-            <div class="card-header">Description</div>
-            <div class="card-body">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim id est laborum.</p>
-            </div>
-          </div>
-        </div>
+  <div class="container">
+    <!-- Header Section -->
+    <header class="header">
+      <div class="deal-name">
+        <h1>{{deal_Name}}</h1>
+        <p>Investment lead</p>
       </div>
-      <!-- Lender/Borrower Card and Investment Lead Card -->
-      <div class="col-12 col-md-3">
-        <div class="card-container box2 mb-3">
-          <div class="card-body">
-            <table class="table">
-              <tbody>
-                <tr>
-                  <td class="left-column">Lender</td>
-                  <td class="right-column">Mast Investments</td>
-                </tr>
-                <tr>
-                  <td class="left-column">Borrower</td>
-                  <td class="right-column">Capital Energy, S.A.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div class="date-input">
+        <label for="date">Date</label>
+        <input type="date" id="date">
       </div>
-      <!-- Company/Ownership Card -->
-      <div class="col-12 col-md-3">
-        <div class="card-container box4">
-          <table class="table">
-            <thead>
-              <tr>
-                <th class="left-column" style="text-align: left">Company</th>
-                <th class="left-column" style="text-align: left">% Ownership</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="right-column">Mast Investments</td>
-                <td class="right-column">100%</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="grid-container">
+      <!-- Description Section -->
+      <div class="card">
+        <h3>Description</h3>
+        <p>Deal description goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </div>
+
+      <!-- Details Section -->
+      <div class="card">
+        <h3>Details</h3>
+        <table>
+          <tbody>
+            <tr>
+              <td class="label">Lender</td>
+              <td>Mast Investments</td>
+            </tr>
+            <tr>
+              <td class="label">Borrower</td>
+              <td>Capital Energy, S.A.</td>
+            </tr>
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <tr>
+              <th>COMPANY</th>
+              <th>OWNERSHIP %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>XYZ Corp</td>
+              <td>100%</td>
+            </tr>
+            <tr>
+              <td>ABC Company</td>
+              <td>40%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Collateral Section -->
+      <div class="card">
+        <h3>Collateral</h3>
+        <p>Information about the collateral...</p>
+      </div>
+
+      <!-- Collateral Information dSection -->
+      <div class="card">
+        <h3>Deal Data</h3>
+        <table class="table">
+        <tbody *ngFor="let deal of dealInformation">
+          <tr>
+            <th>Investment Date</th>
+            <!-- <td>{{ deal.investment_date | date }}</td> -->
+            <td>28/12/2018</td>
+          </tr>
+          <tr>
+            <th>Maturity Date</th>
+            <!-- <td>{{ deal.maturity_date | date }}</td> -->
+            <td>30/06/2024</td>
+
+          </tr>
+          <tr>
+            <th>Facility</th>
+            <td>{{ deal.facility | number:'1.0-0' }}</td>
+          </tr>
+          <tr>
+            <th>Opening Fee</th>
+            <!-- <td>{{ deal.opening_fee | number:'1.0-0' }}</td> -->
+            <td>1%</td>
+          </tr>
+          <tr>
+            <th>Availability Fee</th>
+            <td>{{ deal.availability_fee | number:'1.0-0' }}</td>
+          </tr>
+          <tr>
+            <th>Minimum Multiple</th>
+            <td>1.18x</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <!-- Cash Interest Rates Section -->
+      <div class="card">
+        <h3>Cash and PIK Interest Rates</h3>
+        <table class="table table-bordered" *ngFor="let deal of dealInformation">
+          <!-- Main Header for Cash Interest Rate -->
+          <thead>
+            <tr class="main-header">
+              <th colspan="3" class="left-column">CASH INTEREST RATE</th>
+            </tr>
+            <tr class="sub-header">
+              <th class="right-column">Period</th>
+              <th class="right-column">Rate</th>
+              <th class="right-column">End Period</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1st Period</td>
+              <!-- <td>{{deal.first_CashInterest_Period_Rate}}%</td>
+              <td>{{deal.first_CashInterest_Period_EndPeriods | date}}</td> -->
+
+              <td>0.0%</td>
+              <td>27 Dec 22</td>
+            </tr>
+            <tr>
+              <td>2nd Period</td>
+              <!-- <td>{{deal.second_CashInterest_Period_Rate}}%</td>
+              <td>{{deal.second_CashInterest_Period_EndPeriods | date}}</td> -->
+              <td>0%</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>3rd Period</td>
+              <!-- <td>{{deal.third_CashInterest_Period_Rate}}%</td>
+              <td>{{deal.third_CashInterest_Period_EndPeriods | date}}</td> -->
+
+              <td>0%</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+          <!-- Main Header for PIK Interest Rate -->
+          <thead>
+            <tr class="main-header">
+              <th colspan="3" class="left-column">PIK INTEREST RATE</th>
+            </tr>
+            <tr class="sub-header">
+              <th class="right-column">Period</th>
+              <th class="right-column">Rate</th>
+              <th class="right-column">End Period</th>
+            </tr>
+          </thead>
+          <!-- <tbody>
+            <tr>
+              <td>1st Period</td>
+              <td>{{deal.first_PIKInterest_Period_Rate}}%</td>
+              <td>{{deal.first_PIKInterest_Period_EndPeriods| date}}</td>
+            </tr>
+            <tr>
+              <td>2nd Period</td>
+              <td>{{deal.second_PIKInterest_Period_Rate}}%</td>
+              <td>{{deal.second_PIKInterest_Period_EndPeriods | date}}</td>
+            </tr>
+            <tr>
+              <td>3rd Period</td>
+              <td>{{deal.third_PIKInterest_Period_Rate}}%</td>
+              <td>{{deal.third_PIKInterest_Period_EndPeriods | date}}</td>
+            </tr>
+          </tbody> -->
+
+          <tbody>
+            <tr>
+              <td>1st Period</td>
+              <td>13.50%</td>
+              <td>17 Mar 20</td>
+            </tr>
+            <tr>
+              <td>2nd Period</td>
+              <td>0.00%</td>
+              <td>01 May 20</td>
+            </tr>
+            <tr>
+              <td>3rd Period</td>
+              <td>13.5%</td>
+              <td>08 Nov 20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Facility Details Section -->
+      <div class="card">
+        <h3>Facility Details</h3>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Total Invested</th>
+              <td>{{ metrics?.total_Invested  | number:'1.0-0' }}</td>
+            </tr>
+            <tr>
+              <th>Total debt</th>
+              <td>{{ metrics?.total_Debt  | number:'1.0-0' }}</td>
+            </tr>
+            <tr>
+              <th>Total interest generated</th>
+              <td>{{ metrics?.interest_Generated  | number:'1.0-0' }}</td>
+            </tr>
+            <tr>
+              <th>Accrued cash interest</th>
+              <td>{{ metrics?.accrued_Cash_Interest  | number:'1.0-0' }}</td>
+            </tr>
+            <tr>
+              <th>Accrued PIK Interest</th>
+              <td>{{ metrics?.accrued_Pik_Interest  | number:'1.0-0' }}</td>
+            </tr>
+            <tr>
+              <th>Accrued Undrawn Interest</th>
+              <td>{{ metrics?.accrued_Undrawn_Interest  | number:'1.0-0' }}</td>
+            </tr>
+            <tr>
+              <th>Interest payed</th>
+              <td>{{ metrics?.interest_Payed | number:'1.0-0' }}</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Present Interest Details Section -->
+      <div class="card">
+        <h3>Present Interest Details</h3>
+        <!-- Accrued Table -->
+        <table>
+          <thead>
+            <tr>
+              <th>Accrued</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total Interest Accrued</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Accrued Cash Interest</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Accrued PIK Interest</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Accrued Undrawn Interest</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Repayed Table -->
+        <table>
+          <thead>
+            <tr>
+              <th>Repayed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total Interest Repayed</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Total Cash Interest Repayed</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Total PIK Interest Repayed</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Total Undrawn Interest Repayed</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Underwriting vs Actual</h3>
+        <table class="table table-bordered" *ngFor="let deal of dealInformation">
+          <!-- Main Header -->
+          <thead>
+            <tr>
+              <th colspan="2" class="left-column">UNDERWRITING AMOUNTS</th>
+              <th colspan="2" class="left-column">ACTUAL AMOUNTS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="right-column">Profit</td>
+              <td> {{ deal.underwriting_NAV | number:'1.0-0'}}</td>
+              <td class="right-column">NAV Profit</td>
+              <td>{{metrics?.nav_profit | number:'1.0-0'}}</td>
+            </tr>
+            <tr>
+              <td class="right-column">IRR</td>
+              <td>{{deal.underwriting_IRR}}</td>
+              <td class="right-column">NAV IRR</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td class="right-column">MOIC</td>
+              <td>{{deal.underwriting_MOIC}}</td>
+              <td class="right-column">NAV MOIC</td>
+              <td> {{metrics?.nav_moic | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Present Data</h3>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td class="left-column">NAV IRR</td>
+              <td class="right-column">-</td>
+            </tr>
+            <tr>
+              <td class="left-column">NAV MOIC</td>
+              <td class="right-column"> {{ metrics?.nav_moic | number:'1.0-0'}}x</td>
+            <tr>
+              <td class="left-column">NAV Profit</td>
+              <td class="right-column"> {{ metrics?.nav_profit | number:'1.0-0'}} </td>
+            </tr>
+            <tr>
+              <td class="left-column">Current Collection</td>
+              <td class="right-column"> {{ metrics?.total_Collections | number:'1.0-0'}} </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-    
-    <div class="row">
-      <div class="col-12 col-md-8">
-        <div class="card-container box1">
-          <div class="card">
-            <div class="card-header">Collateral</div>
-            <div class="card-body">
-              <p>​
-
-                Green Park (GP): Landmark building in Lisbon’s skyline, went through a big interior refurbishment and
-                tenancy includes BNP Paribas and CTT.​
-
-                Atlas III: Office building within the Western Corridor of Lisbon. Recently refurbished and offers a lot
-                of flexibility for larger or smaller occupiers.​
-
-                Arquiparque II: Located in the Western Corridor the asset provides a total of 5,434 sqm across 6 floors
-                with a consolidated tenant mix.​
-
-                Dom Manuel II (DMII): Iconic building n Oporto’s Prime CBD and undergoing a total refurbishment, at 70%
-                occupancy with tenants like Generali and Manpower.​
-
-                RO51: Grade A office building and former Banco Popular headquarters, it was fully refurbished in 2019
-                and undergoing an interior refurbishment. Signed 90% of the total area with 12 years WALT.​
-
-                DA46: High quality office building located in the Lisbon´s CBD with a consolidated tenant mix. Design
-                project in preparation in order to upgrade the building to new standards.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class ="col-12 col-md-4">
-        <div class="card-container box1"></div>
-        <div class="card">
-          <div class="card-header">Investment Lead</div>
-          <div class="card-body">
-            <p class="card-text">Leandro Gualario</p>
-          </div>
-        </div>
-      </div>
-
-
-    </div>
-
-            <!-- <div class="card-container box3">
-          <div class="card">
-            <div class="card-header">Investment Lead</div>
-            <div class="card-body">
-              <p class="card-text">Leandro Gualario</p>
-            </div>
-          </div>
-        </div> -->
-
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <div class="card-container box1">
-          <div class="card">
-            <div class="card-header data">Deal Data</div>
-            <div class="card-body w-100 content">
-              <table class="table">
-                <tbody *ngFor="let deal of dealInformation">
-                  <tr>
-                    <th>Investment Date</th>
-                    <td>{{ deal.investment_date | date }}</td>
-                  </tr>
-                  <tr>
-                    <th>Maturity Date</th>
-                    <td>{{ deal.maturity_date | date }}</td>
-                  </tr>
-                  <tr>
-                    <th>Facility</th>
-                    <td>{{ deal.facility | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Opening Fee</th>
-                    <td>{{ deal.opening_fee | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Availability Fee</th>
-                    <td>{{ deal.availability_fee | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Minimum Multiple</th>
-                    <td>{{ deal.minimum_multiple }}x</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6">
-        <div class="box1">
-          <div class="card-container">
-            <table class="table table-bordered" *ngFor="let deal of dealInformation">
-              <!-- Main Header for Cash Interest Rate -->
-              <thead>
-                <tr class="main-header">
-                  <th colspan="3" class="left-column">CASH INTEREST RATE</th>
-                </tr>
-                <tr class="sub-header">
-                  <th class="right-column">Period</th>
-                  <th class="right-column">Rate</th>
-                  <th class="right-column">End Period</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1st Period</td>
-                  <td>{{deal.first_CashInterest_Period_Rate}}%</td>
-                  <td>{{deal.first_CashInterest_Period_EndPeriods | date}}</td>
-                </tr>
-                <tr>
-                  <td>2nd Period</td>
-                  <td>{{deal.second_CashInterest_Period_Rate}}%</td>
-                  <td>{{deal.second_CashInterest_Period_EndPeriods | date}}</td>
-                </tr>
-                <tr>
-                  <td>3rd Period</td>
-                  <td>{{deal.third_CashInterest_Period_Rate}}%</td>
-                  <td>{{deal.third_CashInterest_Period_EndPeriods | date}}</td>
-                </tr>
-              </tbody>
-              <!-- Main Header for PIK Interest Rate -->
-              <thead>
-                <tr class="main-header">
-                  <th colspan="3" class="left-column">PIK INTEREST RATE</th>
-                </tr>
-                <tr class="sub-header">
-                  <th class="right-column">Period</th>
-                  <th class="right-column">Rate</th>
-                  <th class="right-column">End Period</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1st Period</td>
-                  <td>{{deal.first_PIKInterest_Period_Rate}}%</td>
-                  <td>{{deal.first_PIKInterest_Period_EndPeriods| date}}</td>
-                </tr>
-                <tr>
-                  <td>2nd Period</td>
-                  <td>{{deal.second_PIKInterest_Period_Rate}}%</td>
-                  <td>{{deal.second_PIKInterest_Period_EndPeriods | date}}</td>
-                </tr>
-                <tr>
-                  <td>3rd Period</td>
-                  <td>{{deal.third_PIKInterest_Period_Rate}}%</td>
-                  <td>{{deal.third_PIKInterest_Period_EndPeriods | date}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-8">
-        <div class="card-container">
-          <table class="table table-bordered" *ngFor="let deal of dealInformation">
-            <!-- Main Header -->
-            <thead>
-              <tr>
-                <th colspan="2" class="left-column">UNDERWRITING AMOUNTS</th>
-                <th colspan="2" class="left-column">ACTUAL AMOUNTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="right-column">Profit</td>
-                <td> {{ deal.underwriting_NAV | number:'1.0-0'}}</td>
-                <td class="right-column">NAV Profit</td>
-                <td>{{metrics?.nav_profit | number:'1.0-0'}}</td>
-              </tr>
-              <tr>
-                <td class="right-column">IRR</td>
-                <td>{{deal.underwriting_IRR}}</td>
-                <td class="right-column">NAV IRR</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td class="right-column">MOIC</td>
-                <td>{{deal.underwriting_MOIC}}</td>
-                <td class="right-column">NAV MOIC</td>
-                <td> {{metrics?.nav_moic | number:'1.2-2' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="card-container">
-          <div class="card">
-            <div class="card-header data"> Returns </div>
-            <div class="card-body w-100 content">
-              <table class="table">
-                <tbody>
-                  <tr>
-                    <th>Total Invested</th>
-                    <td>{{ metrics?.total_Invested  | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Total debt</th>
-                    <td>{{ metrics?.total_Debt  | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Total interest generated</th>
-                    <td>{{ metrics?.interest_Generated  | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Accrued cash interest</th>
-                    <td>{{ metrics?.accrued_Cash_Interest  | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Accrued PIK Interest</th>
-                    <td>{{ metrics?.accrued_Pik_Interest  | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Accrued Undrawn Interest</th>
-                    <td>{{ metrics?.accrued_Undrawn_Interest  | number:'1.0-0' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Interest payed</th>
-                    <td>{{ metrics?.interest_Payed | number:'1.0-0' }}</td>
-                  </tr>
-
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-4">
-        <div class="card-container w-100 content">
-          <table class="table">
-            <tbody>
-              <tr>
-                <td class="left-column">NAV IRR</td>
-                <td class="right-column">-</td>
-              </tr>
-              <tr>
-                <td class="left-column">NAV MOIC</td>
-                <td class="right-column"> {{ metrics?.nav_moic | number:'1.0-0'}}x</td>
-              <tr>
-                <td class="left-column">NAV Profit</td>
-                <td class="right-column"> {{ metrics?.nav_profit | number:'1.0-0'}} </td>
-              </tr>
-              <tr>
-                <td class="left-column">Current Collection</td>
-                <td class="right-column"> {{ metrics?.total_Collections | number:'1.0-0'}} </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <!-- 
-      <div class="col-12 col-md-4">
-        <div class="card-container">
-          <div class="card">
-            <div class="card-header"> Interest </div>
-            <div class="card-body">
-              <p>.</p>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-      <div class="col-12 col-md-4">
-        <div class="card-body">
-          <table class="table">
-            <tbody>
-              <tr>
-                <td class="left-column">Facility</td>
-                <td class="right-column">{{ metrics?.facility  | number:'1.0-0' }}</td>
-              </tr>
-              <tr>
-                <td class="left-column">Undrawn Amount</td>
-                <td class="right-column">{{ metrics?.accrued_Cash_Interest | number:'1.0-0' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-
-
-
   </div>
-
   <!-- Transactions Table -->
   <div class="mb-4 bg-light tableView">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h2 class="mb-0">Transactions</h2>
-      <!-- <div>
-        <button class="btn btn-primary mr-2" (click)="togglePopup('repayment')">Repayment</button>
-        <button class="btn btn-secondary" (click)="togglePopup('disbursement')">Disbursement</button>
-      </div> -->
-    </div>
+    
     <div class="table-responsive">
-      <table class="table-hover table-bordered">
+      <!-- Add the new transaction-table class here -->
+      <table class="transaction-table table-hover table-bordered">
         <thead class="thead-dark">
           <tr>
             <th rowspan="2">Transaction ID</th>
@@ -425,7 +411,7 @@
           </tr>
           <tr class="table-projected" *ngFor="let projection of projections">
             <td>Proj</td>
-            <td>{{ projection.transaction_Date| date }}</td>
+            <td>{{ projection.transaction_Date | date }}</td>
             <td>{{ projection.amount_Due_BOP | number:'1.0-0' }}</td>
             <td>{{ projection.principal_BOP | number:'1.0-0' }}</td>
             <td>{{ projection.cash_Interest_BOP | number:'1.0-0' }}</td>
@@ -449,7 +435,7 @@
       </table>
     </div>
   </div>
-
+  
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

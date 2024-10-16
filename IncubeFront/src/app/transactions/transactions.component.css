@@ -1,156 +1,208 @@
 /* Page style */
-.body {
-  background-color: red !important;
-}
-.view {
-  padding: 3%;
-}
-
-
-
-/* Heading styles */
-h5.card-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.75rem;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
-  color: white;
+/* BODY */
+body {
+  font-family: 'Inter', sans-serif; /* Use Inter font */
+  background-color: #050a4baf !important; /* Dark blue background with transparency */
+  color: #FFFFFF; /* White text */
+  padding: 20px;
+  height: fit-content;
 }
 
-h3, h4, h5, h6 {
-  font-size: 1.25rem;
-  margin-bottom: 0.75rem;
-  color: #bf4000;
+/* LAYOUT */
+.container {
+  max-width:fit-content;
+  margin: 0 auto;
+  margin-bottom: 5%;
 }
 
-/* Custom styles for your card text */
-.card-body {
-  color: black;
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  margin-left: 7%;
+  margin-right: 4%;
+}
+
+/* GRID LAYOUT */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto auto auto;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* TYPOGRAPHY */
+.deal-name h1 {
+  font-size: 24px;
+  /* font-weight: bold; */
+  color: #BEAF86; /* White text */
+}
+
+.date-input label {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #ffffff; /* White label text */
+  margin-right: 10px; /* Add space between the label and input */
 }
 
 /* Card container styles */
-.card-container {
-  padding: 10px;
-  margin-bottom: 20px; /* Add space between cards */
-
-}
-
 .card {
-  background-color: white;
-  /* border-radius: 8px; */
-  overflow: hidden;
-  width: 100%;
+  background-color: #0000006B; /* Black card background */
+  padding: 20px;
+  border-radius: 6px;
+  /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+  /*border: 0.05px solid #000000;*/
+  height: auto !important; /* Make sure the card can grow based on content */
+  display: flex;
+  display: block !important; /* Ensure it's a block element */
 }
 
-.card-title {
-  font-weight: bold;
-  color: #a73a00;
+.card h3 {
+  font-size: 18px;
+  /* font-weight: bold; */
+  margin-bottom: 10px;
+  color: #BEAF86; /* White text */
+  /* text-transform: uppercase; */
 }
 
-.card-text {
-  color: black;
-}
-
-.card-header {
-  background-color: #bf4000;
-  color: white;
+.card p {
+  font-size: 14px;
+  color: #FFFFFF; /* White text */
 }
 
 .data {
   background-color: #beaf86;
   color: white;
-
 }
 
-.left-column {
-  background-color: #050A4B; /* Blue background */
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
-.right-column {
-  background-color: #d5e4f3; /* Light background */
-  padding: 20px;
+.card-header-transactions {
+  background-color: #333;
+  color: #fff; /* Add this to make the text visible against a dark background */
+  padding: 10px; /* Optional: Add padding for better spacing */
+  border-radius: 4px; /* Optional: Rounded corners */
 }
 
 
-/* Transactions Table*/
-.tableView {
-  font-family: Arial, Helvetica, sans-serif;
+/* TABLE Above*/
+table {
+  width: 100%;
+  background-color: transparent;
+  margin-bottom: 20px;
+  text-align: center; /* Horizontally centers text */
+  vertical-align: middle; /* Vertically centers text */
+  font-size: 12px;
+}
+
+table td{
+  padding: 10px;
+  background-color: #BEAF861F; /* Dark background for table cells */
+  color: #ffffff; /* White text */
+  /* border: 1px solid #FFFFFF; */
+}
+
+table th {
+  padding: 10px;
+  background-color: #265AA6;
+  color: #FFFFFF;
+  font-weight: bold;
+  width: 40%;
+}
+
+table tr {
+  color: black;
+}
+
+table .label {
+  background-color: #265AA6;
+  color: #FFFFFF;
+  font-weight: bold;
+  width: 40%;
+}
+
+/* PRESENT INTEREST SECTION */
+.present-interest ul {
+  list-style-type: none;
+  margin-bottom: 10px;
+}
+
+.present-interest h4 {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #003366; /* Dark blue header text */
+}
+
+/*Transactions Table*/
+
+/* Target only the table inside the unique transaction-table class */
+
+.transaction-table {
+  width: 100%;
   border-collapse: collapse;
-  margin-left: 3%;
-  margin-right: 3%;
+  margin-bottom: 20px;
+  text-align: center; /* Center text horizontally */
+  font-size: 14px;
 }
 
-.table-header {
-  background-color: #a73a00;
-  color: white;
-  align-items: center;
-  padding: 10px 20px;
+.transaction-table th,
+.transaction-table td {
+  padding: 8px 12px;
+  background-color: #f3f4f6; /* Light gray for better readability */
+  color: #333; /* Darker text color for contrast */
+  border: 1px solid #dddddd; /* Subtle border color */
 }
 
-td, th {
-  text-align: left;
-  padding: 15px;
+/* Style for header */
+.transaction-table th {
+  background-color: #1d3b73; /* Darker blue for the header */
+  color: #ffffff;
+  font-weight: bold;
 }
 
-.table-hover tbody tr:hover {
-  background-color: #f2f2f2;
+/* Add hover effect on rows */
+.transaction-table tbody tr:hover {
+  background-color: #e2e8f0; /* Light hover effect */
 }
 
-
-.table-bordered {
-  border: 2px solid rgb(196, 195, 195); /* Darker border color */
+/* Alternating row background color */
+.transaction-table tbody tr:nth-child(odd) {
+  background-color: #f9fafb; /* Lighter background for odd rows */
 }
 
-.table-bordered thead th {
-  border-bottom-width: 2px;
+.transaction-table tbody tr:nth-child(even) {
+  background-color: #ffffff; /* White background for even rows */
 }
 
-.table-bordered td, .table-bordered th {
-  border: 1px solid rgb(196, 195, 195, 0.4); /* Darker border color for table cells */
-}
-.table-hover tbody tr:hover {
-  background-color: #f2f2f2;
-}
-
-.table-bordered {
-  border: 2px solid #ccc;
+/* Projected rows (if you want them to look different) */
+.transaction-table .table-projected {
+  background-color: #e0f7fa; /* Light blue for projected rows */
+  color: #265AA6; /* Darker text for contrast */
 }
 
-.table-bordered thead th {
-  border-bottom-width: 2px;
+/* Make headers sticky */
+.transaction-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.table-bordered td, .table-bordered th {
-  border: 1px solid #ccc;
+/* Right-align numbers */
+.transaction-table td {
+  text-align: right;
 }
 
-.table-projected {
-  background-color: #FEE2E2; /* Blue background for projected rows */
-  color: #7F1D1D; /* Optional: white text color for better contrast */
-}
-
-/*Buttons*/
-.button-group {
-  display: flex;
-  align-items: center;
-}
-
-.btn {
-  padding: 5px 20px;
-  font-size: 1em;
-  color: #050A4B;
-  background-color: #f8f9fa; /* Light background color for the button */
-  border: 1px solid #050A4B; /* Border to match text color */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-}
-
-.btn:hover {
-  background-color: #e2e6ea; /* Slightly darker background on hover */
+.transaction-table td:first-child,
+.transaction-table td:nth-child(2) {
+  text-align: left; /* Align first column and date column to left */
 }

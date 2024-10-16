@@ -176,56 +176,56 @@ namespace API.Services
             return transactionNext;
         }
 
-        public async Task<Transaction> AccruedValues(Transaction transaction)
-        {
-            //Calculate accrued values according to rate
-            //Cash interest is calfculated on the principal payed in the beginning of time or principal in that moment(if the client has already payed?)
+        //public async Task<Transaction> AccruedValues(Transaction transaction)
+        //{
+        //    //Calculate accrued values according to rate
+        //    //Cash interest is calfculated on the principal payed in the beginning of time or principal in that moment(if the client has already payed?)
 
-            //if last recorded entry is greater than amount of time --  calculate values
-            //var mostRecentTransactionDate = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).Select(t => t.Transaction_Date).FirstOrDefaultAsync();
-            //var cashInterestPeriod = await _context.Transactions.Where
-
-
-            var relatedDealId = transaction.Related_Deal_Id;
-            int? cashInterestPeriod = _context.Deals.Where(d => string.Equals(d.Deal_Id, relatedDealId)).Select(d => d.Cash_Interest_Period).FirstOrDefault();
-
-            _logger.LogInformation("Testing");
-
-            if (cashInterestPeriod != null)
-            {
-                var timePassed = DateTime.Now.AddMonths(-cashInterestPeriod.Value);
-
-                //calculating most recent transaction
-                var mostRecentTransactionDate = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id, relatedDealId))
-                                                                            .OrderByDescending(t => t.Transaction_Date)
-                                                                            .ThenByDescending(t => t.Transaction_Id)
-                                                                            .Select(t => t.Transaction_Date)
-                                                                            .FirstOrDefaultAsync();
-
-                if (mostRecentTransactionDate > timePassed)
-                {
-                    // The most recent transaction date is within the interest period
-                    Console.WriteLine("The most recent transaction date is within the calculated interest period.");
-                }
-                else
-                {
-                    // The most recent transaction date is not within the interest period
-                    //if it is out of the interest period, accrued values need to be calculated
-                    Console.WriteLine("The most recent transaction date is not within the calculated interest period.");
-                }
-
-            }
-            //Getting how long it has passed
+        //    //if last recorded entry is greater than amount of time --  calculate values
+        //    //var mostRecentTransactionDate = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).Select(t => t.Transaction_Date).FirstOrDefaultAsync();
+        //    //var cashInterestPeriod = await _context.Transactions.Where
 
 
+        //    var relatedDealId = transaction.Related_Deal_Id;
+        //    int? cashInterestPeriod = _context.Deals.Where(d => string.Equals(d.Deal_Id, relatedDealId)).Select(d => d.Cash_Interest_Period).FirstOrDefault();
 
-            transaction.Cash_Interest_Accrued = transaction.Principal_BOP * (transaction.Cash_Interest_Rate / 100);
-            transaction.PIK_Interest_Accrued = transaction.Amount_Due_BOP * (transaction.Cash_Interest_Rate / 100);
-            transaction.Undrawn_Interest_Accrued = transaction.Undrawn_Amount * (transaction.Undrawn_Interest_Accrued / 100);
+        //    _logger.LogInformation("Testing");
 
-            return transaction;
+        //    if (cashInterestPeriod != null)
+        //    {
+        //        var timePassed = DateTime.Now.AddMonths(-cashInterestPeriod.Value);
 
-        }
+        //        //calculating most recent transaction
+        //        var mostRecentTransactionDate = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id, relatedDealId))
+        //                                                                    .OrderByDescending(t => t.Transaction_Date)
+        //                                                                    .ThenByDescending(t => t.Transaction_Id)
+        //                                                                    .Select(t => t.Transaction_Date)
+        //                                                                    .FirstOrDefaultAsync();
+
+        //        if (mostRecentTransactionDate > timePassed)
+        //        {
+        //            // The most recent transaction date is within the interest period
+        //            Console.WriteLine("The most recent transaction date is within the calculated interest period.");
+        //        }
+        //        else
+        //        {
+        //            // The most recent transaction date is not within the interest period
+        //            //if it is out of the interest period, accrued values need to be calculated
+        //            Console.WriteLine("The most recent transaction date is not within the calculated interest period.");
+        //        }
+
+        //    }
+        //    //Getting how long it has passed
+
+
+
+        //    transaction.Cash_Interest_Accrued = transaction.Principal_BOP * (transaction.Cash_Interest_Rate / 100);
+        //    transaction.PIK_Interest_Accrued = transaction.Amount_Due_BOP * (transaction.Cash_Interest_Rate / 100);
+        //    transaction.Undrawn_Interest_Accrued = transaction.Undrawn_Amount * (transaction.Undrawn_Interest_Accrued / 100);
+
+        //    return transaction;
+
+        //}
 
         public Transaction AccruedCash(Transaction mostRecentTransaction, Deal deal)
         {
@@ -238,7 +238,7 @@ namespace API.Services
             transactionCreatedCash.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
             transactionCreatedCash.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
 
-            transactionCreatedCash.Cash_Interest_Accrued = (transactionCreatedCash.Amount_Due_BOP * deal.First_CashInterest_Period_Rate) + transactionCreatedCash.Amount_Due_BOP;
+            //transactionCreatedCash.Cash_Interest_Accrued = (transactionCreatedCash.Amount_Due_BOP * deal.First_CashInterest_Period_Rate) + transactionCreatedCash.Amount_Due_BOP;
             transactionCreatedCash.Principal_EOP = transactionCreatedCash.Principal_BOP;
             transactionCreatedCash.Cash_Interest_EOP = transactionCreatedCash.Cash_Interest_BOP + transactionCreatedCash.Cash_Interest_Accrued;
             transactionCreatedCash.PIK_Interest_EOP = transactionCreatedCash.PIK_Interest_BOP;
@@ -263,7 +263,7 @@ namespace API.Services
             transactionCreatedPIK.Undrawn_Interest_BOP = capitalizedTransaction.Undrawn_Interest_EOP;
 
             transactionCreatedPIK.Cash_Interest_EOP = transactionCreatedPIK.Cash_Interest_BOP;
-            transactionCreatedPIK.PIK_Interest_Accrued = (transactionCreatedPIK.Amount_Due_BOP * deal.First_PIKInterest_Period_Rate) + transactionCreatedPIK.Amount_Due_BOP;
+            //transactionCreatedPIK.PIK_Interest_Accrued = (transactionCreatedPIK.Amount_Due_BOP * deal.First_PIKInterest_Period_Rate) + transactionCreatedPIK.Amount_Due_BOP;
             transactionCreatedPIK.PIK_Interest_EOP = transactionCreatedPIK.PIK_Interest_Accrued;
             transactionCreatedPIK.Principal_EOP = transactionCreatedPIK.Principal_BOP;
             transactionCreatedPIK.Undrawn_Interest_EOP = transactionCreatedPIK.Undrawn_Interest_BOP;
@@ -273,48 +273,48 @@ namespace API.Services
 
         }
 
-        public async Task<Transaction> Accrued(Deal deal)
-        {
-            Transaction transactionCreatedCash = new Transaction();
-            Transaction transactionCreatedPIK = new Transaction();
-            //Get most recent transaction -- first by date and then by ID
-            var mostRecentTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == deal.Deal_Id)
-                                                                    .OrderByDescending(t => t.Transaction_Date)
-                                                                    .ThenByDescending(t => t.Transaction_Id)
-                                                                    .FirstOrDefaultAsync();
-            if (mostRecentTransaction != null)
-            {
-                DateTime lastTransaction = mostRecentTransaction.Transaction_Date;
+        //public async Task<Transaction> Accrued(Deal deal)
+        //{
+        //    Transaction transactionCreatedCash = new Transaction();
+        //    Transaction transactionCreatedPIK = new Transaction();
+        //    //Get most recent transaction -- first by date and then by ID
+        //    var mostRecentTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == deal.Deal_Id)
+        //                                                            .OrderByDescending(t => t.Transaction_Date)
+        //                                                            .ThenByDescending(t => t.Transaction_Id)
+        //                                                            .FirstOrDefaultAsync();
+        //    if (mostRecentTransaction != null)
+        //    {
+        //        DateTime lastTransaction = mostRecentTransaction.Transaction_Date;
 
-                if (lastTransaction != null && deal.Cash_Interest_Period != null)
-                {
-                    //CASH INTEREST
-                    //If more time than the cash interest period has passed, cash interest is accrued
-                    if (lastTransaction.Month > deal.Cash_Interest_Period)
-                    {
-                        //Seperate function for creating the given transaction CASH
-                        transactionCreatedCash = AccruedCash(mostRecentTransaction, deal);
-                        transactionCreatedCash.Occurred = false;
-                        transactionCreatedCash.Accrued = true;
-                        //needs to be created in the database
+        //        if (lastTransaction != null && deal.Cash_Interest_Period != null)
+        //        {
+        //            //CASH INTEREST
+        //            //If more time than the cash interest period has passed, cash interest is accrued
+        //            if (lastTransaction.Month > deal.Cash_Interest_Period)
+        //            {
+        //                //Seperate function for creating the given transaction CASH
+        //                transactionCreatedCash = AccruedCash(mostRecentTransaction, deal);
+        //                transactionCreatedCash.Occurred = false;
+        //                transactionCreatedCash.Accrued = true;
+        //                //needs to be created in the database
 
-                    }
-                    //PIK INTEREST
-                    else if (lastTransaction.Month > deal.PIK_Interest_Period)
-                    {
-                        //Create capitalized input
-                        Transaction capitalizedTransaction = Capitalized(deal, mostRecentTransaction);
-                        //Seperate function for creating the given transaction for PIK
-                        transactionCreatedPIK = AccruedPIK(capitalizedTransaction, deal);
-                        transactionCreatedCash.Occurred = false;
-                        transactionCreatedPIK.Accrued = true;
-                        //needs to be created in the database
-                    }
-                }
-            }
+        //            }
+        //            //PIK INTEREST
+        //            else if (lastTransaction.Month > deal.PIK_Interest_Period)
+        //            {
+        //                //Create capitalized input
+        //                Transaction capitalizedTransaction = Capitalized(deal, mostRecentTransaction);
+        //                //Seperate function for creating the given transaction for PIK
+        //                transactionCreatedPIK = AccruedPIK(capitalizedTransaction, deal);
+        //                transactionCreatedCash.Occurred = false;
+        //                transactionCreatedPIK.Accrued = true;
+        //                //needs to be created in the database
+        //            }
+        //        }
+        //    }
 
-            return transactionCreatedCash;
-        }
+        //    return transactionCreatedCash;
+        //}
 
         public async Task<List<Transaction>> Projections(string dealId)
         {
@@ -543,9 +543,9 @@ namespace API.Services
             transaction.Principal_BOP = 0;
             transaction.Cash_Interest_BOP = 0;
             transaction.Undrawn_Amount = deal.Facility;
-            transaction.Drawdown = deal.Drawdown;
-            transaction.Principal_EOP = deal.Drawdown;
-            transaction.Amount_Due_EOP = deal.Drawdown;
+            //transaction.Drawdown = deal.Drawdown;
+            //transaction.Principal_EOP = deal.Drawdown;
+            //transaction.Amount_Due_EOP = deal.Drawdown;
 
             _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
