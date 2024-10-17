@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Migrations;
 using API.Services;
 using API.Services.Interfaces;
 using Google.Protobuf;
@@ -218,8 +219,8 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("readDealExcel")]
-        public async Task<List<Deal>> ReadExcelDeal()
+        [HttpGet("readDealLoanTemplateExcel")]
+        public async Task<List<Deal>> ReadExcelDealLoanTemplate()
         {
             string filepath = @"C:\Users\mkhanna\Documents\Fund IV - Loan Template Database Macro.xlsm";
             List<Deal> dealList = new List<Deal>();
@@ -372,7 +373,99 @@ namespace API.Controllers
 
         }
 
+        [HttpGet("readDealExcel")]
+        public async Task<List<Deal>> ReadExcelDeal()
+        {
+            string filepath = @"I:\Finance\Funds\Reporting\.Databases\Fund IV\Fund IV - Investments.xlsx";
+            List<Deal> dealList = new List<Deal>();
 
+            try
+            {
+                List<List<string>> result = excelReader.ReadExcel(filepath, "Deals");
+
+                foreach (List<string> column in result.Skip(0))
+                {
+
+                   string dealName = column[4] == "-" ? null : column[4];
+                   Deal existingDeal = _context.Deals.Where(t => string.Equals(t.Deal_Name, dealName)).FirstOrDefault();
+
+                    if (existingDeal != null)
+                    {
+                        // Update fields of the existing deal
+                        existingDeal.Percent_Master_Fund = column[10] == "-" ? (decimal?)null : (decimal.TryParse(column[10], out decimal percentMasterFund) ? percentMasterFund * 100 : (decimal?)null);
+                        existingDeal.Percent_Coinvestor = column[11] == "-" ? (decimal?)null : (decimal.TryParse(column[11], out decimal percentCoinvestors) ? percentCoinvestors * 100 : (decimal?)null); // % Coinvestors
+                        existingDeal.Country_Code = column[12] == "-" ? null : column[12]; // Country Code
+                        existingDeal.Country = column[13] == "-" ? null : column[13]; // Country
+                        existingDeal.Client_Country_Code = column[14] == "-" ? null : column[14]; // Client Country Code
+                        existingDeal.Asset_Class = column[15] == "-" ? null : column[15]; // Asset Class
+                        existingDeal.Product = column[16] == "-" ? null : column[16]; // Product
+                        existingDeal.Sector = column[17]; // Sector
+                        existingDeal.Subsector = column[18] == "-" ? null : column[18]; // Subsector
+                        existingDeal.Underwriting_IRR = column[19] == "-" ? (decimal?)null : (decimal.TryParse(column[19], out decimal underwritingIRR) ? underwritingIRR * 100 : (decimal?)null);
+                        existingDeal.Underwriting_MOIC = column[20] == "-" ? (decimal?)null : (decimal.TryParse(column[20], out decimal underwritingMOIC) ? underwritingMOIC : (decimal?)null); // Underwriting MOIC
+                        existingDeal.Instrument_Dealddbbb = column[21] == "-" ? null : column[21];
+                        existingDeal.Grouping = column[22] == "-" ? null : column[22]; 
+                        existingDeal.Loan_Type = column[23] == "-" ? null : column[23]; // Loan Type
+                        existingDeal.Capital_Repayment = column[25] == "-" ? null : column[25]; // Capital Repayment
+                        existingDeal.Interest_Rate_Type = column[27] == "-" ? null : column[27];
+                        existingDeal.Thematic_Vs_Opportunistic = column[28] == "-" ? null : column[28]; // Thematic vs Opportunistic
+                        existingDeal.Theme = column[29] == "-" ? null : column[29]; // Theme
+                        existingDeal.Origination = column[30] == "-" ? null : column[30]; // Origination
+                        existingDeal.Sponsorship = column[31] == "-" ? null : column[31]; // Sponsorship
+                        existingDeal.Repeat_Counterparty = column[32] == "-" ? null : column[32]; // Repeat Counterparty
+                        existingDeal.Deal_Source = column[33] == "-" ? null : column[33]; // Deal Source
+                        existingDeal.Strategy = column[34] == "-" ? null : column[34]; // Strategy
+                    }
+
+                        ////var createdDeal = new Deal
+                        //{
+                        //    //Fund = column[1] == "-" ? null : column[1], // Fund as a string
+                        //    //Deal_Id = column[2] == "-" ? null : column[2], // Deal_Id: Investment Code
+                        //    //Deal_Name = column[4] == "-" ? null : column[4], // Deal Name
+                        //    //General_Investment_Name = column[5] == "-" ? null : column[5], // General Investment Name
+                        //    //Client = column[6] == "-" ? null : column[6], //
+                        //    //Investment_date = column[7] == "-" ? (DateTime?)null : (DateTime.TryParseExact(column[7], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime investment_date) ? investment_date : (DateTime?)null),
+                        //    //Realization_Date = column[8] == "-" ? (DateTime?)null : (DateTime.TryParseExact(column[8], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime date) ? date : (DateTime?)null), // Realization Date
+                        //    //Facility = (column[9] == "-" || string.IsNullOrWhiteSpace(column[9])) ? 0 : (decimal.TryParse(column[9].Trim(), NumberStyles.AllowParentheses | NumberStyles.AllowThousands | NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal facilityValue) ? facilityValue : 0),
+                        //    Percent_Master_Fund = column[10] == "-" ? (decimal?)null : (decimal.TryParse(column[10], out decimal percentMasterFund) ? percentMasterFund * 100 : (decimal?)null),
+                        //    Percent_Coinvestor = column[11] == "-" ? (decimal?)null : (decimal.TryParse(column[11], out decimal percentCoinvestors) ? percentCoinvestors * 100 : (decimal?)null), // % Coinvestors
+                        //    Country_Code = column[12] == "-" ? null : column[12], // Country Code
+                        //    Country = column[13] == "-" ? null : column[13], // Country
+                        //    Client_Country_Code = column[14] == "-" ? null : column[14], // Client Country Code
+                        //    Asset_Class = column[15] == "-" ? null : column[15], // Asset Class
+                        //    Product = column[16] == "-" ? null : column[16], // Product
+                        //    Sector = column[17], // Sector
+                        //    Subsector = column[18] == "-" ? null : column[18], // Subsector
+                        //    Underwriting_IRR = column[19] == "-" ? (decimal?)null : (decimal.TryParse(column[19], out decimal underwritingIRR) ? underwritingIRR * 100 : (decimal?)null),
+                        //    Underwriting_MOIC = column[20] == "-" ? (decimal?)null : (decimal.TryParse(column[20], out decimal underwritingMOIC) ? underwritingMOIC : (decimal?)null), // Underwriting MOIC
+                        //    Instrument_Dealddbbb = column[21] == "-" ? null : column[21],
+                        //    Grouping = column[22] == "-" ? null : column[22],
+                        //    Loan_Type = column[23] == "-" ? null : column[23], // Loan Type
+                        //    Capital_Repayment = column[25] == "-" ? null : column[25], // Capital Repayment
+                        //    Interest_Rate_Type = column[27] == "-" ? null : column[27],
+                        //    Thematic_Vs_Opportunistic = column[28] == "-" ? null : column[28], // Thematic vs Opportunistic
+                        //    Theme = column[29] == "-" ? null : column[29], // Theme
+                        //    Origination = column[30] == "-" ? null : column[30], // Origination
+                        //    Sponsorship = column[31] == "-" ? null : column[31], // Sponsorship
+                        //    Repeat_Counterparty = column[32] == "-" ? null : column[32], // Repeat Counterparty
+                        //    Deal_Source = column[33] == "-" ? null : column[33], // Deal Source
+                        //    Strategy = column[34] == "-" ? null : column[34], // Strategy
+                        //};
+
+                        //dealList.Add(createdDeal);
+
+                    //_context.SaveChanges(;
+                    await _context.SaveChangesAsync();
+                }
+
+                return dealList;
+            }
+            catch (FileNotFoundException ex)
+            {
+                return null;
+            }
+
+        }
 
         /*Delete deal method-*/
         //[HttpDelete]
