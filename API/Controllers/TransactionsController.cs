@@ -33,11 +33,14 @@ namespace API.Controllers
             return await _context.Transactions.ToListAsync();
         }
 
-        //Get all transactions in descending order
+        //Get most recent transaction
         [HttpGet("TransactionsInDescending")]
-        public async Task<List<Transaction>> GetMostRecentTransactions()
+        public async Task<Transaction> GetMostRecentTransactions(string dealId)
         {
-            List<Transaction> mostRecentTransaction = await _context.Transactions.OrderByDescending(t => t.Transaction_Date).ToListAsync();
+            Transaction mostRecentTransaction = await _context.Transactions
+                .Where(t => t.Deal_Name == dealId)
+                .OrderByDescending(t => t.Transaction_Date)
+                .FirstOrDefaultAsync();
 
             return mostRecentTransaction;
         }
@@ -87,21 +90,37 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("Projections/{dealId}")]
-        public async Task<ActionResult<List<Transaction>>> GetProjections(string dealId)
-        {
-            List<Transaction> projectionTransactions = new List<Transaction>();
-            projectionTransactions = await _transactionService.Projections(dealId);
-            return projectionTransactions;
+        //[HttpGet("Projections/{dealId}")]
+        //public async Task<ActionResult<List<Transaction>>> GetProjections(string dealId)
+        //{
+        //    List<Transaction> projectionTransactions = new List<Transaction>();
+        //    projectionTransactions = await _transactionService.Projections(dealId);
+        //    return projectionTransactions;
 
-        }
+        //}
 
-        [HttpGet("Projections/CashRecTransfer")]
+        [HttpGet("Projections/CashRecTransfer")]  
         public async Task<List<Transaction>> TransferCashRecToTransactions()
         {
             List < Transaction > result = await _transactionService.TransactionsFromCashRec();
 
             return result;
+        }
+
+        [HttpGet("Accrued/PIKInterest/{dealName}")]
+        public async Task<List<Transaction>> AccruedPIKTransactions(string dealName)
+        {
+            List<Transaction> AccruedValues = new List<Transaction>();
+
+            Transaction lastTransaction = new Transaction();
+            lastTransaction =await GetMostRecentTransactions(dealName);
+
+            Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
+
+            AccruedValues = _transactionService.AccruedPIK(lastTransaction, relatedDeal);
+
+            return AccruedValues;
+
         }
 
 
