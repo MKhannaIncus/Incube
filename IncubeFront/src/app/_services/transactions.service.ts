@@ -33,9 +33,8 @@ export class TransactionService {
         return this.http.post<Transaction>(`${this.apiUrl}/NewTransactionRepayment`, model);
     }
 
-    // Get projections for a deal based on deal_Name (string)
     getProjections(deal_Name: string): Observable<Transaction[]> {
-        // Fetch projections for a specific deal using deal_Name
         return this.http.get<Transaction[]>(`${this.apiUrl}/Projections/${deal_Name}`);
     }
+    
 }

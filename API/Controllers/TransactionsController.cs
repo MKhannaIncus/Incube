@@ -107,6 +107,31 @@ namespace API.Controllers
             return result;
         }
 
+        [HttpGet("Projections/{dealName}")]
+        public async Task<List<Transaction>> Projections(string dealName)
+        {
+            List<Transaction> ProjectedValuesPIK = new List<Transaction>();
+            List<Transaction> ProjectedValuesCash = new List<Transaction>();
+            List<Transaction> AllTransactions = new List<Transaction>();
+
+            Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
+
+
+            //List<Deal> relatedDeal = await _context.Deals.ToListAsync();
+
+            //foreach (Deal deal in relatedDeal)
+            //{
+                ProjectedValuesPIK = _transactionService.ProjectionsPIK(relatedDeal);
+                ProjectedValuesCash = _transactionService.ProjectionsCash(relatedDeal);
+                AllTransactions.AddRange(ProjectedValuesPIK);
+                AllTransactions.AddRange(ProjectedValuesCash);
+            
+
+            return AllTransactions;
+
+        }
+
+
         [HttpGet("Accrued/PIKInterest/{dealName}")]
         public async Task<List<Transaction>> AccruedPIKTransactions(string dealName)
         {
@@ -117,9 +142,28 @@ namespace API.Controllers
 
             Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
 
-            AccruedValues = _transactionService.AccruedPIK(lastTransaction, relatedDeal);
+            AccruedValues = _transactionService.AccruedPIK(relatedDeal);
 
             return AccruedValues;
+
+        }
+
+        [HttpGet("Accrued/AllPIK")]
+        public async Task<List<List<Transaction>>> AccruedPIKTransactionsForAllDeals()
+        {
+            List<Transaction> AccruedValues = new List<Transaction>();
+            List<List<Transaction>> AllTransactions = new List<List<Transaction>>();
+
+
+            List<Deal> relatedDeal = await _context.Deals.ToListAsync();
+
+            foreach(Deal deal in relatedDeal)
+            {
+                AccruedValues = _transactionService.AccruedPIK(deal);
+                AllTransactions.Add(AccruedValues);
+            }
+
+            return AllTransactions;
 
         }
 

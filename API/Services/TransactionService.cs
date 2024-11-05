@@ -240,21 +240,35 @@ namespace API.Services
          */
         public Transaction AccruedCash(Transaction mostRecentTransaction, Deal deal)
         {
+
+            List<Transaction> AccruedCashList = new List<Transaction>();
             Transaction transactionCreatedCash = new Transaction();
 
-            transactionCreatedCash.Occurred = false;
-            transactionCreatedCash.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
-            transactionCreatedCash.Principal_BOP = mostRecentTransaction.Amount_Due_EOP;
-            transactionCreatedCash.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
-            transactionCreatedCash.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
-            transactionCreatedCash.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
+            int monthsPassed = mostRecentTransaction.Transaction_Date.Month - DateTime.Now.Month;
 
-            //transactionCreatedCash.Cash_Interest_Accrued = (transactionCreatedCash.Amount_Due_BOP * deal.First_CashInterest_Period_Rate) + transactionCreatedCash.Amount_Due_BOP;
-            transactionCreatedCash.Principal_EOP = transactionCreatedCash.Principal_BOP;
-            transactionCreatedCash.Cash_Interest_EOP = transactionCreatedCash.Cash_Interest_BOP + transactionCreatedCash.Cash_Interest_Accrued;
-            transactionCreatedCash.PIK_Interest_EOP = transactionCreatedCash.PIK_Interest_BOP;
-            transactionCreatedCash.Undrawn_Interest_EOP = transactionCreatedCash.Undrawn_Interest_BOP;
-            transactionCreatedCash.Amount_Due_EOP = transactionCreatedCash.Amount_Due_BOP + transactionCreatedCash.Cash_Interest_Accrued;
+            while (monthsPassed > int.Parse(deal.Interest_Period))
+            {
+                transactionCreatedCash.Occurred = false;
+                transactionCreatedCash.Transaction_Date = mostRecentTransaction.Transaction_Date.AddDays(deal.Interest_Period.Length);
+                transactionCreatedCash.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
+                transactionCreatedCash.Principal_BOP = mostRecentTransaction.Amount_Due_EOP;
+                transactionCreatedCash.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+                transactionCreatedCash.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+                transactionCreatedCash.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
+
+                //transactionCreatedCash.Cash_Interest_Accrued = (transactionCreatedCash.Amount_Due_BOP * deal.First_CashInterest_Period_Rate) + transactionCreatedCash.Amount_Due_BOP;
+                transactionCreatedCash.Principal_EOP = transactionCreatedCash.Principal_BOP;
+                transactionCreatedCash.Cash_Interest_EOP = transactionCreatedCash.Cash_Interest_BOP + transactionCreatedCash.Cash_Interest_Accrued;
+                transactionCreatedCash.PIK_Interest_EOP = transactionCreatedCash.PIK_Interest_BOP;
+                transactionCreatedCash.Undrawn_Interest_EOP = transactionCreatedCash.Undrawn_Interest_BOP;
+                transactionCreatedCash.Amount_Due_EOP = transactionCreatedCash.Amount_Due_BOP + transactionCreatedCash.Cash_Interest_Accrued;
+
+                AccruedCashList.Add(transactionCreatedCash);
+
+                //Recalculate months passed
+                monthsPassed = transactionCreatedCash.Transaction_Date.Month - DateTime.Now.Month;
+            }
+
 
             //needs to BE PERSISTED INTO THE DATABASE
 
@@ -262,38 +276,66 @@ namespace API.Services
 
         }
 
-        public List<Transaction> AccruedPIK(Transaction lastTransaction, Deal deal)
+        public List<Transaction> AccruedPIK(Deal deal)
         {
 
             List<Transaction> AccruedPIKList = new List<Transaction>();
             Transaction transactionCreatedPIK = new Transaction();
+            Transaction lastTransaction = new Transaction();
 
-            //Make sure that the time frame between the last transaction made and present date is equal to investment period
-            //If it is more than the present date, its not accrued values, its projected
-            int monthsPassed = lastTransaction.Transaction_Date.Month - DateTime.Now.Month;
+            lastTransaction = _context.Transactions.Where(t => t.Deal_Name == deal.Deal_Name)
+                .OrderByDescending(t => t.Transaction_Date)
+                .FirstOrDefault();
 
-            if(monthsPassed> int.Parse(deal.Interest_Period))
+            if (lastTransaction != null)
             {
-                transactionCreatedPIK.Occurred = false;
-                transactionCreatedPIK.Amount_Due_BOP = lastTransaction.Amount_Due_EOP;
-                transactionCreatedPIK.Principal_BOP = lastTransaction.Principal_EOP;
-                transactionCreatedPIK.Cash_Interest_BOP = lastTransaction.Cash_Interest_EOP;
-                transactionCreatedPIK.PIK_Interest_BOP = lastTransaction.PIK_Interest_EOP;
-                transactionCreatedPIK.Undrawn_Interest_BOP = lastTransaction.Undrawn_Interest_EOP;
+                //Make sure that the time frame between the last transaction made and present date is equal to investment period
+                //If it is more than the present date, its not accrued values, its projected
+                int monthsPassed = (DateTime.Now.Year - lastTransaction.Transaction_Date.Year) * 12
+                                 + DateTime.Now.Month - lastTransaction.Transaction_Date.Month;
 
-                transactionCreatedPIK.Cash_Interest_EOP = transactionCreatedPIK.Cash_Interest_BOP;
-                //Calculating PIK interest generated
-                transactionCreatedPIK.PIK_Interest_Accrued = (transactionCreatedPIK.Amount_Due_BOP * deal.PIKInterest_Rate_1st) + transactionCreatedPIK.Amount_Due_BOP;
-                transactionCreatedPIK.PIK_Interest_EOP = transactionCreatedPIK.PIK_Interest_BOP + transactionCreatedPIK.PIK_Interest_Accrued;
-                transactionCreatedPIK.Principal_EOP = transactionCreatedPIK.Principal_BOP;
-                transactionCreatedPIK.Undrawn_Interest_EOP = transactionCreatedPIK.Undrawn_Interest_BOP;
-                transactionCreatedPIK.Amount_Due_EOP = transactionCreatedPIK.Amount_Due_BOP + transactionCreatedPIK.PIK_Interest_Accrued;
+                // A variable to keep track of the rolling transaction date
+                DateTime rollingTransactionDate = lastTransaction.Transaction_Date;
 
-                AccruedPIKList.Add(transactionCreatedPIK);
+                while (monthsPassed >= int.Parse(deal.Interest_Period) && int.Parse(deal.Interest_Period) > 0)
+                {
+                    transactionCreatedPIK.Occurred = false;
+
+                    // Set transactionCreatedPIK.Transaction_Date to the new rolling date
+                    rollingTransactionDate = rollingTransactionDate.AddMonths(int.Parse(deal.Interest_Period));
+                    transactionCreatedPIK.Transaction_Date = rollingTransactionDate;
+
+                    transactionCreatedPIK.Deal_Name = deal.Deal_Name;
+                    transactionCreatedPIK.Amount_Due_BOP = (lastTransaction.Amount_Due_EOP ?? 0);
+                    transactionCreatedPIK.Principal_BOP = (lastTransaction.Principal_EOP ?? 0);
+                    transactionCreatedPIK.Cash_Interest_BOP = lastTransaction.Cash_Interest_EOP;
+                    transactionCreatedPIK.PIK_Interest_BOP = lastTransaction.PIK_Interest_EOP;
+                    transactionCreatedPIK.Undrawn_Interest_BOP = lastTransaction.Undrawn_Interest_EOP;
+
+                    transactionCreatedPIK.Cash_Interest_EOP = transactionCreatedPIK.Cash_Interest_BOP;
+                    // Calculating PIK interest generated
+                    transactionCreatedPIK.PIK_Interest_Accrued = (transactionCreatedPIK.Amount_Due_BOP * deal.PIKInterest_Rate_1st) + transactionCreatedPIK.Amount_Due_BOP;
+
+                    //If PIK interest BOP is null it will not add the PIK value
+                    transactionCreatedPIK.PIK_Interest_EOP = (transactionCreatedPIK.PIK_Interest_BOP ?? 0) + transactionCreatedPIK.PIK_Interest_Accrued;
+
+                    //The principal stays the same becuase nothing is capitalized
+                    transactionCreatedPIK.Principal_EOP = transactionCreatedPIK.Principal_BOP;
+                    transactionCreatedPIK.Undrawn_Interest_EOP = transactionCreatedPIK.Undrawn_Interest_BOP;
+                    transactionCreatedPIK.Amount_Due_EOP = (transactionCreatedPIK.Amount_Due_BOP ?? 0) + transactionCreatedPIK.PIK_Interest_Accrued;
+                    transactionCreatedPIK.Accrued = true;
+
+                    AccruedPIKList.Add(transactionCreatedPIK);
+
+                    // Update lastTransaction to the current transactionCreatedPIK for next iteration
+                    lastTransaction = transactionCreatedPIK;
+
+                    // Recalculate monthsPassed based on the updated rollingTransactionDate
+                    monthsPassed = (DateTime.Now.Year - rollingTransactionDate.Year) * 12
+                                 + DateTime.Now.Month - rollingTransactionDate.Month;
+                }
             }
-
             return AccruedPIKList;
-
         }
 
 
@@ -400,6 +442,152 @@ namespace API.Services
 
         //}
 
+        public List<Transaction> ProjectionsPIK(Deal deal)
+        {
+            List<Transaction> projectionsCreated = new List<Transaction>();
+            Transaction lastTransaction = new Transaction();
+            lastTransaction = _context.Transactions.Where(t => t.Deal_Name == deal.Deal_Name)
+                            .OrderByDescending(t => t.Transaction_Date)
+                            .FirstOrDefault();
+
+
+
+            if (lastTransaction != null)
+            {
+                DateTime rollingDate = lastTransaction.Transaction_Date;
+                DateTime? maxDate = deal.Maturity_date;
+
+
+                if (maxDate != null && lastTransaction != null)
+                {
+
+                    if (int.TryParse(deal.Interest_Period, out int interestPeriod) && interestPeriod != 0 )
+                    {
+
+                        //while it doesnt reach the maturity date-
+                        while (rollingDate < maxDate)
+                        {
+                            Transaction newTransaction = new Transaction();
+
+                            newTransaction.Occurred = false;
+
+                            // Set transactionCreatedPIK.Transaction_Date to the new rolling date
+                            rollingDate = rollingDate.AddMonths(int.Parse(deal.Interest_Period));
+                            newTransaction.Transaction_Date = rollingDate;
+
+                            newTransaction.Deal_Name = deal.Deal_Name;
+                            newTransaction.Related_Deal_Id = deal.Deal_Id;
+                            newTransaction.Amount_Due_BOP = (lastTransaction.Amount_Due_EOP ?? 0);
+
+                            newTransaction.Principal_BOP = (lastTransaction.Principal_EOP ?? 0);
+                            newTransaction.Cash_Interest_BOP = lastTransaction.Cash_Interest_EOP;
+                            newTransaction.PIK_Interest_BOP = (lastTransaction.PIK_Interest_EOP ?? 0);
+                            newTransaction.Undrawn_Interest_BOP = lastTransaction.Undrawn_Interest_EOP;
+
+                            newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
+                            // Calculating PIK interest generated
+                            newTransaction.PIK_Interest_Accrued = (newTransaction.Amount_Due_BOP * deal.PIKInterest_Rate_1st) + newTransaction.Amount_Due_BOP;
+
+                            //If PIK interest BOP is null it will not add the PIK value
+                            newTransaction.PIK_Interest_EOP = (newTransaction.PIK_Interest_BOP ?? 0) + newTransaction.PIK_Interest_Accrued;
+
+                            //The principal stays the same becuase nothing is capitalized
+                            newTransaction.Principal_EOP = newTransaction.Principal_BOP;
+                            newTransaction.Undrawn_Interest_EOP = newTransaction.Undrawn_Interest_BOP;
+                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) + newTransaction.PIK_Interest_Accrued;
+                            newTransaction.Accrued = true;
+
+                            projectionsCreated.Add(newTransaction);
+
+                            // Update lastTransaction to the current transactionCreatedPIK for next iteration
+                            lastTransaction = newTransaction;
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+
+            return projectionsCreated;
+
+        }
+
+        public List<Transaction> ProjectionsCash(Deal deal)
+        {
+            List<Transaction> projectionsCreated = new List<Transaction>();
+            Transaction lastTransaction = new Transaction();
+            lastTransaction = _context.Transactions.Where(t => t.Deal_Name == deal.Deal_Name)
+                            .OrderByDescending(t => t.Transaction_Date)
+                            .FirstOrDefault();
+
+            if (lastTransaction != null)
+            {
+                DateTime rollingDate = lastTransaction.Transaction_Date;
+                DateTime? maxDate = deal.Maturity_date;
+
+
+                if (maxDate != null && lastTransaction != null)
+                {
+
+                    if (int.TryParse(deal.Interest_Period, out int interestPeriod) && interestPeriod != 0)
+                    {
+                        
+                        deal.CashInterest_Rate_1st = (deal.CashInterest_Rate_1st != 0) ? deal.CashInterest_Rate_1st : 3;
+
+                        //while it doesnt reach the maturity date-
+                        while (rollingDate < maxDate)
+                        {
+                            Transaction newTransaction = new Transaction();
+
+                            newTransaction.Occurred = false;
+
+                            // Set transactionCreatedPIK.Transaction_Date to the new rolling date
+                            rollingDate = rollingDate.AddMonths(int.Parse(deal.Interest_Period));
+                            newTransaction.Transaction_Date = rollingDate;
+
+                            newTransaction.Deal_Name = deal.Deal_Name;
+                            newTransaction.Related_Deal_Id = deal.Deal_Id;
+                            newTransaction.Amount_Due_BOP = (lastTransaction.Amount_Due_EOP ?? 0);
+
+                            newTransaction.Principal_BOP = (lastTransaction.Principal_EOP ?? 0);
+                            newTransaction.Cash_Interest_BOP = (lastTransaction.Cash_Interest_EOP ?? 0);
+                            newTransaction.PIK_Interest_BOP = (lastTransaction.PIK_Interest_EOP ?? 0);
+                            newTransaction.Undrawn_Interest_BOP = lastTransaction.Undrawn_Interest_EOP;
+
+                            //newTransaction.Cash_Interest_BOP = (newTransaction.Cash_Interest_EOP ?? 0);
+                            // Calculating PIK interest generated
+                            newTransaction.Cash_Interest_Accrued = (newTransaction.Amount_Due_BOP * deal.CashInterest_Rate_1st) + newTransaction.Amount_Due_BOP;
+
+                            //If PIK interest BOP is null it will not add the PIK value
+                            newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0) + newTransaction.Cash_Interest_Accrued;
+
+                            //The principal stays the same becuase nothing is capitalized
+                            newTransaction.Principal_EOP = newTransaction.Principal_BOP;
+                            newTransaction.Undrawn_Interest_EOP = newTransaction.Undrawn_Interest_BOP;
+                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) + newTransaction.Cash_Interest_Accrued;
+                            newTransaction.Projection = true;
+
+                            projectionsCreated.Add(newTransaction);
+
+                            // Update lastTransaction to the current transactionCreatedPIK for next iteration
+                            lastTransaction = newTransaction;
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+
+            return projectionsCreated;
+
+        }
+
         public Transaction Capitalized(Deal deal, Transaction latestTransaction)
         {
             Transaction transactionCapitalized = new Transaction();
@@ -458,7 +646,7 @@ namespace API.Services
             newMetrics.Interest_Payed = 0;
 
             //In an list retrieve all the values in transactions
-            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id,dealId))
+            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id, dealId))
                 .OrderByDescending(t => t.Transaction_Id).ToListAsync();
 
             Deal dealRelated = await _context.Deals.Where(t => string.Equals(t.Deal_Id, dealId)).FirstAsync();
