@@ -8,12 +8,12 @@ import { FinancialMetrics } from '../_models/financialMetrics';
 })
 export class FinancialMetricsService {
 
-  private apiUrl = 'https://localhost:5001/api/FinancialMetrics';
+  private apiUrl = 'https://localhost:5001/api/deal';
 
   constructor(private http: HttpClient) { }
 
-  getFinancialMetrics(dealId:number): Observable<FinancialMetrics>{
-    return this.http.get<FinancialMetrics>(`${this.apiUrl}/NAV/${dealId}`);
+  getFinancialMetrics(deal_Name:string): Observable<FinancialMetrics>{
+    return this.http.get<FinancialMetrics>(`${this.apiUrl}/FacilityInformation/${deal_Name}`);
   }
 
 }

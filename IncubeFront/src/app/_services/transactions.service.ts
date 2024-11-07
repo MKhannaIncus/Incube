@@ -36,5 +36,9 @@ export class TransactionService {
     getProjections(deal_Name: string): Observable<Transaction[]> {
         return this.http.get<Transaction[]>(`${this.apiUrl}/Projections/${deal_Name}`);
     }
+
+    getAccrued(deal_Name :string): Observable<Transaction[]> {
+        return this.http.get<Transaction[]>(`${this.apiUrl}/Accrued/${deal_Name}`);
+    }
     
 }

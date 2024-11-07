@@ -1,73 +1,75 @@
 export interface Deal {
-  deal_Id: string; // Changed to string based on "INV3-001"
+  deal_Id: string; // Matches C# Deal_Id
+  related_Fund?: string; // Matches C# Related_Fund
   deal_Name: string;
-  client_Id?: number;
-  client?: string; // Added this field to match "Sacyr"
-  facility?: number;
-  asset_Id?: number;
-  country: string;
-  sector: string;
-  subsector: string;
-  status?: string;
-  investment_date?: Date | string; // Added string type to handle the ISO string dates
-  maturity_date?: Date | string;   // Same here to handle ISO string dates
+  facility?: number; // Adjusted to match the decimal type
+  country?: string;
+  sector?: string;
+  subsector?: string;
+  investment_date?: Date | string;
+  maturity_date?: Date | string;
   opening_fee?: number;
-  minimum_multiple?: number;
-  irr?: number; // Corrected naming to lower case based on the provided data
-  underwriting_IRR?: number;
-  moic?: number; // Corrected naming to lower case based on the provided data
-  underwriting_MOIC?: number;
-  nav?: number;
-  underwriting_NAV?: number;
   availability_period?: number;
-  availability_fee?: number;
-  intercompany_loan?: boolean;
-  entity_Id?: number;
-  interest_Id?: number;
-  amortization_type?: string;
-  ownership_Id?: number;
-  ltV_Entry?: number; // Corrected field name based on provided data
+  underwriting_IRR?: number;
+  underwriting_MOIC?: number;
+  underwriting_NAV?: number;
   comments?: string;
-  related_fund_id?: number;
-  drawdown?: number; // Added this field based on your data
-  cash_Interest_Period?: string; // Added this field based on your data
-  piK_Interest_Period?: string;  // Added this field based on your data
-  first_CashInterest_Period_Rate?: number;
-  first_CashInterest_Period_EndPeriods?: Date | string;
-  second_CashInterest_Period_Rate?: number;
-  second_CashInterest_Period_EndPeriods?: Date | string;
-  third_CashInterest_Period_Rate?: number;
-  third_CashInterest_Period_EndPeriods?: Date | string;
-  first_PIKInterest_Period_Rate?: number;
-  first_PIKInterest_Period_EndPeriods?: Date | string;
-  second_PIKInterest_Period_Rate?: number;
-  second_PIKInterest_Period_EndPeriods?: Date | string;
-  third_PIKInterest_Period_Rate?: number;
-  third_PIKInterest_Period_EndPeriods?: Date | string;
-
-  // New fields based on the provided data
-  fund?: string; // "Fund III"
-  general_Investment_Code?: string; // "INV-045"
-  general_Investment_Name?: string; // "Path FIII"
-  realization_Date?: Date | string; // "2019-02-28T00:00:00"
+  loan?: string; // Matches C# Loan
+  instrument_Dealddbbb?: string; // Matches C# Instrument_Dealddbbb
+  extension_Period?: string;
+  first_Utilization?: number;
+  purchase_Discount_Rate?: number;
+  exit_fee?: number;
+  minimum_Multiple?: number;
+  eURIBOR_Interest_Rate?: string; // Matches C# EURIBOR_Interest_Rate
+  cashInterest_Rate_1st?: number;
+  cashInterest_End_1st?: Date | string;
+  cashInterest_Rate_2nd?: number;
+  cashInterest_End_2nd?: Date | string;
+  cashInterest_Rate_3rd?: number;
+  cashInterest_End_3rd?: Date | string;
+  pikInterest_Rate_1st?: number;
+  pikInterest_End_1st?: Date | string;
+  pikInterest_Rate_2nd?: number;
+  pikInterest_End_2nd?: Date | string;
+  pikInterest_Rate_3rd?: number;
+  pikInterest_End_3rd?: Date | string;
+  piycInterest_Rate_1st?: number;
+  piycInterest_End_1st?: Date | string;
+  piycInterest_Rate_2nd?: number;
+  piycInterest_End_2nd?: Date | string;
+  piycInterest_Rate_3rd?: number;
+  piycInterest_End_3rd?: Date | string;
+  others?: string;
+  year_Base?: number;
+  interest_Period?: string;
+  default_interest_rate?: number;
+  undrawn_fee?: number;
+  undrawn_fee_periods?: string;
+  default_Capitalization_Periods?: string;
+  acceleration_Date?: Date | string;
+  share_Premium?: number;
+  lender?: string;
+  borrower?: string;
+  client?: string;
   percent_Master_Fund?: number;
-  percent_Coinvestors?: number;
-  country_Code?: string; // "ESP"
-  client_Country_Code?: string; // "ESP"
-  asset_Class?: string; // "Infrastructure"
-  product?: string; // "Debt"
-  strategy?: string; // "Path"
-  deal_Grouping?: string; // "Single"
-  loan_Type?: string; // "PL"
-  seniority?: string; // "Junior"
-  capital_Repayment?: string; // "Asset disposal"
-  coupon?: string; // "Cash"
-  interest_Rate?: string; // "Fixed"
-  thematic_vs_Opportunistic?: string; // "Thematic"
-  theme?: string; // "Infra HoldCo"
-  origination?: string; // "Primary"
-  sponsorship?: string; // "Non-sponsored"
-  repeat_Counterparty?: string; // "Yes"
-  deal_Source?: string; // "Incus"
-  instrument?: string; // "Loan"
+  percent_Coinvestor?: number;
+  country_Code?: string;
+  client_Country_Code?: string;
+  asset_Class?: string;
+  product?: string;
+  strategy?: string;
+  grouping?: string; // Matches C# Grouping
+  loan_Type?: string;
+  seniority?: string;
+  capital_Repayment?: string;
+  coupon?: string;
+  interest_Rate_Type?: string;
+  thematic_Vs_Opportunistic?: string;
+  theme?: string;
+  origination?: string;
+  sponsorship?: string;
+  repeat_Counterparty?: string;
+  deal_Source?: string;
+  instrument_LoanTemplateddbb?: string;
 }

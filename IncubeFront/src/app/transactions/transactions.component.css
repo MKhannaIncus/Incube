@@ -206,3 +206,7 @@ table .label {
 .transaction-table td:nth-child(2) {
   text-align: left; /* Align first column and date column to left */
 }
+
+.table-container {
+  padding: 2%;
+}

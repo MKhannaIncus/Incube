@@ -38,7 +38,7 @@ export class DealsComponent {
   pageRedirection(deal_Name: string): void {
     if (deal_Name) {
       console.log('Redirecting with deal_Name:', deal_Name);
-      this.router.navigate(['/deal-transaction', deal_Name]); // Navigate using deal_Name
+      this.router.navigate(['/deal-qualitative-data', deal_Name]); // Navigate using deal_Name
     } else {
       console.error('deal_Name is undefined or empty:', deal_Name);
     }

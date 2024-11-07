@@ -5,6 +5,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { AddNewDealComponent } from './add-new-deal/add-new-deal.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { DealDataComponent } from './deal-data/deal-data.component';
+import { DealQualitativeDataComponent } from './deal-qualitative-data/deal-qualitative-data.component';
 
 
 const routes: Routes = [
@@ -13,7 +14,10 @@ const routes: Routes = [
   { path: 'new-deal', component: AddNewDealComponent }, 
   { path: '', redirectTo: '/login', pathMatch: 'full' }, 
   { path: 'deal-transaction/:deal_Name', component: TransactionsComponent},
+  { path: 'deal-qualitative-data/:deal_Name', component: DealQualitativeDataComponent },
   { path: 'deal-data', component: DealDataComponent},
+  { path: 'deal-qualitative-data', component: DealQualitativeDataComponent },
+
   // { path: '', redirectTo: '/deals', pathMatch: 'full' }, // Redirect empty path to '/deals'
 ];
 
