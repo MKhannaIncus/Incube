@@ -39,7 +39,7 @@ using System.Threading.Tasks;
     [HttpGet("NAV/{dealId}")]
     public async Task<ActionResult<FinancialMetrics>> GetNAVValues(string dealID)
     {
-        FinancialMetrics metrics = await _transactionService.MetricsCalculations(dealID);
+        FinancialMetrics metrics = _transactionService.MetricsCalculations(dealID);
 
         return metrics;
 

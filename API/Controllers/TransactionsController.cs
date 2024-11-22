@@ -21,7 +21,7 @@ namespace API.Controllers
 
         public TransactionsController(TransactionService transactionService, DataContext context)
         {
-            _transactionService = transactionService;  
+            _transactionService = transactionService;
             _context = context;
         }
 
@@ -33,7 +33,7 @@ namespace API.Controllers
             return await _context.Transactions.ToListAsync();
         }
 
-        //Get most recent transaction
+        //Get most recent transactions for the given deal
         [HttpGet("TransactionsInDescending")]
         public async Task<Transaction> GetMostRecentTransactions(string dealId)
         {
@@ -49,21 +49,21 @@ namespace API.Controllers
         [HttpGet("TransactionsFromDeal/{DealId}")]
         public async Task<List<Transaction>> GetTransactionsForDeals(string DealId)
         {
-            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Deal_Name,DealId)).ToListAsync();
+            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Deal_Name, DealId)).ToListAsync();
 
 
             return transactionForDeal;
         }
 
-
+        //Repayment is added manually
         [HttpPost("NewTransactionRepayment")]
         public Task<Transaction> Repayment(Transaction transaction)
         {
             try
             {
                 //var result = _transactionService.NewTransactionMade(transaction);
-                var result =_transactionService.NewTransaction_Repayment(transaction);
-                    return result;
+                var result = _transactionService.NewTransaction_Repayment(transaction);
+                return result;
             }
             catch (System.Exception ex)
             {
@@ -72,7 +72,7 @@ namespace API.Controllers
             }
         }
 
-
+        //Disbursement is added manually
         [HttpPost("NewTransactionDisbursement")]
         public Task<Transaction> Disbursement(Transaction transaction)
         {
@@ -90,23 +90,53 @@ namespace API.Controllers
         }
 
 
-        //[HttpGet("Projections/{dealId}")]
-        //public async Task<ActionResult<List<Transaction>>> GetProjections(string dealId)
-        //{
-        //    List<Transaction> projectionTransactions = new List<Transaction>();
-        //    projectionTransactions = await _transactionService.Projections(dealId);
-        //    return projectionTransactions;
-
-        //}
-
-        [HttpGet("Projections/CashRecTransfer")]  
-        public async Task<List<Transaction>> TransferCashRecToTransactions()
+        //Removes the list of transactions already stored in the database and recalculates the transactions and accrued and stores it again in the database
+        [HttpGet("CashRecTransfer/{dealName}")]
+        public async Task<List<Transaction>> TransferCashRecToTransactions(string dealName)
         {
-            List < Transaction > result = await _transactionService.TransactionsFromCashRec();
+            Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
+
+            // Get all transactions associated with the deal
+            var transactionsToDelete = _context.Transactions
+                .Where(t => t.Deal_Name == relatedDeal.Deal_Name);
+
+            // Remove the transactions from the context
+            _context.Transactions.RemoveRange(transactionsToDelete);
+
+            // Save changes to persist the deletion
+            _context.SaveChanges();
+
+            List<Transaction> result = await _transactionService.TransactionsFromCashRec(relatedDeal);
 
             return result;
         }
 
+
+
+        //Removes the list of transactions already stored in the database and recalculates the transactions and accrued and stores it again in the database
+        [HttpGet("TransactionsAndAccrued/{dealName}")]
+        public async Task<List<Transaction>> TransactionsAndAccrued(string dealName)
+        {
+            Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
+
+            // Get all transactions associated with the deal
+            var transactionsToDelete = _context.Transactions
+                .Where(t => t.Deal_Name == relatedDeal.Deal_Name);
+
+            // Remove the transactions from the context
+            _context.Transactions.RemoveRange(transactionsToDelete);
+
+            // Save changes to persist the deletion
+            _context.SaveChanges();
+
+            List<Transaction> result = await _transactionService.CombineTransactionsandAccrued(relatedDeal);
+
+            return result;
+        }
+
+
+        //Calculate the Cash and PIK projections related to the deal and outputs them 
+        //Not saved in the database
         [HttpGet("Projections/{dealName}")]
         public async Task<List<Transaction>> Projections(string dealName)
         {
@@ -116,56 +146,82 @@ namespace API.Controllers
 
             Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
 
+            ProjectedValuesPIK = _transactionService.ProjectionsPIK(relatedDeal);
+            ProjectedValuesCash = _transactionService.ProjectionsCash(relatedDeal);
+            AllTransactions.AddRange(ProjectedValuesPIK);
+            AllTransactions.AddRange(ProjectedValuesCash);
 
-            //List<Deal> relatedDeal = await _context.Deals.ToListAsync();
-
-            //foreach (Deal deal in relatedDeal)
-            //{
-                ProjectedValuesPIK = _transactionService.ProjectionsPIK(relatedDeal);
-                ProjectedValuesCash = _transactionService.ProjectionsCash(relatedDeal);
-                AllTransactions.AddRange(ProjectedValuesPIK);
-                AllTransactions.AddRange(ProjectedValuesCash);
-            
 
             return AllTransactions;
 
         }
 
-
+        //Calculate the PIK Accrued related to the deal and outputs them 
+        //Not saved in the database
         [HttpGet("Accrued/PIKInterest/{dealName}")]
         public async Task<List<Transaction>> AccruedPIKTransactions(string dealName)
         {
             List<Transaction> AccruedValues = new List<Transaction>();
 
             Transaction lastTransaction = new Transaction();
-            lastTransaction =await GetMostRecentTransactions(dealName);
+            lastTransaction = await GetMostRecentTransactions(dealName);
 
             Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
 
-            AccruedValues = _transactionService.AccruedPIK(relatedDeal);
+            AccruedValues = _transactionService.PreviousAccruedPIK(relatedDeal);
 
             return AccruedValues;
 
         }
 
-        [HttpGet("Accrued/AllPIK")]
-        public async Task<List<List<Transaction>>> AccruedPIKTransactionsForAllDeals()
+        //Caclulates accrued PIK and Cash interests
+        //Not saved in the database
+        [HttpGet("Accrued/{dealName}")]
+        public async Task<List<Transaction>> AccruedValues(string dealName)
         {
             List<Transaction> AccruedValues = new List<Transaction>();
-            List<List<Transaction>> AllTransactions = new List<List<Transaction>>();
 
 
-            List<Deal> relatedDeal = await _context.Deals.ToListAsync();
+            //List<Deal> relatedDeal = await _context.Deals.ToListAsync();
 
-            foreach(Deal deal in relatedDeal)
-            {
-                AccruedValues = _transactionService.AccruedPIK(deal);
-                AllTransactions.Add(AccruedValues);
-            }
+            //foreach(Deal deal in relatedDeal)
+            //{
+            //    AccruedValues = _transactionService.PIKAccrued(deal);
+            //    AllTransactions.Add(AccruedValues);
+            //}
+
+            List<Transaction> AccruedValuesPIK = new List<Transaction>();
+            List<Transaction> AccruedValuesCash = new List<Transaction>();
+            List<Transaction> AllTransactions = new List<Transaction>();
+
+            Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
+
+
+            //List<Deal> relatedDeal = await _context.Deals.ToListAsync();
+
+            //foreach (Deal deal in relatedDeal)
+            //{
+            AccruedValuesPIK = _transactionService.PIKAccrued(relatedDeal);
+            AccruedValuesCash = _transactionService.CashAccrued(relatedDeal);
+            AllTransactions.AddRange(AccruedValuesPIK);
+            AllTransactions.AddRange(AccruedValuesCash);
+
 
             return AllTransactions;
 
         }
+
+
+
+
+        //[HttpGet("Projections/{dealId}")]
+        //public async Task<ActionResult<List<Transaction>>> GetProjections(string dealId)
+        //{
+        //    List<Transaction> projectionTransactions = new List<Transaction>();
+        //    projectionTransactions = await _transactionService.Projections(dealId);
+        //    return projectionTransactions;
+
+        //}
 
 
         //[HttpPost("PeriodicAccrued")]

@@ -12,6 +12,8 @@
           <th rowspan="2">Capitalized</th>
           <th colspan="4">EOP</th>
           <th rowspan="2">Amount Due EOP</th>
+          <th rowspan="2">Repayment</th>
+          <th rowspan="2">Withdrawn Amount</th>
         </tr>
         <tr>
           <th>Total Amount</th>
@@ -32,12 +34,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let transaction of transactions">
+        <tr *ngFor="let transaction of transactions"
+        [ngClass]="{'row-accrued': transaction.accrued === 1}">
           <td>{{ transaction.transaction_Id }}</td>
           <td>{{ transaction.transaction_Date | date }}</td>
           <td>{{ transaction.amount_Due_BOP ? (transaction.amount_Due_BOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.principal_BOP ? (transaction.principal_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ transaction.cash_Interest_BOP || '-' }}</td>
+          <td>{{ transaction.cash_Interest_BOP ? (transaction.cash_Interest_BOP | number:'1.0-0') : '-'}}</td>
           <td>{{ transaction.piK_Interest_BOP || '-' }}</td>
           <td>{{ transaction.undrawn_Amount ? (transaction.undrawn_Amount | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.cash_Interest_Accrued ? (transaction.cash_Interest_Accrued | number:'1.0-0') : '-' }}</td>
@@ -53,8 +56,12 @@
           <td>{{ transaction.piK_Interest_EOP ? (transaction.piK_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.undrawn_Interest_EOP ? (transaction.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.amount_Due_EOP ? (transaction.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
+          <td>{{ transaction.repayment ? (transaction.repayment | number:'1.0-0') : '-' }}</td>
+          <td>{{ transaction.withrawn_Principal ? (transaction.withrawn_Principal | number:'1.0-0') : '-' }}</td>
+
         </tr>
-        <tr class="table-projected" *ngFor="let projection of projections">
+        <tr class="table-projected" *ngFor="let projection of projections"
+        [ngClass]="{'row-projections': projection.projection === 1}">
           <td>Proj</td>
           <td>{{ projection.transaction_Date | date }}</td>
           <td>{{ projection.amount_Due_BOP ? (projection.amount_Due_BOP | number:'1.0-0') : '-' }}</td>
@@ -76,7 +83,7 @@
           <td>{{ projection.undrawn_Interest_EOP ? (projection.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.amount_Due_EOP ? (projection.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
         </tr>
-        <tr class="table-projected" *ngFor="let accruedValue of accrued">
+        <!-- <tr class="table-projected" *ngFor="let accruedValue of accrued">
           <td>acr</td>
           <td>{{ accruedValue.transaction_Date | date }}</td>
           <td>{{ accruedValue.amount_Due_BOP ? (accruedValue.amount_Due_BOP | number:'1.0-0') : '-' }}</td>
@@ -97,7 +104,7 @@
           <td>{{ accruedValue.piK_Interest_EOP ? (accruedValue.piK_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ accruedValue.undrawn_Interest_EOP ? (accruedValue.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ accruedValue.amount_Due_EOP ? (accruedValue.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
   </div>

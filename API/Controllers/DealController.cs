@@ -35,6 +35,7 @@ namespace API.Controllers
         private readonly DataContext _context;
         private TransactionService transactionService;
         private ExcelReader excelReader;
+        private FinancialMetrics financialMetrics;
 
         public DealController(DataContext context)
         {
@@ -52,38 +53,9 @@ namespace API.Controllers
         }
 
         [HttpGet("DealInformation/{dealName}")]
-        public async Task<ActionResult<IEnumerable<DealDTO>>> GetDealDetails(string DealName)
+        public async Task<ActionResult<IEnumerable<Deal>>> GetDealDetails(string dealName)
         {
-            var dealDetails = await _context.Deals.Where(t => string.Equals(t.Deal_Name, DealName)).
-                Select(t => new DealDTO
-                {
-                    Comments = t.Comments,
-                    Investment_date = t.Investment_date,
-                    Maturity_date = t.Maturity_date,
-                    Facility = t.Facility,
-                    Opening_fee = t.Opening_fee,
-                    //Availability_fee = t.Availability_fee,
-                    //Minimum_multiple = t.Minimum_multiple,
-                    //MOIC = t.MOIC,
-                    //IRR = t.IRR,
-                    //NAV = t.NAV,
-                    Underwriting_MOIC = t.Underwriting_MOIC,
-                    Underwriting_IRR = t.Underwriting_IRR,
-                    Underwriting_NAV = t.Underwriting_NAV,
-                    //First_CashInterest_Period_Rate = t.First_CashInterest_Period_Rate,
-                    //First_CashInterest_Period_EndPeriods = t.First_CashInterest_Period_EndPeriods,
-                    //Second_CashInterest_Period_Rate = t.Second_CashInterest_Period_Rate,
-                    //Second_CashInterest_Period_EndPeriods = t.Second_CashInterest_Period_EndPeriods,
-                    //Third_CashInterest_Period_Rate = t.Third_CashInterest_Period_Rate,
-                    //Third_CashInterest_Period_EndPeriods = t.Third_CashInterest_Period_EndPeriods,
-                    //First_PIKInterest_Period_Rate = t.First_PIKInterest_Period_Rate,
-                    //First_PIKInterest_Period_EndPeriods = t.First_PIKInterest_Period_EndPeriods,
-                    //Second_PIKInterest_Period_Rate = t.Second_PIKInterest_Period_Rate,
-                    //Second_PIKInterest_Period_EndPeriods = t.Second_PIKInterest_Period_EndPeriods,
-                    //Third_PIKInterest_Period_Rate = t.Third_PIKInterest_Period_Rate,
-                    //Third_PIKInterest_Period_EndPeriods = t.Third_PIKInterest_Period_EndPeriods
-
-                }).ToListAsync();
+            var dealDetails = await _context.Deals.Where(t => string.Equals(t.Deal_Name, dealName)).ToListAsync();
 
             return Ok(dealDetails);
 
@@ -91,26 +63,24 @@ namespace API.Controllers
         }
 
         [HttpGet("FacilityInformation/{dealName}")]
-        public async Task<ActionResult<FacilityInformationDTO>> GetFacilityDetails(string dealName)
+        public async Task<ActionResult<FinancialMetrics>> GetFacilityDetails(string dealName)
         {
-            var deal = await _context.Deals
-                .Where(d => string.Equals(dealName, d.Deal_Name))
-                .Select(d => new FacilityInformationDTO
-                {
-                    Facility = d.Facility,
-                    UndrawnAmount = _context.Transactions
-                        .Where(t => t.Deal_Name == dealName)
-                        .OrderByDescending(t => t.Transaction_Date)
-                        .Select(t => t.Undrawn_Amount)
-                        .FirstOrDefault()
-                }).FirstOrDefaultAsync();
+            //var deal = await _context.Deals
+            //    .Where(d => string.Equals(dealName, d.Deal_Name))
+            //    .Select(d => new FacilityInformationDTO
+            //    {
+            //        Facility = d.Facility,
+            //        UndrawnAmount = _context.Transactions
+            //            .Where(t => t.Deal_Name == dealName)
+            //            .OrderByDescending(t => t.Transaction_Date)
+            //            .Select(t => t.Undrawn_Amount)
+            //            .FirstOrDefault()
+            //    }).FirstOrDefaultAsync();
 
-            if (deal == null)
-            {
-                return NotFound();
-            }
+            FinancialMetrics metrics = transactionService.MetricsCalculations(dealName);
 
-            return Ok(deal);
+
+            return Ok(metrics);
         }
 
         //[HttpGet("DealbyFunds/{fundId}")]

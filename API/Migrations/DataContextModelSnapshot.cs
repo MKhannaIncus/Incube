@@ -500,8 +500,8 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<bool?>("Accrued")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<int?>("Accrued")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Amount_Due_BOP")
                         .HasColumnType("decimal(18,2)");
@@ -551,8 +551,8 @@ namespace API.Migrations
                     b.Property<decimal?>("Principal_EOP")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool?>("Projection")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<int?>("Projection")
+                        .HasColumnType("int");
 
                     b.Property<string>("Related_Deal_Id")
                         .HasColumnType("longtext");
@@ -588,6 +588,9 @@ namespace API.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Undrawn_Interest_EOP")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Withrawn_Principal")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Transaction_Id");

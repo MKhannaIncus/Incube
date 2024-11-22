@@ -163,31 +163,22 @@ table .label {
   border: 1px solid #dddddd; /* Subtle border color */
 }
 
+
+.row-accrued td {
+  background-color: #F87171;
+  color: rgb(112, 0, 0);; /* Optional: makes text readable */
+}
+
+.row-projection td {
+  background-color: blue;
+  color: rgb(112, 0, 0);
+}
+
 /* Style for header */
 .transaction-table th {
   background-color: #1d3b73; /* Darker blue for the header */
   color: #ffffff;
   font-weight: bold;
-}
-
-/* Add hover effect on rows */
-.transaction-table tbody tr:hover {
-  background-color: #e2e8f0; /* Light hover effect */
-}
-
-/* Alternating row background color */
-.transaction-table tbody tr:nth-child(odd) {
-  background-color: #f9fafb; /* Lighter background for odd rows */
-}
-
-.transaction-table tbody tr:nth-child(even) {
-  background-color: #ffffff; /* White background for even rows */
-}
-
-/* Projected rows (if you want them to look different) */
-.transaction-table .table-projected {
-  background-color: #e0f7fa; /* Light blue for projected rows */
-  color: #265AA6; /* Darker text for contrast */
 }
 
 /* Make headers sticky */
@@ -210,3 +201,4 @@ table .label {
 .table-container {
   padding: 2%;
 }
+

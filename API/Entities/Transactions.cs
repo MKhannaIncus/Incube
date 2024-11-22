@@ -24,6 +24,7 @@ namespace API.Entities
         public decimal? PIK_Interest_Rate { get; set; }
         public decimal? Undrawn_Fee_Interest_Rate { get; set; }
         public decimal? Undrawn_Amount { get; set; }
+        public decimal? Withrawn_Principal { get; set; }
         public decimal? Cash_Interest_Accrued { get; set; }
         public decimal? PIK_Interest_Accrued { get; set; }
         public decimal? Undrawn_Interest_Accrued { get; set; }
@@ -39,8 +40,8 @@ namespace API.Entities
         public decimal? Undrawn_Interest_EOP { get; set; }
         public decimal? Amount_Due_EOP { get; set; }
         public decimal? Drawdown { get; set; }
-        public Boolean? Projection { get; set; }
+        public int? Projection { get; set; }
         
-        public Boolean? Accrued { get; set; }
+        public int? Accrued { get; set; }
     }
 }

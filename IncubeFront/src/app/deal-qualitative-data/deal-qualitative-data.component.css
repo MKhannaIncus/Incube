@@ -25,8 +25,9 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
-    margin-left: 7%;
     margin-right: 4%;
+    margin-left: 2%;
+
   }
   
   /* GRID LAYOUT */
@@ -48,6 +49,10 @@
     font-size: 24px;
     /* font-weight: bold; */
     color: black; /* White text */
+        /* Font improvements */
+        font-family: 'Arial', sans-serif; /* Use a clean and professional font */
+        font-weight: bold; /* Make the text bold */
+        color: #333; /* Set a darker text color for better readability */
   }
   
   .date-input label {

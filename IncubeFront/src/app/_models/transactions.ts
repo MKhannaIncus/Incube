@@ -28,5 +28,8 @@ export interface Transaction {
     undrawn_Interest_EOP?: number;
     amount_Due_EOP?: number;
     drawdown?: number;
+    accrued?: number;
+    projection?: number;
+    withrawn_Principal?: number;
   }
   
