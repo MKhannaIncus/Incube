@@ -19,6 +19,8 @@ namespace API.Entities
         public decimal? Principal_BOP { get; set; }
         public decimal? Cash_Interest_BOP { get; set; }
         public decimal? PIK_Interest_BOP { get; set; }
+        public decimal? PIYC_Interest_BOP { get; set; }
+
         public decimal? Undrawn_Interest_BOP { get; set; }
         public decimal? Cash_Interest_Rate { get; set; }
         public decimal? PIK_Interest_Rate { get; set; }
@@ -27,6 +29,7 @@ namespace API.Entities
         public decimal? Withrawn_Principal { get; set; }
         public decimal? Cash_Interest_Accrued { get; set; }
         public decimal? PIK_Interest_Accrued { get; set; }
+        public decimal? PIYC_Interest_Accrued { get; set; }
         public decimal? Undrawn_Interest_Accrued { get; set; }
         public decimal? Repayment { get; set; }
         public decimal? Repayment_CashInterest { get; set; }
@@ -37,6 +40,7 @@ namespace API.Entities
         public decimal? Principal_EOP { get; set; }
         public decimal? Cash_Interest_EOP { get; set; }
         public decimal? PIK_Interest_EOP { get; set; }
+        public decimal? PIYC_Interest_EOP { get; set; }
         public decimal? Undrawn_Interest_EOP { get; set; }
         public decimal? Amount_Due_EOP { get; set; }
         public decimal? Drawdown { get; set; }

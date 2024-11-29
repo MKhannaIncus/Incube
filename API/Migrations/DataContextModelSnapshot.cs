@@ -545,6 +545,15 @@ namespace API.Migrations
                     b.Property<decimal?>("PIK_Interest_Rate")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal?>("PIYC_Interest_Accrued")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PIYC_Interest_BOP")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PIYC_Interest_EOP")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("Principal_BOP")
                         .HasColumnType("decimal(18,2)");
 

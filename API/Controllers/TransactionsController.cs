@@ -49,7 +49,12 @@ namespace API.Controllers
         [HttpGet("TransactionsFromDeal/{DealId}")]
         public async Task<List<Transaction>> GetTransactionsForDeals(string DealId)
         {
-            List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Deal_Name, DealId)).ToListAsync();
+            //List<Transaction> transactionForDeal = await _context.Transactions.Where(t => string.Equals(t.Deal_Name, DealId)).ToListAsync();
+
+            List<Transaction> transactionForDeal = await _context.Transactions
+                    .Where(t => string.Equals(t.Deal_Name, DealId))
+                    .OrderBy(t => t.Transaction_Date) // Replace TransactionDate with your date column
+                    .ToListAsync();
 
 
             return transactionForDeal;
@@ -129,7 +134,7 @@ namespace API.Controllers
             // Save changes to persist the deletion
             _context.SaveChanges();
 
-            List<Transaction> result = await _transactionService.CombineTransactionsandAccrued(relatedDeal);
+            List<Transaction> result = await _transactionService.CombineTransactionsandAccruedTest(relatedDeal);
 
             return result;
         }

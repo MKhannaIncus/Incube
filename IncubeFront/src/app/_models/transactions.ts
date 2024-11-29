@@ -8,6 +8,7 @@ export interface Transaction {
     principal_BOP?: number;
     cash_Interest_BOP?: number;
     piK_Interest_BOP?: number;
+    piyC_Interest_BOP?: number;
     undrawn_Interest_BOP?: number;
     cash_Interest_Rate?: number;
     piK_Interest_Rate?: number;
@@ -15,6 +16,7 @@ export interface Transaction {
     undrawn_Amount?: number;
     cash_Interest_Accrued?: number;
     piK_Interest_Accrued?: number;
+    piyC_Interest_Accrued?: number;
     undrawn_Interest_Accrued?: number;
     repayment?: number;
     repayment_CashInterest?: number;
@@ -25,6 +27,7 @@ export interface Transaction {
     principal_EOP?: number;
     cash_Interest_EOP?: number;
     piK_Interest_EOP?: number;
+    piyC_Interest_EOP?: number;
     undrawn_Interest_EOP?: number;
     amount_Due_EOP?: number;
     drawdown?: number;

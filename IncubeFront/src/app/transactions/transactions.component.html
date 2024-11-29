@@ -5,12 +5,12 @@
         <tr>
           <th rowspan="2">Transaction ID</th>
           <th rowspan="2">Transaction Date</th>
-          <th colspan="4">BOP</th>
+          <th colspan="5">BOP</th> <!-- Updated to include PIYC -->
           <th rowspan="2">Undrawn Amount</th>
-          <th colspan="3">Accrued</th>
+          <th colspan="4">Accrued</th> <!-- Updated to include PIYC -->
           <th colspan="4">Repayments</th>
           <th rowspan="2">Capitalized</th>
-          <th colspan="4">EOP</th>
+          <th colspan="5">EOP</th> <!-- Updated to include PIYC -->
           <th rowspan="2">Amount Due EOP</th>
           <th rowspan="2">Repayment</th>
           <th rowspan="2">Withdrawn Amount</th>
@@ -20,8 +20,10 @@
           <th>Principal</th>
           <th>Cash Interest</th>
           <th>PIK Interest</th>
+          <th>PIYC Interest</th> <!-- Added PIYC -->
           <th>Cash Interest</th>
           <th>PIK Interest</th>
+          <th>PIYC Interest</th> <!-- Added PIYC -->
           <th>Undrawn Interest</th>
           <th>Cash Interest</th>
           <th>PIK Interest</th>
@@ -30,21 +32,24 @@
           <th>Principal</th>
           <th>Cash Interest</th>
           <th>PIK Interest</th>
+          <th>PIYC Interest</th> <!-- Added PIYC -->
           <th>Undrawn Interest</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let transaction of transactions"
-        [ngClass]="{'row-accrued': transaction.accrued === 1}">
+            [ngClass]="{'row-accrued': transaction.accrued === 1}">
           <td>{{ transaction.transaction_Id }}</td>
           <td>{{ transaction.transaction_Date | date }}</td>
           <td>{{ transaction.amount_Due_BOP ? (transaction.amount_Due_BOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.principal_BOP ? (transaction.principal_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ transaction.cash_Interest_BOP ? (transaction.cash_Interest_BOP | number:'1.0-0') : '-'}}</td>
-          <td>{{ transaction.piK_Interest_BOP || '-' }}</td>
+          <td>{{ transaction.cash_Interest_BOP ? (transaction.cash_Interest_BOP | number:'1.0-0') : '-' }}</td>
+          <td>{{ transaction.piK_Interest_BOP ? (transaction.piK_Interest_BOP | number:'1.0-0') : '-' }}</td>
+          <td>{{ transaction.piyC_Interest_BOP ? (transaction.piyC_Interest_BOP | number:'1.0-0') : '-' }}</td> <!-- Added PIYC BOP -->
           <td>{{ transaction.undrawn_Amount ? (transaction.undrawn_Amount | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.cash_Interest_Accrued ? (transaction.cash_Interest_Accrued | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.piK_Interest_Accrued ? (transaction.piK_Interest_Accrued | number:'1.0-0') : '-' }}</td>
+          <td>{{ transaction.piyC_Interest_Accrued ? (transaction.piyC_Interest_Accrued | number:'1.0-0') : '-' }}</td> <!-- Added PIYC Accrued -->
           <td>{{ transaction.undrawn_Interest_Accrued ? (transaction.undrawn_Interest_Accrued | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.repayment_CashInterest ? (transaction.repayment_CashInterest | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.repayment_PIKInterest ? (transaction.repayment_PIKInterest | number:'1.0-0') : '-' }}</td>
@@ -54,23 +59,25 @@
           <td>{{ transaction.principal_EOP ? (transaction.principal_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.cash_Interest_EOP ? (transaction.cash_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.piK_Interest_EOP ? (transaction.piK_Interest_EOP | number:'1.0-0') : '-' }}</td>
+          <td>{{ transaction.piyC_Interest_EOP ? (transaction.piyC_Interest_EOP | number:'1.0-0') : '-' }}</td> <!-- Added PIYC EOP -->
           <td>{{ transaction.undrawn_Interest_EOP ? (transaction.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.amount_Due_EOP ? (transaction.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.repayment ? (transaction.repayment | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.withrawn_Principal ? (transaction.withrawn_Principal | number:'1.0-0') : '-' }}</td>
-
         </tr>
         <tr class="table-projected" *ngFor="let projection of projections"
-        [ngClass]="{'row-projections': projection.projection === 1}">
+            [ngClass]="{'row-projections': projection.projection === 1}">
           <td>Proj</td>
           <td>{{ projection.transaction_Date | date }}</td>
           <td>{{ projection.amount_Due_BOP ? (projection.amount_Due_BOP | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.principal_BOP ? (projection.principal_BOP | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.cash_Interest_BOP ? (projection.cash_Interest_BOP | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.piK_Interest_BOP ? (projection.piK_Interest_BOP | number:'1.0-0') : '-' }}</td>
+          <td>{{ projection.piyC_Interest_BOP ? (projection.piyC_Interest_BOP | number:'1.0-0') : '-' }}</td> <!-- Added PIYC BOP -->
           <td>{{ projection.undrawn_Amount ? (projection.undrawn_Amount | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.cash_Interest_Accrued ? (projection.cash_Interest_Accrued | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.piK_Interest_Accrued ? (projection.piK_Interest_Accrued | number:'1.0-0') : '-' }}</td>
+          <td>{{ projection.piyC_Interest_Accrued ? (projection.piyC_Interest_Accrued | number:'1.0-0') : '-' }}</td> <!-- Added PIYC Accrued -->
           <td>{{ projection.undrawn_Interest_Accrued ? (projection.undrawn_Interest_Accrued | number:'1.0-0') : '-' }}</td>
           <td>-</td>
           <td>-</td>
@@ -80,31 +87,10 @@
           <td>{{ projection.principal_EOP ? (projection.principal_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.cash_Interest_EOP ? (projection.cash_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.piK_Interest_EOP ? (projection.piK_Interest_EOP | number:'1.0-0') : '-' }}</td>
+          <td>{{ projection.piyC_Interest_EOP ? (projection.piyC_Interest_EOP | number:'1.0-0') : '-' }}</td> <!-- Added PIYC EOP -->
           <td>{{ projection.undrawn_Interest_EOP ? (projection.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ projection.amount_Due_EOP ? (projection.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
         </tr>
-        <!-- <tr class="table-projected" *ngFor="let accruedValue of accrued">
-          <td>acr</td>
-          <td>{{ accruedValue.transaction_Date | date }}</td>
-          <td>{{ accruedValue.amount_Due_BOP ? (accruedValue.amount_Due_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.principal_BOP ? (accruedValue.principal_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.cash_Interest_BOP ? (accruedValue.cash_Interest_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.piK_Interest_BOP ? (accruedValue.piK_Interest_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.undrawn_Amount ? (accruedValue.undrawn_Amount | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.cash_Interest_Accrued ? (accruedValue.cash_Interest_Accrued | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.piK_Interest_Accrued ? (accruedValue.piK_Interest_Accrued | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.undrawn_Interest_Accrued ? (accruedValue.undrawn_Interest_Accrued | number:'1.0-0') : '-' }}</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>{{ accruedValue.capitalized ? (accruedValue.capitalized | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.principal_EOP ? (accruedValue.principal_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.cash_Interest_EOP ? (accruedValue.cash_Interest_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.piK_Interest_EOP ? (accruedValue.piK_Interest_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.undrawn_Interest_EOP ? (accruedValue.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ accruedValue.amount_Due_EOP ? (accruedValue.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
-        </tr> -->
       </tbody>
     </table>
   </div>
