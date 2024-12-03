@@ -40,7 +40,7 @@ namespace API.Controllers
         public DealController(DataContext context)
         {
             _context = context;
-            transactionService = new TransactionService(null, _context);
+            //transactionService = new TransactionService(null, _context);
             excelReader = new ExcelReader();
         }
 

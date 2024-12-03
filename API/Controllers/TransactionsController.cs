@@ -111,6 +111,8 @@ namespace API.Controllers
             // Save changes to persist the deletion
             _context.SaveChanges();
 
+
+
             List<Transaction> result = await _transactionService.TransactionsFromCashRec(relatedDeal);
 
             return result;
@@ -134,7 +136,10 @@ namespace API.Controllers
             // Save changes to persist the deletion
             _context.SaveChanges();
 
+            //List<Transaction> resultAccrued = await _transactionService.AccruedValuesLoopOne(relatedDeal);
+
             List<Transaction> result = await _transactionService.CombineTransactionsandAccruedTest(relatedDeal);
+            //List<Transaction> result = await _transactionService.AccruedValuesLoopOne(relatedDeal);
 
             return result;
         }
@@ -163,21 +168,21 @@ namespace API.Controllers
 
         //Calculate the PIK Accrued related to the deal and outputs them 
         //Not saved in the database
-        [HttpGet("Accrued/PIKInterest/{dealName}")]
-        public async Task<List<Transaction>> AccruedPIKTransactions(string dealName)
-        {
-            List<Transaction> AccruedValues = new List<Transaction>();
+        //[HttpGet("Accrued/PIKInterest/{dealName}")]
+        //public async Task<List<Transaction>> AccruedPIKTransactions(string dealName)
+        //{
+        //    List<Transaction> AccruedValues = new List<Transaction>();
 
-            Transaction lastTransaction = new Transaction();
-            lastTransaction = await GetMostRecentTransactions(dealName);
+        //    Transaction lastTransaction = new Transaction();
+        //    lastTransaction = await GetMostRecentTransactions(dealName);
 
-            Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
+        //    Deal relatedDeal = _context.Deals.Where(d => d.Deal_Name == dealName).FirstOrDefault();
 
-            AccruedValues = _transactionService.PreviousAccruedPIK(relatedDeal);
+        //    AccruedValues = _transactionService.PreviousAccruedPIK(relatedDeal);
 
-            return AccruedValues;
+        //    return AccruedValues;
 
-        }
+        //}
 
         //Caclulates accrued PIK and Cash interests
         //Not saved in the database

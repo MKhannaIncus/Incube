@@ -22,13 +22,15 @@ namespace API.Services
     public class TransactionService : ITransactionService
     {
         private readonly DataContext _context;
+        private readonly DataContext _DBcontext;
         private readonly ILogger<BackgroundTaskService> _logger;
         public readonly Deal deal;
 
-        public TransactionService(ILogger<BackgroundTaskService> logger, DataContext context)
+        public TransactionService(ILogger<BackgroundTaskService> logger, DataContext context, DataContext DBContext)
         {
             _context = context;
             _logger = logger;
+            _DBcontext = DBContext;
 
         }
 
@@ -41,7 +43,7 @@ namespace API.Services
         {
             decimal? RemainingAfterCash;
             //Get the most recent transaction from the table
-            //Transaction newTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == incomingTransaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
+            //Transaction newTransactionInvestment = await _context.Transactions.Where(t => t.Related_Deal_Id == incomingTransaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
             Transaction newTransaction = await _context.Transactions.Where(t => t.Related_Deal_Id == incomingTransaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Id).FirstOrDefaultAsync();
 
 
@@ -71,7 +73,7 @@ namespace API.Services
                 {
                     //The cash interest is paid off
                     newTransaction.Repayment_CashInterest = newTransaction.Cash_Interest_BOP;
-                    //newTransaction.Cash_Interest_EOP = 0;
+                    //newTransactionInvestment.Cash_Interest_EOP = 0;
 
                     #region PIK Interest
                     decimal? RemainingAfterPIK = RemainingAfterCash - newTransaction.PIK_Interest_BOP;
@@ -184,162 +186,6 @@ namespace API.Services
         #endregion
 
         #region ACCRUED VALUES -> Automatic deployment
-
-        #region PREVIOUS ACCRUED FUNCTIONS
-        //public async Task<Transaction> AccruedValues(Transaction transaction)
-        //{
-        //    //Calculate accrued values according to rate
-        //    //Cash interest is calfculated on the principal payed in the beginning of time or principal in that moment(if the client has already payed?)
-
-        //    //if last recorded entry is greater than amount of time --  calculate values
-        //    //var mostRecentTransactionDate = await _context.Transactions.Where(t => t.Related_Deal_Id == transaction.Related_Deal_Id).OrderByDescending(t => t.Transaction_Date).ThenByDescending(t => t.Transaction_Id).Select(t => t.Transaction_Date).FirstOrDefaultAsync();
-        //    //var cashInterestPeriod = await _context.Transactions.Where
-
-
-        //    var relatedDealId = transaction.Related_Deal_Id;
-        //    int? cashInterestPeriod = _context.Deals.Where(d => string.Equals(d.Deal_Id, relatedDealId)).Select(d => d.Cash_Interest_Period).FirstOrDefault();
-
-        //    _logger.LogInformation("Testing");
-
-        //    if (cashInterestPeriod != null)
-        //    {
-        //        var timePassed = DateTime.Now.AddMonths(-cashInterestPeriod.Value);
-
-        //        //calculating most recent transaction
-        //        var mostRecentTransactionDate = await _context.Transactions.Where(t => string.Equals(t.Related_Deal_Id, relatedDealId))
-        //                                                                    .OrderByDescending(t => t.Transaction_Date)
-        //                                                                    .ThenByDescending(t => t.Transaction_Id)
-        //                                                                    .Select(t => t.Transaction_Date)
-        //                                                                    .FirstOrDefaultAsync();
-
-        //        if (mostRecentTransactionDate > timePassed)
-        //        {
-        //            // The most recent transaction date is within the interest period
-        //            Console.WriteLine("The most recent transaction date is within the calculated interest period.");
-        //        }
-        //        else
-        //        {
-        //            // The most recent transaction date is not within the interest period
-        //            //if it is out of the interest period, accrued values need to be calculated
-        //            Console.WriteLine("The most recent transaction date is not within the calculated interest period.");
-        //        }
-
-        //    }
-        //    //Getting how long it has passed
-
-
-
-        //    transaction.Cash_Interest_Accrued = transaction.Principal_BOP * (transaction.Cash_Interest_Rate / 100);
-        //    transaction.PIK_Interest_Accrued = transaction.Amount_Due_BOP * (transaction.Cash_Interest_Rate / 100);
-        //    transaction.Undrawn_Interest_Accrued = transaction.Undrawn_Amount * (transaction.Undrawn_Interest_Accrued / 100);
-
-        //    return transaction;
-
-        //}
-
-        //
-
-        public Transaction AccruedCash(Transaction mostRecentTransaction, Deal deal)
-        {
-
-            List<Transaction> AccruedCashList = new List<Transaction>();
-            Transaction transactionCreatedCash = new Transaction();
-
-            int monthsPassed = mostRecentTransaction.Transaction_Date.Month - DateTime.Now.Month;
-
-            while (monthsPassed > int.Parse(deal.Interest_Period))
-            {
-                transactionCreatedCash.Occurred = false;
-                transactionCreatedCash.Transaction_Date = mostRecentTransaction.Transaction_Date.AddDays(deal.Interest_Period.Length);
-                transactionCreatedCash.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
-                transactionCreatedCash.Principal_BOP = mostRecentTransaction.Amount_Due_EOP;
-                transactionCreatedCash.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
-                transactionCreatedCash.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
-                transactionCreatedCash.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
-
-                //transactionCreatedCash.Cash_Interest_Accrued = (transactionCreatedCash.Amount_Due_BOP * deal.First_CashInterest_Period_Rate) + transactionCreatedCash.Amount_Due_BOP;
-                transactionCreatedCash.Principal_EOP = transactionCreatedCash.Principal_BOP;
-                transactionCreatedCash.Cash_Interest_EOP = transactionCreatedCash.Cash_Interest_BOP + transactionCreatedCash.Cash_Interest_Accrued;
-                transactionCreatedCash.PIK_Interest_EOP = transactionCreatedCash.PIK_Interest_BOP;
-                transactionCreatedCash.Undrawn_Interest_EOP = transactionCreatedCash.Undrawn_Interest_BOP;
-                transactionCreatedCash.Amount_Due_EOP = transactionCreatedCash.Amount_Due_BOP + transactionCreatedCash.Cash_Interest_Accrued;
-
-                AccruedCashList.Add(transactionCreatedCash);
-
-                //Recalculate months passed
-                monthsPassed = transactionCreatedCash.Transaction_Date.Month - DateTime.Now.Month;
-            }
-
-
-            //needs to BE PERSISTED INTO THE DATABASE
-
-            return transactionCreatedCash;
-
-        }
-
-        public List<Transaction> PreviousAccruedPIK(Deal deal)
-        {
-
-            List<Transaction> AccruedPIKList = new List<Transaction>();
-            Transaction transactionCreatedPIK = new Transaction();
-            Transaction lastTransaction = new Transaction();
-
-            lastTransaction = _context.Transactions.Where(t => t.Deal_Name == deal.Deal_Name)
-                .OrderByDescending(t => t.Transaction_Date)
-                .FirstOrDefault();
-
-            if (lastTransaction != null)
-            {
-                //Make sure that the time frame between the last transaction made and present date is equal to investment period
-                //If it is more than the present date, its not accrued values, its projected
-                int monthsPassed = (DateTime.Now.Year - lastTransaction.Transaction_Date.Year) * 12
-                                 + DateTime.Now.Month - lastTransaction.Transaction_Date.Month;
-
-                // A variable to keep track of the rolling transaction date
-                DateTime rollingTransactionDate = lastTransaction.Transaction_Date;
-
-                while (monthsPassed >= int.Parse(deal.Interest_Period) && int.Parse(deal.Interest_Period) > 0)
-                {
-                    transactionCreatedPIK.Occurred = false;
-
-                    // Set rollingTransaction.Transaction_Date to the new rolling date
-                    rollingTransactionDate = rollingTransactionDate.AddMonths(int.Parse(deal.Interest_Period));
-                    transactionCreatedPIK.Transaction_Date = rollingTransactionDate;
-
-                    transactionCreatedPIK.Deal_Name = deal.Deal_Name;
-                    transactionCreatedPIK.Amount_Due_BOP = (lastTransaction.Amount_Due_EOP ?? 0);
-                    transactionCreatedPIK.Principal_BOP = (lastTransaction.Principal_EOP ?? 0);
-                    transactionCreatedPIK.Cash_Interest_BOP = lastTransaction.Cash_Interest_EOP;
-                    transactionCreatedPIK.PIK_Interest_BOP = lastTransaction.PIK_Interest_EOP;
-                    transactionCreatedPIK.Undrawn_Interest_BOP = lastTransaction.Undrawn_Interest_EOP;
-
-                    transactionCreatedPIK.Cash_Interest_EOP = transactionCreatedPIK.Cash_Interest_BOP;
-                    // Calculating PIK interest generated
-                    transactionCreatedPIK.PIK_Interest_Accrued = (transactionCreatedPIK.Amount_Due_BOP * deal.PIKInterest_Rate_1st) + transactionCreatedPIK.Amount_Due_BOP;
-
-                    //If PIK interest BOP is null it will not add the PIK value
-                    transactionCreatedPIK.PIK_Interest_EOP = (transactionCreatedPIK.PIK_Interest_BOP ?? 0) + transactionCreatedPIK.PIK_Interest_Accrued;
-
-                    //The principal stays the same becuase nothing is capitalized
-                    transactionCreatedPIK.Principal_EOP = transactionCreatedPIK.Principal_BOP;
-                    transactionCreatedPIK.Undrawn_Interest_EOP = transactionCreatedPIK.Undrawn_Interest_BOP;
-                    transactionCreatedPIK.Amount_Due_EOP = (transactionCreatedPIK.Amount_Due_BOP ?? 0) + transactionCreatedPIK.PIK_Interest_Accrued;
-                    transactionCreatedPIK.Accrued = 1;
-
-                    AccruedPIKList.Add(transactionCreatedPIK);
-
-                    // Update rollingTransaction to the current rollingTransaction for next iteration
-                    lastTransaction = transactionCreatedPIK;
-
-                    // Recalculate monthsPassed based on the updated rollingTransactionDate
-                    monthsPassed = (DateTime.Now.Year - rollingTransactionDate.Year) * 12
-                                 + DateTime.Now.Month - rollingTransactionDate.Month;
-                }
-            }
-            return AccruedPIKList;
-        }
-
-        #endregion
 
         public List<Transaction> PIKAccrued(Deal deal)
         {
@@ -614,7 +460,7 @@ namespace API.Services
                             newTransaction.PIK_Interest_BOP = (lastTransaction.PIK_Interest_EOP ?? 0);
                             newTransaction.Undrawn_Interest_BOP = lastTransaction.Undrawn_Interest_EOP;
 
-                            //newTransaction.Cash_Interest_BOP = (newTransaction.Cash_Interest_EOP ?? 0);
+                            //newTransactionInvestment.Cash_Interest_BOP = (newTransactionInvestment.Cash_Interest_EOP ?? 0);
                             // Calculating PIK interest generated
                             newTransaction.Cash_Interest_Accrued = (newTransaction.Amount_Due_BOP * deal.CashInterest_Rate_1st) + newTransaction.Amount_Due_BOP;
 
@@ -751,27 +597,6 @@ namespace API.Services
 
 
             return newMetrics;
-        }
-
-        #endregion
-
-        #region INJECT VALUES- First Inputs
-        public async Task<Transaction> FirstTransaction(Deal deal)
-        {
-            Transaction transaction = new Transaction();
-            transaction.Transaction_Id = 140;
-            transaction.Related_Deal_Id = deal.Deal_Id;
-            transaction.Amount_Due_BOP = 0;
-            transaction.Principal_BOP = 0;
-            transaction.Cash_Interest_BOP = 0;
-            transaction.Undrawn_Amount = deal.Facility;
-            //transaction.Drawdown = deal.Drawdown;
-            //transaction.Principal_EOP = deal.Drawdown;
-            //transaction.Amount_Due_EOP = deal.Drawdown;
-
-            _context.Transactions.Add(transaction);
-            await _context.SaveChangesAsync();
-            return transaction;
         }
 
         #endregion
@@ -925,102 +750,16 @@ namespace API.Services
                         transactionsCreated.Add(newTransaction);
                     }
                 }
-                //_context.Transactions.Add(newTransaction);
+                //_context.Transactions.Add(newTransactionInvestment);
                 //await _context.SaveChangesAsync();
 
-                //transactionsCreated.Add(newTransaction);
+                //transactionsCreated.Add(newTransactionInvestment);
             }
 
 
             return transactionsCreated;
         }
 
-        //Further Processing Cash rec transactions passed
-        public async Task<Transaction> ProcessTransactionSubType(Deal deal, Transaction mostRecentTransaction, Transaction newTransaction, Cash_Rec movement)
-        {
-            // Set the BOP values from the most recent transaction
-            //newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
-            //newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
-            //newTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
-            //newTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
-
-            if (!decimal.TryParse(movement.TransactionAmount, out decimal transactionAmount))
-            {
-                throw new Exception("Invalid transaction amount in CashRec");
-            }
-
-            // Handle Collection -- What is payed back by the borrower
-            if (movement.Type == "Collection")
-            {
-                newTransaction.Repayment = transactionAmount;
-
-                if (movement.SubType == "Interest")
-                {
-                    if (transactionAmount != null)
-                    {
-                        //Process PIK first
-                        if (mostRecentTransaction.PIK_Interest_EOP != null)
-                        {
-                            newTransaction.Repayment_PIKInterest = transactionAmount;
-                            newTransaction.PIK_Interest_EOP = (newTransaction.PIK_Interest_BOP ?? 0) - newTransaction.Repayment_PIKInterest;
-                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_PIKInterest ?? 0);
-                            newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0);
-
-                            //Check if there is remaining after paying PIK
-                            decimal? remainingAmountAfterPIK = (mostRecentTransaction.PIK_Interest_EOP ?? 0) - transactionAmount;
-
-                            //Incase there is remaining, pay Cash Interest
-                            if (remainingAmountAfterPIK != null)
-                            {
-                                //What if there is more repayment than cash interest
-                                newTransaction.Repayment_CashInterest = newTransaction.Cash_Interest_BOP - remainingAmountAfterPIK;
-                                newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0);
-                                newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_CashInterest ?? 0);
-                            
-                            }
-
-                        }
-                        //If PIK accrued till this point is null, process cash
-                        else
-                        {
-                            //Need to put a condition if the cashInterest is less than transactionAmount
-                            newTransaction.Repayment_CashInterest = transactionAmount;
-                            newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0) - newTransaction.Repayment_CashInterest;
-                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_CashInterest ?? 0);
-                            newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
-                        }
-                    }
-
-                    newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0);
-
-
-                }
-                else if (movement.SubType == "Principal")
-                {
-                    //Assuming that the entire transactonAmount is not in excess when paying the principal
-                    newTransaction.Repayment_Principal = transactionAmount;
-                    newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0) + transactionAmount;
-                    newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) + transactionAmount;
-                    newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
-                    newTransaction.PIK_Interest_EOP = newTransaction.PIK_Interest_BOP;
-                }
-            }
-            // Handle Investment -- what is given to the borrower
-            else if (movement.Type == "Investment")
-            {
-                newTransaction.Withrawn_Principal = transactionAmount;
-                newTransaction.Drawdown = transactionAmount;
-                newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0) + transactionAmount;
-                newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) + transactionAmount;
-                newTransaction.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0) - Math.Abs(transactionAmount);
-
-                newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
-                newTransaction.PIK_Interest_EOP = newTransaction.PIK_Interest_BOP;
-                newTransaction.Undrawn_Interest_EOP = newTransaction.Undrawn_Interest_BOP;
-            }
-
-            return newTransaction;
-        }
 
         #endregion
 
@@ -1038,7 +777,7 @@ namespace API.Services
         //    foreach (Cash_Rec movement in dealsCashRec)
         //    {
         //        //Create new transaction each time
-        //        Transaction newTransaction = new Transaction();
+        //        Transaction newTransactionInvestment = new Transaction();
 
 
         //        // Check and retrieve if there is a related deal
@@ -1073,7 +812,7 @@ namespace API.Services
         //            double totalMonths = 0;
 
         //            //most recent accrued values
-        //            Transaction mostRecentAccrued = await _context.Transactions
+        //            Transaction mostRecentTransaction = await _context.Transactions
         //                                .Where(t => t.Deal_Name == movement.Project && t.Accrued == 1)
         //                                .OrderByDescending(t => t.Transaction_Date)
         //                                .ThenByDescending(t => t.Transaction_Id)
@@ -1101,9 +840,9 @@ namespace API.Services
         //            //most recent accrued
         //            if (int.TryParse(dealRelated.Interest_Period, out int months))
         //            {
-        //                if (mostRecentAccrued != null)
+        //                if (mostRecentTransaction != null)
         //                {
-        //                    rollingTransactionDate = mostRecentAccrued.Transaction_Date.AddMonths(months);
+        //                    rollingTransactionDate = mostRecentTransaction.Transaction_Date.AddMonths(months);
         //                }
         //                else
         //                {
@@ -1117,17 +856,17 @@ namespace API.Services
         //                Transaction newAccruedTransactionPIK = new Transaction();
 
 
-        //                if (mostRecentAccrued != null)
+        //                if (mostRecentTransaction != null)
         //                {
-        //                    newAccruedTransactionCash = AccruedCash(newAccruedTransactionCash, mostRecentAccrued, rollingTransactionDate, deal);
+        //                    newAccruedTransactionCash = AccruedCash(newAccruedTransactionCash, mostRecentTransaction, rollingTransactionDate, deal);
         //                    AccruedCashList.Add(newAccruedTransactionCash);
 
         //                    _context.Transactions.Add(newAccruedTransactionCash);
         //                    await _context.SaveChangesAsync();
 
-        //                    mostRecentAccrued = newAccruedTransactionCash;
+        //                    mostRecentTransaction = newAccruedTransactionCash;
 
-        //                    newAccruedTransactionPIK = AccruedPIK(newAccruedTransactionPIK, mostRecentAccrued, rollingTransactionDate, deal);
+        //                    newAccruedTransactionPIK = AccruedPIK(newAccruedTransactionPIK, mostRecentTransaction, rollingTransactionDate, deal);
         //                    AccruedCashList.Add(newAccruedTransactionPIK);
 
 
@@ -1150,9 +889,9 @@ namespace API.Services
         //                    _context.Transactions.Add(newAccruedTransactionCash);
         //                    await _context.SaveChangesAsync();
 
-        //                    mostRecentAccrued = newAccruedTransactionCash;
+        //                    mostRecentTransaction = newAccruedTransactionCash;
 
-        //                    newAccruedTransactionPIK = AccruedPIK(newAccruedTransactionPIK, mostRecentAccrued, rollingTransactionDate, deal);
+        //                    newAccruedTransactionPIK = AccruedPIK(newAccruedTransactionPIK, mostRecentTransaction, rollingTransactionDate, deal);
         //                    AccruedCashList.Add(newAccruedTransactionPIK);
 
         //                    _context.Transactions.Add(newAccruedTransactionPIK);
@@ -1193,9 +932,9 @@ namespace API.Services
         //        /*Transactions values calculations*/
 
         //        //Add the basic information into the transaction, before checking for further information9
-        //        newTransaction.Deal_Name = movement.Project;
+        //        newTransactionInvestment.Deal_Name = movement.Project;
         //        DateTime.TryParse(movement.ValueDate, out DateTime value_date);
-        //        newTransaction.Transaction_Date = value_date;
+        //        newTransactionInvestment.Transaction_Date = value_date;
 
         //        //In case this is the first transaction
         //        if (mostRecentTransaction == null)
@@ -1203,42 +942,42 @@ namespace API.Services
         //            if (movement.Type == "Investment")
         //            {
         //                // First transaction setup
-        //                newTransaction.Undrawn_Amount = dealRelated.Facility;
+        //                newTransactionInvestment.Undrawn_Amount = dealRelated.Facility;
 
-        //                newTransaction.Amount_Due_BOP = 0;
-        //                newTransaction.Principal_BOP = 0;
-        //                newTransaction.Cash_Interest_BOP = 0;
-        //                newTransaction.PIK_Interest_BOP = 0;
-        //                newTransaction.Undrawn_Interest_BOP = 0;
-        //                newTransaction.PIK_Interest_BOP = 0;
-        //                newTransaction.Cash_Interest_BOP = 0;
+        //                newTransactionInvestment.Amount_Due_BOP = 0;
+        //                newTransactionInvestment.Principal_BOP = 0;
+        //                newTransactionInvestment.Cash_Interest_BOP = 0;
+        //                newTransactionInvestment.PIK_Interest_BOP = 0;
+        //                newTransactionInvestment.Undrawn_Interest_BOP = 0;
+        //                newTransactionInvestment.PIK_Interest_BOP = 0;
+        //                newTransactionInvestment.Cash_Interest_BOP = 0;
 
-        //                newTransaction.PIK_Interest_Accrued = 0;
-        //                newTransaction.Cash_Interest_Accrued = 0;
-        //                newTransaction.Undrawn_Interest_Accrued = 0;
+        //                newTransactionInvestment.PIK_Interest_Accrued = 0;
+        //                newTransactionInvestment.Cash_Interest_Accrued = 0;
+        //                newTransactionInvestment.Undrawn_Interest_Accrued = 0;
 
-        //                newTransaction.Repayment_CashInterest = 0;
-        //                newTransaction.Repayment_PIKInterest = 0;
-        //                newTransaction.Repayment_Principal = 0;
-        //                newTransaction.Repayment_UndrawnFees = 0;
+        //                newTransactionInvestment.Repayment_CashInterest = 0;
+        //                newTransactionInvestment.Repayment_PIKInterest = 0;
+        //                newTransactionInvestment.Repayment_Principal = 0;
+        //                newTransactionInvestment.Repayment_UndrawnFees = 0;
 
-        //                newTransaction.Capitalized = 0;
+        //                newTransactionInvestment.Capitalized = 0;
         //                //movement.TransactionAmount
         //                //If it is a quantity invested, it is first withdrawn amount
-        //                newTransaction.Withrawn_Principal = movementDecimal;
-        //                newTransaction.Principal_EOP = movementDecimal;
+        //                newTransactionInvestment.Withrawn_Principal = movementDecimal;
+        //                newTransactionInvestment.Principal_EOP = movementDecimal;
 
-        //                //newTransaction.Cash_Interest_EOP = 0;
-        //                //newTransaction.PIK_Interest_EOP = 0;
+        //                //newTransactionInvestment.Cash_Interest_EOP = 0;
+        //                //newTransactionInvestment.PIK_Interest_EOP = 0;
 
-        //                newTransaction.Drawdown = movementDecimal;
-        //                newTransaction.Amount_Due_EOP = newTransaction.Principal_EOP;
+        //                newTransactionInvestment.Drawdown = movementDecimal;
+        //                newTransactionInvestment.Amount_Due_EOP = newTransactionInvestment.Principal_EOP;
 
 
-        //                _context.Transactions.Add(newTransaction);
+        //                _context.Transactions.Add(newTransactionInvestment);
         //                await _context.SaveChangesAsync();
 
-        //                transactionsCreated.Add(newTransaction);
+        //                transactionsCreated.Add(newTransactionInvestment);
 
         //            }
 
@@ -1252,37 +991,112 @@ namespace API.Services
         //                if (mostRecentTransaction.Withrawn_Principal != 0)
         //                {
         //                    //Remove what was was withdrawn in the previous movement
-        //                    newTransaction.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount - mostRecentTransaction.Withrawn_Principal;
+        //                    newTransactionInvestment.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount - mostRecentTransaction.Withrawn_Principal;
         //                }
 
-        //                newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
-        //                newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
-        //                newTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
-        //                newTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+        //                newTransactionInvestment.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
+        //                newTransactionInvestment.Principal_BOP = mostRecentTransaction.Principal_EOP;
+        //                newTransactionInvestment.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+        //                newTransactionInvestment.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
 
-        //                //newTransaction.Cash_Interest_Accrued = 0;
-        //                //newTransaction.PIK_Interest_Accrued = 0;
-        //                //newTransaction.Undrawn_Interest_Accrued = 0;
-        //                newTransaction.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0);
+        //                //newTransactionInvestment.Cash_Interest_Accrued = 0;
+        //                //newTransactionInvestment.PIK_Interest_Accrued = 0;
+        //                //newTransactionInvestment.Undrawn_Interest_Accrued = 0;
+        //                newTransactionInvestment.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0);
 
         //                // Process Repayments
-        //                newTransaction = await ProcessTransactionSubType(dealRelated, mostRecentTransaction, newTransaction, movement);
+        //                newTransactionInvestment = await ProcessTransactionSubType(dealRelated, mostRecentTransaction, newTransactionInvestment, movement);
 
-        //                _context.Transactions.Add(newTransaction);
+        //                _context.Transactions.Add(newTransactionInvestment);
         //                await _context.SaveChangesAsync();
 
-        //                transactionsCreated.Add(newTransaction);
+        //                transactionsCreated.Add(newTransactionInvestment);
         //            }
         //        }
-        //        //_context.Transactions.Add(newTransaction);
+        //        //_context.Transactions.Add(newTransactionInvestment);
         //        //await _context.SaveChangesAsync();
 
-        //        //transactionsCreated.Add(newTransaction);
+        //        //transactionsCreated.Add(newTransactionInvestment);
         //    }
 
 
         //    return transactionsCreated;
         //}
+
+
+        //Further Processing Cash rec transactions passed
+
+        public async Task<Transaction> ProcessTransactionSubType(Deal deal, Transaction mostRecentTransaction, Transaction newTransaction, Cash_Rec movement)
+        {
+            // Set the BOP values from the most recent transaction
+            //newTransactionInvestment.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
+            //newTransactionInvestment.Principal_BOP = mostRecentTransaction.Principal_EOP;
+            //newTransactionInvestment.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+            //newTransactionInvestment.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+
+            if (!decimal.TryParse(movement.TransactionAmount, out decimal transactionAmount))
+            {
+                throw new Exception("Invalid transaction amount in CashRec");
+            }
+
+            // Handle Collection -- What is payed back by the borrower
+                newTransaction.Repayment = transactionAmount;
+
+                if (movement.SubType == "Interest")
+                {
+                    if (transactionAmount != null)
+                    {
+                        //Process PIK first
+                        if (mostRecentTransaction.PIK_Interest_EOP != null)
+                        {
+                            newTransaction.Repayment_PIKInterest = transactionAmount;
+                            newTransaction.PIK_Interest_EOP = (newTransaction.PIK_Interest_BOP ?? 0) - newTransaction.Repayment_PIKInterest;
+                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_PIKInterest ?? 0);
+                            //newTransactionInvestment.Cash_Interest_EOP = (newTransactionInvestment.Cash_Interest_BOP ?? 0);
+
+                            //Check if there is remaining after paying PIK
+                            decimal? remainingAmountAfterPIK = (mostRecentTransaction.PIK_Interest_EOP ?? 0) - transactionAmount;
+
+                            //Incase there is remaining, pay Cash Interest
+                            if (remainingAmountAfterPIK > 0)
+                            {
+                                //What if there is more repayment than cash interest
+                                newTransaction.Repayment_CashInterest = newTransaction.Cash_Interest_BOP - remainingAmountAfterPIK;
+                                newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0);
+                                newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_CashInterest ?? 0);
+
+                            }
+
+                        }
+                        //If PIK accrued till this point is null, process cash
+                        else
+                        {
+                            //Need to put a condition if the cashInterest is less than transactionAmount
+                            newTransaction.Repayment_CashInterest = transactionAmount;
+                            newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0) - newTransaction.Repayment_CashInterest;
+                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_CashInterest ?? 0);
+                            newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
+                        }
+                    }
+
+                    newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0);
+
+
+                }
+                else if (movement.SubType == "Principal")
+                {
+                    //Assuming that the entire transactonAmount is not in excess when paying the principal
+                    newTransaction.Repayment_Principal = transactionAmount;
+                    newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0) + transactionAmount;
+                    newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) + transactionAmount;
+                    newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
+                    newTransaction.PIK_Interest_EOP = newTransaction.PIK_Interest_BOP;
+                }
+            
+            // Handle Investment -- what is given to the borrower
+
+            return newTransaction;
+        }
 
 
 
@@ -1297,11 +1111,13 @@ namespace API.Services
                 .ToListAsync();
 
             //Retrieve most recent transaction for this deal
-            Transaction mostRecentTransaction = await _context.Transactions
+            Transaction firstTransacion = await _context.Transactions
                 .Where(t => t.Deal_Name == deal.Deal_Name)
+                .OrderByDescending(t => t.Transaction_Date) // Sort by date descending
+                .ThenByDescending(t => t.Transaction_Id)   // Secondary sort by ID
                 .FirstOrDefaultAsync();
 
-            if (mostRecentTransaction == null)
+            if (firstTransacion == null)
             {
                 Transaction firstTransaction = new Transaction();
 
@@ -1314,39 +1130,16 @@ namespace API.Services
 
                 // First transaction setup
                 firstTransaction.Undrawn_Amount = deal.Facility;
-                firstTransaction.Amount_Due_BOP = 0;
-                firstTransaction.Principal_BOP = 0;
-                firstTransaction.Cash_Interest_BOP = 0;
-                firstTransaction.PIK_Interest_BOP = 0;
-                firstTransaction.Undrawn_Interest_BOP = 0;
-                firstTransaction.PIK_Interest_BOP = 0;
-                firstTransaction.Cash_Interest_BOP = 0;
 
-                firstTransaction.PIK_Interest_Accrued = 0;
-                firstTransaction.Cash_Interest_Accrued = 0;
-                firstTransaction.Undrawn_Interest_Accrued = 0;
-
-                firstTransaction.Repayment_CashInterest = 0;
-                firstTransaction.Repayment_PIKInterest = 0;
-                firstTransaction.Repayment_Principal = 0;
-                firstTransaction.Repayment_UndrawnFees = 0;
-
-                firstTransaction.Capitalized = 0;
-                firstTransaction.Cash_Interest_EOP = 0;
-                firstTransaction.PIK_Interest_EOP = 0;
-
-
-                _context.Transactions.Add(firstTransaction);
+                await _context.Transactions.AddAsync(firstTransaction);
                 await _context.SaveChangesAsync();
             }
+
+            //AccruedValuesLoopOne(deal);
 
             //Pass through all values in movements in dealscashrec
             foreach (Cash_Rec movement in dealsCashRec)
             {
-                //Create new transaction each time
-                Transaction newTransaction = new Transaction();
-
-
                 // Check and retrieve if there is a related deal
                 Deal dealRelated = await _context.Deals
                     .Where(t => t.Deal_Name == movement.Project)
@@ -1368,261 +1161,119 @@ namespace API.Services
                 }
 
                 //Retrieve most recent transaction for this deal
-                mostRecentTransaction = await _context.Transactions
-                    .Where(t => t.Deal_Name == movement.Project)
-                    .OrderByDescending(t => t.Transaction_Date)
-                    .ThenByDescending(t => t.Transaction_Id)
+                Transaction mostRecentTransaction = await _context.Transactions
+                    .Where(t => t.Deal_Name == movement.Project && t.Accrued != 1)
+                    .OrderByDescending(t => t.Transaction_Date) // Sort by most recent date
                     .FirstOrDefaultAsync();
 
+
+                Transaction mostRecentAccrued = await _context.Transactions
+                    .Where(t => t.Deal_Name == movement.Project && t.Accrued == 1)
+                    .OrderByDescending(t => t.Transaction_Date) // Sort by the latest date
+                    .FirstOrDefaultAsync();
 
                 //If the most recent transaction exists
                 if (mostRecentTransaction != null)
                 {
-                    /*Accrued values calculations:*/
-                    double totalMonths = 0;
 
-                    //most recent accrued values
-                    Transaction mostRecentAccrued = await _context.Transactions
-                                        .Where(t => t.Deal_Name == movement.Project && t.Accrued == 1)
-                                        .OrderByDescending(t => t.Transaction_Date)
-                                        .ThenByDescending(t => t.Transaction_Id)
-                                        .FirstOrDefaultAsync();
-
-                    if (!int.TryParse(deal.Interest_Period, out int interestPeriod) || interestPeriod == 0)
-                    {
-                        interestPeriod = 3; // Default to 3 if Interest_Period is invalid or zero
-                    }
-
-                    // Parse movement.ValueDate to DateTime
-                    if (DateTime.TryParse(movement.ValueDate, out DateTime valueDate))
-                    {
-                        DateTime transactionDate = dealRelated.Investment_date.Value;
-
-
-                        // Calculate the difference in days from most recent transaction and present transaction being working with
-                        totalMonths = Math.Abs((transactionDate.Year - valueDate.Year) * 12 + (transactionDate.Month - valueDate.Month));
-                    }
-
-                    double division = totalMonths / 3;
-                    DateTime rollingTransactionDate = DateTime.MinValue;
-                    //most recent accrued
-                    if (int.TryParse(dealRelated.Interest_Period, out int months))
-                    {
-                        if (mostRecentAccrued != null)
-                        {
-                            rollingTransactionDate = mostRecentAccrued.Transaction_Date.AddMonths(months);
-                        }
-                        else
-                        {
-                            //if no previouse date meaning its first accrued
-                            rollingTransactionDate = (DateTime)dealRelated.Investment_date;
-                            rollingTransactionDate = rollingTransactionDate.AddMonths(interestPeriod);
-
-                        }
-                    }
-
-                    while (division >= 1 && rollingTransactionDate < valueDate)
-                    {
-                        Transaction newAccruedTransactionCash = new Transaction();
-                        Transaction newAccruedTransactionPIK = new Transaction();
-                        Transaction newAccruedTransactionPIYC = new Transaction();
-                        Transaction newAccruedTransactionUndrawn = new Transaction();
-                        decimal applicableCashRate = GetApplicableRate(rollingTransactionDate, "Cash", deal);
-                        decimal applicablePIKRate = GetApplicableRate(rollingTransactionDate, "PIK", deal);
-                        decimal applicablePIYCRate = GetApplicableRate(rollingTransactionDate, "PIYC", deal);
-
-                        //If it is the first Accrued Value
-                        if (mostRecentAccrued != null)
-                        {
-                            if (applicableCashRate != 0)
-                            {
-                                newAccruedTransactionCash = AccruedCash(mostRecentAccrued, rollingTransactionDate, deal, applicableCashRate);
-                                AccruedList.Add(newAccruedTransactionCash);
-
-                                _context.Transactions.Add(newAccruedTransactionCash);
-                                await _context.SaveChangesAsync();
-
-                                mostRecentAccrued = newAccruedTransactionCash;
-                            }
-
-                            if (applicablePIKRate != 0)
-                            {
-                                newAccruedTransactionPIK = AccruedPIK(mostRecentAccrued, rollingTransactionDate, deal, applicablePIKRate);
-                                AccruedList.Add(newAccruedTransactionPIK);
-
-                                _context.Transactions.Add(newAccruedTransactionPIK);
-                                await _context.SaveChangesAsync();
-
-                                if (newAccruedTransactionPIK != null)
-                                {
-                                    mostRecentTransaction = newAccruedTransactionPIK;
-                                }
-                            }
-
-                            if (applicablePIYCRate != 0)
-                            {
-                                newAccruedTransactionPIYC = AccruedPIYC(mostRecentAccrued, rollingTransactionDate, deal, applicablePIYCRate);
-                                AccruedList.Add(newAccruedTransactionCash);
-
-                                _context.Transactions.Add(newAccruedTransactionPIYC);
-                                await _context.SaveChangesAsync();
-
-
-                                if (newAccruedTransactionPIYC != null)
-                                {
-                                    mostRecentTransaction = newAccruedTransactionPIYC;
-                                }
-                            }
-
-                            if(deal.Undrawn_fee != 0)
-                            {
-                                newAccruedTransactionUndrawn = AccruedUndrawn(mostRecentAccrued, rollingTransactionDate, deal);
-                                AccruedList.Add(newAccruedTransactionUndrawn);
-
-                                _context.Transactions.Add(newAccruedTransactionUndrawn);
-                                await _context.SaveChangesAsync();
-
-                                mostRecentTransaction = newAccruedTransactionUndrawn;
-
-                            }
-
-
-                        }
-                        //All first accrued values
-                        else
-                        {
-                            //rollingTransactionDate = rollingTransactionDate.AddMonths(interestPeriod);
-                            if (applicableCashRate != 0)
-                            {
-                                newAccruedTransactionCash = AccruedCash(mostRecentTransaction, rollingTransactionDate, deal, applicableCashRate);
-                                AccruedList.Add(newAccruedTransactionCash);
-
-                                _context.Transactions.Add(newAccruedTransactionCash);
-                                await _context.SaveChangesAsync();
-                                mostRecentAccrued = newAccruedTransactionCash;
-
-                            }
-
-                            if (applicablePIKRate != 0)
-                            {
-                                newAccruedTransactionPIK = AccruedPIK(mostRecentTransaction, rollingTransactionDate, deal, applicablePIKRate);
-                                AccruedList.Add(newAccruedTransactionPIK);
-
-                                _context.Transactions.Add(newAccruedTransactionPIK);
-                                await _context.SaveChangesAsync();
-
-                                if (newAccruedTransactionPIK != null)
-                                {
-                                    mostRecentAccrued = newAccruedTransactionPIK;
-                                }
-                            }
-
-                            if (applicablePIYCRate != 0)
-                            {
-                                newAccruedTransactionPIYC = AccruedPIYC(mostRecentTransaction, rollingTransactionDate, deal, applicablePIYCRate);
-                                AccruedList.Add(newAccruedTransactionCash);
-
-                                _context.Transactions.Add(newAccruedTransactionPIYC);
-                                await _context.SaveChangesAsync();
-
-
-                                if (newAccruedTransactionPIYC != null)
-                                {
-                                    mostRecentAccrued = newAccruedTransactionPIYC;
-                                }
-                            }
-
-
-                            if (deal.Undrawn_fee != 0)
-                            {
-                                newAccruedTransactionUndrawn = AccruedUndrawn(mostRecentTransaction, rollingTransactionDate, deal);
-                                AccruedList.Add(newAccruedTransactionUndrawn);
-
-                                _context.Transactions.Add(newAccruedTransactionUndrawn);
-                                await _context.SaveChangesAsync();
-
-                                mostRecentAccrued = newAccruedTransactionUndrawn;
-
-                            }
-
-                        }
-
-                        // Update rollingTransaction to the current rollingTransaction for next iteration
-                        //firstTransaction = newAccruedTransactionCash;
-
-                        rollingTransactionDate = rollingTransactionDate.AddMonths(interestPeriod);
-
-                        //// Recalculate monthsPassed based on the updated rollingTransactionDate
-                        //   monthsPassed = (DateTime.Now.Year - rollingTransactionDate.Year) * 12
-                        //             + DateTime.Now.Month - rollingTransactionDate.Month;
-
-
-                        // Parse movement.ValueDate to DateTime
-                        if (DateTime.TryParse(movement.ValueDate, out valueDate)) 
-                        {
-                            DateTime transactionDate = rollingTransactionDate;
-
-
-                            // Calculate the difference in days from most recent transaction and present transaction being working with
-                            totalMonths = Math.Abs((transactionDate.Year - valueDate.Year) * 12 + (transactionDate.Month - valueDate.Month));
-                        }
-                        division = totalMonths / 3;
-                    }
-
-                    DateTime.TryParse(movement.ValueDate, out valueDate);
+                    DateTime.TryParse(movement.ValueDate, out DateTime valueDate);
 
                     /*Transactions values calculations*/
                     if (movement.Type == "Collection")
                     {
+                        //Create new transaction each time
+                        Transaction newTransaction = new Transaction();
+
                         newTransaction.Deal_Name = dealRelated.Deal_Name;
                         newTransaction.Transaction_Date = valueDate;
 
-                        if (mostRecentTransaction.Withrawn_Principal != 0)
-                        {
-                            //Remove what was was withdrawn in the previous movement
-                            newTransaction.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount - mostRecentTransaction.Withrawn_Principal;
-                        }
+                        //if (mostRecentTransaction.Withrawn_Principal != 0)
+                        //{
+                        //    //Remove what was was withdrawn in the previous movement
+                        //    newTransactionInvestment.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0)- mostRecentTransaction.Withrawn_Principal;
+                        //}
 
                         newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
                         newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
                         newTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
                         newTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
 
-                        //newTransaction.Cash_Interest_Accrued = 0;
-                        //newTransaction.PIK_Interest_Accrued = 0;
-                        //newTransaction.Undrawn_Interest_Accrued = 0;
+                        //newTransactionInvestment.Cash_Interest_Accrued = 0;
+                        //newTransactionInvestment.PIK_Interest_Accrued = 0;
+                        //newTransactionInvestment.Undrawn_Interest_Accrued = 0;
                         newTransaction.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0);
+
+
+                        //newTransactionInvestment = AccruedForInvestementAndCollection(newTransactionInvestment, valueDate, mostRecentAccrued.Transaction_Date, deal);
+                        newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0);
 
                         // Process Repayments
                         newTransaction = await ProcessTransactionSubType(dealRelated, mostRecentTransaction, newTransaction, movement);
 
-                        _context.Transactions.Add(newTransaction);
+
+                        await _context.Transactions.AddAsync(newTransaction);
                         await _context.SaveChangesAsync();
+
+
+                        //Deletes all the accrued values that exist from the date of the transaction forward
+                        //These accrued values were created previously from differnt transactions
+                        //await DeleteAccruedTransactionsFromDateAsync(deal.Deal_Name, valueDate);
+
+                        //await _context.Transactions
+                        //    .Where(t => t.Accrued == 1 && t.Deal_Name == deal.Deal_Name && t.Transaction_Date >= valueDate)
+                        //    .ExecuteDeleteAsync();
+
+                        //New Accrued values from the date of the transaction forward
+                        await AccruedValuesModifyLoopOne(deal, valueDate);
+
 
                         transactionsCreated.Add(newTransaction);
                     }
                     else if (movement.Type == "Investment")
                     {
-                        newTransaction.Deal_Name = dealRelated.Deal_Name;
-                        newTransaction.Transaction_Date = valueDate;
-                        newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
-                        newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
 
+                        //Create new transaction each time
+                        Transaction newTransactionInvestment = new Transaction();
+
+                        newTransactionInvestment.Deal_Name = dealRelated.Deal_Name;
+                        newTransactionInvestment.Transaction_Date = valueDate;
+
+                        newTransactionInvestment.Amount_Due_BOP = (mostRecentTransaction.Amount_Due_EOP ?? 0);
+                        newTransactionInvestment.Principal_BOP = (mostRecentTransaction.Principal_EOP ?? 0);
+
+                        
                         //movement.TransactionAmount
                         //If it is a quantity invested, it is first withdrawn amount
-                        newTransaction.Withrawn_Principal = movementDecimal;
-                        newTransaction.Principal_EOP = mostRecentTransaction.Principal_BOP + movementDecimal;
+                        newTransactionInvestment.Withrawn_Principal = movementDecimal;
 
-                        //newTransaction.Cash_Interest_EOP = 0;
-                        //newTransaction.PIK_Interest_EOP = 0;
+                        //newTransactionInvestment.Cash_Interest_EOP = 0;
+                        //newTransactionInvestment.PIK_Interest_EOP = 0;
+                        //if (mostRecentAccrued != null )
+                        //{
+                        //    newTransactionInvestment = AccruedForInvestementAndCollection(newTransactionInvestment, valueDate, mostRecentAccrued.Transaction_Date, deal);
+                        //}
 
-                        newTransaction.Drawdown = movementDecimal;
-                        newTransaction.Amount_Due_EOP = mostRecentTransaction.Principal_BOP + newTransaction.Principal_EOP;
+                        newTransactionInvestment.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0) - mostRecentTransaction.Withrawn_Principal;
+                        newTransactionInvestment.Principal_EOP = newTransactionInvestment.Principal_BOP + movementDecimal;
 
-                        _context.Transactions.Add(newTransaction);
+                        newTransactionInvestment.Drawdown = movementDecimal;
+                        newTransactionInvestment.Amount_Due_EOP = newTransactionInvestment.Amount_Due_BOP + movementDecimal ;
+
+                        await _context.Transactions.AddAsync(newTransactionInvestment);
                         await _context.SaveChangesAsync();
 
-                        transactionsCreated.Add(newTransaction);
+                        //Deletes all the accrued values that exist from the date of the transaction forward
+                        //These accrued values were created previously from differnt transactions
+                        //await DeleteAccruedTransactionsFromDateAsync(deal.Deal_Name, valueDate);
+
+                        //await _context.Transactions
+                        //    .Where(t => t.Accrued == 1 && t.Deal_Name == deal.Deal_Name && t.Transaction_Date >= valueDate)
+                        //    .ExecuteDeleteAsync();
+
+                        //New Accrued values from the date of the transaction forward
+                        await AccruedValuesModifyLoopOne(deal, valueDate);
+
+                        transactionsCreated.Add(newTransactionInvestment);
 
                     }
                 }
@@ -1631,6 +1282,177 @@ namespace API.Services
             return transactionsCreated;
         }
 
+        public async Task DeleteAccruedTransactionsFromDateAsync(string dealName, DateTime fromDate)
+        {
+            // Fetch the transactions to delete
+            var transactionsToDelete = await _context.Transactions
+                .Where(t => t.Accrued == 1 && t.Transaction_Date >= fromDate && t.Deal_Name == dealName)
+                .ToListAsync();
+
+
+            // Check if there are transactions to delete
+            if (transactionsToDelete.Any())
+            {
+                // Remove the transactions from the context
+                _context.Transactions.RemoveRange(transactionsToDelete);
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine($"{transactionsToDelete.Count} accrued transactions deleted for deal '{dealName}' starting from {fromDate:yyyy-MM-dd}.");
+            }
+            else
+            {
+                Console.WriteLine($"No accrued transactions found for deal '{dealName}' from {fromDate:yyyy-MM-dd} onwards.");
+            }
+        }
+
+
+        //rollingTransactionDate is the date of the transaction
+        public async Task<List<Transaction>> AccruedValuesModifyLoopOne(Deal deal, DateTime rollingTransactionDate)
+        {
+
+            List<Transaction> AccruedList = new List<Transaction>();
+            decimal applicableCashRate;
+            decimal applicablePIKRate;
+            decimal applicablePIYCRate;
+
+            AccruedList = await _context.Transactions
+                    .Where(t => t.Deal_Name == deal.Deal_Name)
+                    .Where(t => t.Accrued == 1 && t.Transaction_Date > rollingTransactionDate) // Filter by Accrued and Date
+                    .OrderBy(t => t.Transaction_Date) // Optional: Sort by date ascending
+                    .ToListAsync();
+
+            int interestPeriod = int.TryParse(deal.Interest_Period, out int parsedInterestPeriod)
+                                    ? parsedInterestPeriod
+                                    : 3; // Default to 1 if parsing fails
+
+            Transaction mostRecentAccrued = await _context.Transactions
+                .Where(t => t.Deal_Name == deal.Deal_Name)
+                .OrderByDescending(t => t.Transaction_Date)
+                .ThenByDescending(t => t.Transaction_Id)   // In case of ties, sort by biggest ID
+                .FirstOrDefaultAsync();
+
+            Transaction mostRecentTransaction = await _context.Transactions
+                .Where(t => t.Deal_Name == deal.Deal_Name)
+                .OrderByDescending(t => t.Transaction_Date) // Sort by most recent date
+                .ThenByDescending(t => t.Transaction_Id)   // In case of ties, sort by biggest ID
+                .FirstOrDefaultAsync();
+
+
+            if (AccruedList.Count > 0)
+            {
+                // Temporary list to store new accrued transactions
+                List<Transaction> newAccruedList = new List<Transaction>();
+
+                foreach (Transaction accrued in AccruedList.ToList()) // Use ToList() to avoid modifying the collection being iterated
+                {
+                    applicableCashRate = GetApplicableRate(rollingTransactionDate, "Cash", deal);
+                    applicablePIKRate = GetApplicableRate(rollingTransactionDate, "PIK", deal);
+                    applicablePIYCRate = GetApplicableRate(rollingTransactionDate, "PIYC", deal);
+
+                    // Get the most recent transaction
+
+                    // Modify accrued transaction or create a new one
+                    Transaction AccruedTransaction = AccruedAllInterestsModifications(
+                        mostRecentTransaction, accrued, rollingTransactionDate, deal,
+                        applicableCashRate, applicablePIKRate, applicablePIYCRate);
+
+                    // Mark the transaction as modified
+                    _context.Entry(AccruedTransaction).State = EntityState.Modified;
+                }
+
+                // Save all changes to the database
+                await _context.SaveChangesAsync();
+
+                // Add new transactions to the original AccruedList (if needed for further processing)
+                AccruedList.AddRange(newAccruedList);
+            }
+            else
+            {
+                await AccruedValuesLoopOne(deal, rollingTransactionDate);
+            }
+
+            return AccruedList;
+
+        }
+
+            public async Task<List<Transaction>> AccruedValuesLoopOne(Deal deal, DateTime rollingTransactionDate)
+        {
+
+            List<Transaction> AccruedList = new List<Transaction>();
+            //DateTime rollingTransactionDate = deal.Investment_date ?? DateTime.MinValue;
+
+            Transaction newAccruedTransactionCash = new Transaction();
+            Transaction newAccruedTransactionPIK = new Transaction();
+            Transaction newAccruedTransactionPIYC = new Transaction();
+            Transaction newAccruedTransactionUndrawn = new Transaction();
+
+            int interestPeriod = int.TryParse(deal.Interest_Period, out int parsedInterestPeriod)
+                                    ? parsedInterestPeriod
+                                    : 3; // Default to 1 if parsing fails
+
+            decimal applicableCashRate;
+            decimal applicablePIKRate;
+            decimal applicablePIYCRate;
+
+
+            Transaction mostRecentAccrued = await _context.Transactions
+                .Where(t => t.Deal_Name == deal.Deal_Name)
+                .OrderByDescending(t => t.Transaction_Date)
+                .FirstOrDefaultAsync();
+
+
+
+            while (rollingTransactionDate < DateTime.Today)
+            {                
+                
+                rollingTransactionDate = rollingTransactionDate.AddMonths(parsedInterestPeriod);
+
+                applicableCashRate = GetApplicableRate(rollingTransactionDate, "Cash", deal);
+                applicablePIKRate = GetApplicableRate(rollingTransactionDate, "PIK", deal);
+                applicablePIYCRate = GetApplicableRate(rollingTransactionDate, "PIYC", deal);
+                
+                ////most recent accrued values
+                Transaction mostRecentTransaction = await _context.Transactions
+                    .Where(t => t.Deal_Name == deal.Deal_Name)
+                    .OrderByDescending(t => t.Transaction_Date) // Sort by most recent date
+                    .ThenByDescending(t => t.Transaction_Id)   // In case of ties, sort by biggest ID
+                    .FirstOrDefaultAsync();
+
+                Transaction AccruedTransaction = new Transaction();
+
+                AccruedTransaction = AccruedAllInterests(mostRecentTransaction, rollingTransactionDate, deal, applicableCashRate, applicablePIKRate, applicablePIYCRate);
+                AccruedList.Add(newAccruedTransactionCash);
+
+                await _context.Transactions.AddAsync(AccruedTransaction);
+                await _context.SaveChangesAsync();
+            }
+
+            return AccruedList;
+        }
+
+        public Transaction AccruedForInvestementAndCollection(Transaction preseTransaction, DateTime presTransDate, DateTime prevAcruedDate, Deal deal)
+        {
+            //Difference in days from previous accrued to present transaciton date
+            int elapsedDays = (presTransDate - prevAcruedDate).Days;
+
+            int.TryParse(deal.Interest_Period, out int interestLength);
+            //Days passed between previous accured date and next accrued date (days in interest period)
+            int daysInPeriod = (prevAcruedDate.AddMonths(interestLength) - prevAcruedDate).Days;
+
+            //Corresponding interest for days passed
+            decimal interestAccruedCash = (elapsedDays / daysInPeriod) * GetApplicableRate(presTransDate, "Cash", deal);
+            decimal interestAccruedPIK = (elapsedDays / daysInPeriod) * GetApplicableRate(presTransDate, "PIK", deal);
+            decimal interestAccruedPIYC = (elapsedDays / daysInPeriod) * GetApplicableRate(presTransDate, "PIYC", deal);
+
+            //Set values for Interst BOP
+            preseTransaction.Cash_Interest_Accrued = interestAccruedCash;
+            preseTransaction.PIK_Interest_Accrued = interestAccruedPIK;
+            preseTransaction.PIYC_Interest_Accrued = interestAccruedPIYC;
+
+            return preseTransaction;
+        }
 
         public decimal GetApplicableRate(DateTime currentDate, string interestType, Deal deal)
         {
@@ -1690,11 +1512,7 @@ namespace API.Services
             newAccruedTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
             newAccruedTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
             newAccruedTransaction.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount;
-            newAccruedTransaction.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
 
-            newAccruedTransaction.PIK_Interest_EOP = newAccruedTransaction.PIK_Interest_BOP;
-            // Calculating PIK interest generated
-            newAccruedTransaction.PIK_Interest_Accrued = 0;
             newAccruedTransaction.Cash_Interest_Accrued = (newAccruedTransaction.Amount_Due_BOP * (interestRate / 100)) + newAccruedTransaction.Amount_Due_BOP;
 
             //If PIK interest BOP is null it will not add the PIK value
@@ -1702,7 +1520,6 @@ namespace API.Services
 
             //The principal stays the same becuase nothing is capitalized
             newAccruedTransaction.Principal_EOP = newAccruedTransaction.Principal_BOP;
-            newAccruedTransaction.Undrawn_Interest_EOP = newAccruedTransaction.Undrawn_Interest_BOP;
             newAccruedTransaction.Amount_Due_EOP = (newAccruedTransaction.Amount_Due_BOP ?? 0) + newAccruedTransaction.Cash_Interest_Accrued;
             newAccruedTransaction.Accrued = 1;
             //AccruedList.Add(newAccruedTransactionCash);
@@ -1723,25 +1540,17 @@ namespace API.Services
             newAccruedTransaction.Deal_Name = deal.Deal_Name;
             newAccruedTransaction.Amount_Due_BOP = (mostRecentTransaction.Amount_Due_EOP ?? 0);
             newAccruedTransaction.Principal_BOP = (mostRecentTransaction.Principal_EOP ?? 0);
-            newAccruedTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
-            newAccruedTransaction.Cash_Interest_EOP = newAccruedTransaction.Cash_Interest_BOP;
             newAccruedTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
             newAccruedTransaction.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount;
-            newAccruedTransaction.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
-
-            newAccruedTransaction.PIK_Interest_EOP = newAccruedTransaction.PIK_Interest_BOP;
 
             // Calculating PIK interest generated
             newAccruedTransaction.PIK_Interest_Accrued = (newAccruedTransaction.Amount_Due_BOP * (interestRate / 100)) + newAccruedTransaction.Amount_Due_BOP;
-
-            newAccruedTransaction.Cash_Interest_Accrued = 0;
 
             //If PIK interest BOP is null it will not add the PIK value
             newAccruedTransaction.PIK_Interest_EOP = (newAccruedTransaction.PIK_Interest_BOP ?? 0) + newAccruedTransaction.PIK_Interest_Accrued;
 
             //The principal stays the same becuase nothing is capitalized
             newAccruedTransaction.Principal_EOP = newAccruedTransaction.Principal_BOP;
-            newAccruedTransaction.Undrawn_Interest_EOP = newAccruedTransaction.Undrawn_Interest_BOP;
             newAccruedTransaction.Amount_Due_EOP = (newAccruedTransaction.Amount_Due_BOP ?? 0) + newAccruedTransaction.PIK_Interest_Accrued;
             newAccruedTransaction.Accrued = 1;
             //AccruedList.Add(newAccruedTransactionCash);
@@ -1763,16 +1572,9 @@ namespace API.Services
             newAccruedTransaction.Deal_Name = deal.Deal_Name;
             newAccruedTransaction.Amount_Due_BOP = (mostRecentTransaction.Amount_Due_EOP ?? 0);
             newAccruedTransaction.Principal_BOP = (mostRecentTransaction.Principal_EOP ?? 0);
-            newAccruedTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
-            newAccruedTransaction.Cash_Interest_EOP = newAccruedTransaction.Cash_Interest_BOP;
-            newAccruedTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
             newAccruedTransaction.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
 
             newAccruedTransaction.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount;
-            newAccruedTransaction.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
-
-            newAccruedTransaction.PIK_Interest_EOP = newAccruedTransaction.PIK_Interest_BOP;
-
             // Calculating PIK interest generated
             newAccruedTransaction.PIYC_Interest_Accrued = (newAccruedTransaction.Amount_Due_BOP * (interestRate / 100)) + newAccruedTransaction.Amount_Due_BOP;
 
@@ -1781,13 +1583,13 @@ namespace API.Services
 
             //The principal stays the same becuase nothing is capitalized
             newAccruedTransaction.Principal_EOP = newAccruedTransaction.Principal_BOP;
-            newAccruedTransaction.Undrawn_Interest_EOP = newAccruedTransaction.Undrawn_Interest_BOP;
             newAccruedTransaction.Amount_Due_EOP = (newAccruedTransaction.Amount_Due_BOP ?? 0) + newAccruedTransaction.PIYC_Interest_Accrued;
             newAccruedTransaction.Accrued = 1;
             //AccruedList.Add(newAccruedTransactionCash);
             return newAccruedTransaction;
 
         }
+
 
         public Transaction AccruedUndrawn(Transaction mostRecentTransaction, DateTime rollingTransactionDate, Deal deal)
         {
@@ -1803,7 +1605,7 @@ namespace API.Services
             newAccruedTransaction.Amount_Due_BOP = (mostRecentTransaction.Amount_Due_EOP ?? 0);
             newAccruedTransaction.Principal_BOP = (mostRecentTransaction.Principal_EOP ?? 0);
             newAccruedTransaction.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount;
-            
+
             newAccruedTransaction.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
             newAccruedTransaction.Undrawn_Interest_Accrued = (newAccruedTransaction.Amount_Due_BOP * (deal.Undrawn_fee / 100)) + newAccruedTransaction.Amount_Due_BOP;
             newAccruedTransaction.Undrawn_Interest_EOP = mostRecentTransaction.Undrawn_Interest_BOP + newAccruedTransaction.Undrawn_Interest_Accrued;
@@ -1817,6 +1619,126 @@ namespace API.Services
 
         }
 
+
+        public Transaction AccruedAllInterests(Transaction mostRecentTransaction, DateTime rollingTransactionDate,Deal deal,decimal? cashInterestRate,decimal? pikInterestRate,decimal? piycInterestRate)
+        {
+            Transaction newAccruedTransaction = new Transaction
+            {
+
+                // General properties
+                Occurred = false,
+                Transaction_Date = rollingTransactionDate,
+                Deal_Name = deal.Deal_Name,
+                Amount_Due_BOP = (mostRecentTransaction.Amount_Due_EOP ?? 0),
+                Principal_BOP = (mostRecentTransaction.Principal_EOP ?? 0),
+                Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0)
+            };
+
+            // Calculate Cash Interest
+            if (cashInterestRate.HasValue && cashInterestRate.Value > 0)
+            {
+                newAccruedTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+                newAccruedTransaction.Cash_Interest_Accrued =
+                    (newAccruedTransaction.Amount_Due_BOP * (cashInterestRate.Value / 100));
+                newAccruedTransaction.Cash_Interest_EOP =
+                    (newAccruedTransaction.Cash_Interest_BOP ?? 0) + newAccruedTransaction.Cash_Interest_Accrued;
+            }
+
+            // Calculate PIK Interest
+            if (pikInterestRate.HasValue && pikInterestRate.Value > 0)
+            {
+                newAccruedTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+                newAccruedTransaction.PIK_Interest_Accrued =
+                    (newAccruedTransaction.Amount_Due_BOP * (pikInterestRate.Value / 100));
+                newAccruedTransaction.PIK_Interest_EOP =
+                    (newAccruedTransaction.PIK_Interest_BOP ?? 0) + newAccruedTransaction.PIK_Interest_Accrued;
+            }
+
+            // Calculate PIYC Interest
+            if (piycInterestRate.HasValue && piycInterestRate.Value > 0)
+            {
+                newAccruedTransaction.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
+                newAccruedTransaction.PIYC_Interest_Accrued =
+                    (newAccruedTransaction.Amount_Due_BOP * (piycInterestRate.Value / 100));
+                newAccruedTransaction.PIYC_Interest_EOP =
+                    (newAccruedTransaction.PIYC_Interest_BOP ?? 0) + newAccruedTransaction.PIYC_Interest_Accrued;
+            }
+
+            // Calculate Undrawn Interest
+            if (deal.Undrawn_fee.HasValue && deal.Undrawn_fee.Value > 0)
+            {
+
+                newAccruedTransaction.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
+                newAccruedTransaction.Undrawn_Interest_Accrued = 
+                    (newAccruedTransaction.Amount_Due_BOP * (deal.Undrawn_fee / 100)) + newAccruedTransaction.Amount_Due_BOP;
+                newAccruedTransaction.Undrawn_Interest_EOP = newAccruedTransaction.Undrawn_Interest_BOP + newAccruedTransaction.Undrawn_Interest_Accrued;
+            }
+
+            // Common updates
+            newAccruedTransaction.Principal_EOP = newAccruedTransaction.Principal_BOP; // Principal remains unchanged
+            newAccruedTransaction.Amount_Due_EOP =
+                (newAccruedTransaction.Amount_Due_BOP ?? 0) +
+                (newAccruedTransaction.Cash_Interest_Accrued ?? 0) +
+                (newAccruedTransaction.PIK_Interest_Accrued ?? 0) +
+                (newAccruedTransaction.PIYC_Interest_Accrued ?? 0);
+
+            newAccruedTransaction.Accrued = 1; // Mark as accrued
+
+            return newAccruedTransaction;
+        }
+
+
+        public Transaction AccruedAllInterestsModifications(Transaction mostRecentTransaction, Transaction accruedMod, DateTime rollingTransactionDate, Deal deal, decimal? cashInterestRate, decimal? pikInterestRate, decimal? piycInterestRate)
+        {
+            accruedMod.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
+            accruedMod.Principal_BOP = mostRecentTransaction.Principal_EOP;
+            accruedMod.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+            accruedMod.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+            accruedMod.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
+            accruedMod.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
+
+
+            // Calculate Cash Interest
+            if (cashInterestRate.HasValue && cashInterestRate.Value > 0)
+            {
+                accruedMod.Cash_Interest_Accrued = (accruedMod.Amount_Due_BOP * (cashInterestRate.Value / 100));
+                accruedMod.Cash_Interest_EOP = (accruedMod.Cash_Interest_BOP ?? 0) + accruedMod.Cash_Interest_Accrued;
+            }
+
+            // Calculate PIK Interest
+            if (pikInterestRate.HasValue && pikInterestRate.Value > 0)
+            {
+                accruedMod.PIK_Interest_Accrued = (accruedMod.Amount_Due_BOP * (pikInterestRate.Value / 100));
+                accruedMod.PIK_Interest_EOP = (accruedMod.PIK_Interest_BOP ?? 0) + accruedMod.PIK_Interest_Accrued;
+            }
+
+            // Calculate PIYC Interest
+            if (piycInterestRate.HasValue && piycInterestRate.Value > 0)
+            {
+                accruedMod.PIYC_Interest_Accrued = (accruedMod.Amount_Due_BOP * (piycInterestRate.Value / 100));
+                accruedMod.PIYC_Interest_EOP = (accruedMod.PIYC_Interest_BOP ?? 0) + accruedMod.PIYC_Interest_Accrued;
+            }
+
+            // Calculate Undrawn Interest
+            if (deal.Undrawn_fee.HasValue && deal.Undrawn_fee.Value > 0)
+            {
+                accruedMod.Undrawn_Interest_Accrued =
+                    (accruedMod.Amount_Due_BOP * (deal.Undrawn_fee / 100));
+                accruedMod.Undrawn_Interest_EOP = accruedMod.Undrawn_Interest_BOP + accruedMod.Undrawn_Interest_Accrued;
+            }
+
+            // Common updates
+            accruedMod.Principal_EOP = accruedMod.Principal_BOP; // Principal remains unchanged
+            accruedMod.Amount_Due_EOP =
+                (accruedMod.Amount_Due_BOP ?? 0) +
+                (accruedMod.Cash_Interest_Accrued ?? 0) +
+                (accruedMod.PIK_Interest_Accrued ?? 0) +
+                (accruedMod.PIYC_Interest_Accrued ?? 0);
+
+            accruedMod.Accrued = 1; // Mark as accrued
+
+            return accruedMod;
+        }
 
 
 
