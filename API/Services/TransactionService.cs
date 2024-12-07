@@ -1135,8 +1135,6 @@ namespace API.Services
                 await _context.SaveChangesAsync();
             }
 
-            //AccruedValuesLoopOne(deal);
-
             //Pass through all values in movements in dealscashrec
             foreach (Cash_Rec movement in dealsCashRec)
             {
@@ -1159,11 +1157,12 @@ namespace API.Services
                     Console.WriteLine("No deal found for project: " + movement.Project);
                     continue; // Skip if no deal is found
                 }
+                DateTime.TryParse(movement.ValueDate, out DateTime valueDate);
 
-                //Retrieve most recent transaction for this deal
                 Transaction mostRecentTransaction = await _context.Transactions
-                    .Where(t => t.Deal_Name == movement.Project && t.Accrued != 1)
+                    .Where(t => t.Deal_Name == movement.Project && t.Transaction_Date <= valueDate)
                     .OrderByDescending(t => t.Transaction_Date) // Sort by most recent date
+                    .ThenByDescending(t => t.Transaction_Id)
                     .FirstOrDefaultAsync();
 
 
@@ -1175,9 +1174,6 @@ namespace API.Services
                 //If the most recent transaction exists
                 if (mostRecentTransaction != null)
                 {
-
-                    DateTime.TryParse(movement.ValueDate, out DateTime valueDate);
-
                     /*Transactions values calculations*/
                     if (movement.Type == "Collection")
                     {
@@ -1186,23 +1182,17 @@ namespace API.Services
 
                         newTransaction.Deal_Name = dealRelated.Deal_Name;
                         newTransaction.Transaction_Date = valueDate;
-
-                        //if (mostRecentTransaction.Withrawn_Principal != 0)
-                        //{
-                        //    //Remove what was was withdrawn in the previous movement
-                        //    newTransactionInvestment.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0)- mostRecentTransaction.Withrawn_Principal;
-                        //}
-
                         newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
                         newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
                         newTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
                         newTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+                        newTransaction.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
 
-                        //newTransactionInvestment.Cash_Interest_Accrued = 0;
-                        //newTransactionInvestment.PIK_Interest_Accrued = 0;
-                        //newTransactionInvestment.Undrawn_Interest_Accrued = 0;
+                        newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
+                        newTransaction.PIK_Interest_EOP = newTransaction.PIK_Interest_BOP;
+                        newTransaction.PIYC_Interest_EOP = newTransaction.PIYC_Interest_BOP;
+
                         newTransaction.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0);
-
 
                         //newTransactionInvestment = AccruedForInvestementAndCollection(newTransactionInvestment, valueDate, mostRecentAccrued.Transaction_Date, deal);
                         newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0);
@@ -1224,14 +1214,13 @@ namespace API.Services
                         //    .ExecuteDeleteAsync();
 
                         //New Accrued values from the date of the transaction forward
-                        await AccruedValuesModifyLoopOne(deal, valueDate);
+                        await AccruedValuesModifyLoopOne(deal, newTransaction, valueDate);
 
 
                         transactionsCreated.Add(newTransaction);
                     }
                     else if (movement.Type == "Investment")
                     {
-
                         //Create new transaction each time
                         Transaction newTransactionInvestment = new Transaction();
 
@@ -1241,37 +1230,31 @@ namespace API.Services
                         newTransactionInvestment.Amount_Due_BOP = (mostRecentTransaction.Amount_Due_EOP ?? 0);
                         newTransactionInvestment.Principal_BOP = (mostRecentTransaction.Principal_EOP ?? 0);
 
-                        
-                        //movement.TransactionAmount
-                        //If it is a quantity invested, it is first withdrawn amount
+                        newTransactionInvestment.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP + mostRecentTransaction.Cash_Interest_Accrued;
+                        newTransactionInvestment.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP + mostRecentTransaction.PIK_Interest_Accrued;
+                        newTransactionInvestment.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP + mostRecentTransaction.PIYC_Interest_Accrued;
+
+
                         newTransactionInvestment.Withrawn_Principal = movementDecimal;
-
-                        //newTransactionInvestment.Cash_Interest_EOP = 0;
-                        //newTransactionInvestment.PIK_Interest_EOP = 0;
-                        //if (mostRecentAccrued != null )
-                        //{
-                        //    newTransactionInvestment = AccruedForInvestementAndCollection(newTransactionInvestment, valueDate, mostRecentAccrued.Transaction_Date, deal);
-                        //}
-
-                        newTransactionInvestment.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0) - mostRecentTransaction.Withrawn_Principal;
+                        newTransactionInvestment.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0) + newTransactionInvestment.Withrawn_Principal;
                         newTransactionInvestment.Principal_EOP = newTransactionInvestment.Principal_BOP + movementDecimal;
 
                         newTransactionInvestment.Drawdown = movementDecimal;
                         newTransactionInvestment.Amount_Due_EOP = newTransactionInvestment.Amount_Due_BOP + movementDecimal ;
 
+                        newTransactionInvestment.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+                        newTransactionInvestment.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+                        newTransactionInvestment.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
+
+                        newTransactionInvestment.Cash_Interest_EOP = newTransactionInvestment.Cash_Interest_BOP;
+                        newTransactionInvestment.PIK_Interest_EOP = newTransactionInvestment.PIK_Interest_BOP;
+                        newTransactionInvestment.PIYC_Interest_EOP = newTransactionInvestment.PIYC_Interest_BOP;
+
+
                         await _context.Transactions.AddAsync(newTransactionInvestment);
                         await _context.SaveChangesAsync();
-
-                        //Deletes all the accrued values that exist from the date of the transaction forward
-                        //These accrued values were created previously from differnt transactions
-                        //await DeleteAccruedTransactionsFromDateAsync(deal.Deal_Name, valueDate);
-
-                        //await _context.Transactions
-                        //    .Where(t => t.Accrued == 1 && t.Deal_Name == deal.Deal_Name && t.Transaction_Date >= valueDate)
-                        //    .ExecuteDeleteAsync();
-
-                        //New Accrued values from the date of the transaction forward
-                        await AccruedValuesModifyLoopOne(deal, valueDate);
+                    
+                        await AccruedValuesModifyLoopOne(deal, newTransactionInvestment, valueDate);
 
                         transactionsCreated.Add(newTransactionInvestment);
 
@@ -1282,34 +1265,9 @@ namespace API.Services
             return transactionsCreated;
         }
 
-        public async Task DeleteAccruedTransactionsFromDateAsync(string dealName, DateTime fromDate)
-        {
-            // Fetch the transactions to delete
-            var transactionsToDelete = await _context.Transactions
-                .Where(t => t.Accrued == 1 && t.Transaction_Date >= fromDate && t.Deal_Name == dealName)
-                .ToListAsync();
-
-
-            // Check if there are transactions to delete
-            if (transactionsToDelete.Any())
-            {
-                // Remove the transactions from the context
-                _context.Transactions.RemoveRange(transactionsToDelete);
-
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-
-                Console.WriteLine($"{transactionsToDelete.Count} accrued transactions deleted for deal '{dealName}' starting from {fromDate:yyyy-MM-dd}.");
-            }
-            else
-            {
-                Console.WriteLine($"No accrued transactions found for deal '{dealName}' from {fromDate:yyyy-MM-dd} onwards.");
-            }
-        }
-
 
         //rollingTransactionDate is the date of the transaction
-        public async Task<List<Transaction>> AccruedValuesModifyLoopOne(Deal deal, DateTime rollingTransactionDate)
+        public async Task<List<Transaction>> AccruedValuesModifyLoopOne(Deal deal, Transaction recentTransaction, DateTime rollingTransactionDate)
         {
 
             List<Transaction> AccruedList = new List<Transaction>();
@@ -1333,12 +1291,6 @@ namespace API.Services
                 .ThenByDescending(t => t.Transaction_Id)   // In case of ties, sort by biggest ID
                 .FirstOrDefaultAsync();
 
-            Transaction mostRecentTransaction = await _context.Transactions
-                .Where(t => t.Deal_Name == deal.Deal_Name)
-                .OrderByDescending(t => t.Transaction_Date) // Sort by most recent date
-                .ThenByDescending(t => t.Transaction_Id)   // In case of ties, sort by biggest ID
-                .FirstOrDefaultAsync();
-
 
             if (AccruedList.Count > 0)
             {
@@ -1355,7 +1307,7 @@ namespace API.Services
 
                     // Modify accrued transaction or create a new one
                     Transaction AccruedTransaction = AccruedAllInterestsModifications(
-                        mostRecentTransaction, accrued, rollingTransactionDate, deal,
+                        recentTransaction, accrued, rollingTransactionDate, deal,
                         applicableCashRate, applicablePIKRate, applicablePIYCRate);
 
                     // Mark the transaction as modified
@@ -1676,6 +1628,10 @@ namespace API.Services
 
             // Common updates
             newAccruedTransaction.Principal_EOP = newAccruedTransaction.Principal_BOP; // Principal remains unchanged
+            newAccruedTransaction.Cash_Interest_EOP = (mostRecentTransaction.Cash_Interest_EOP ?? 0) + newAccruedTransaction.Cash_Interest_Accrued;
+            newAccruedTransaction.PIK_Interest_EOP = (mostRecentTransaction.PIK_Interest_EOP ?? 0) + newAccruedTransaction.PIK_Interest_EOP;
+            newAccruedTransaction.PIYC_Interest_EOP = (mostRecentTransaction.PIYC_Interest_EOP ?? 0) + newAccruedTransaction.PIYC_Interest_EOP;
+            
             newAccruedTransaction.Amount_Due_EOP =
                 (newAccruedTransaction.Amount_Due_BOP ?? 0) +
                 (newAccruedTransaction.Cash_Interest_Accrued ?? 0) +
@@ -1696,7 +1652,7 @@ namespace API.Services
             accruedMod.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
             accruedMod.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
             accruedMod.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
-
+            accruedMod.Undrawn_Amount = mostRecentTransaction.Undrawn_Amount;
 
             // Calculate Cash Interest
             if (cashInterestRate.HasValue && cashInterestRate.Value > 0)
@@ -1729,6 +1685,10 @@ namespace API.Services
 
             // Common updates
             accruedMod.Principal_EOP = accruedMod.Principal_BOP; // Principal remains unchanged
+            accruedMod.Cash_Interest_EOP = (mostRecentTransaction.Cash_Interest_EOP ?? 0) + accruedMod.Cash_Interest_Accrued;
+            accruedMod.PIK_Interest_EOP = (mostRecentTransaction.PIK_Interest_EOP ?? 0) + accruedMod.PIK_Interest_EOP;
+            accruedMod.PIYC_Interest_EOP = (mostRecentTransaction.PIYC_Interest_EOP ?? 0) + accruedMod.PIYC_Interest_EOP;
+
             accruedMod.Amount_Due_EOP =
                 (accruedMod.Amount_Due_BOP ?? 0) +
                 (accruedMod.Cash_Interest_Accrued ?? 0) +
