@@ -26,12 +26,10 @@ namespace API.Services
         private readonly ILogger<BackgroundTaskService> _logger;
         public readonly Deal deal;
 
-        public TransactionService(ILogger<BackgroundTaskService> logger, DataContext context, DataContext DBContext)
+        public TransactionService(ILogger<BackgroundTaskService> logger, DataContext context)
         {
             _context = context;
             _logger = logger;
-            _DBcontext = DBContext;
-
         }
 
         #region MANUAL INPUTS- Repayments and Drawdowns
@@ -532,7 +530,14 @@ namespace API.Services
             newMetrics.Total_Invested = 0;
             newMetrics.Accrued_Cash_Interest = 0;
             newMetrics.Accrued_Pik_Interest = 0;
+            newMetrics.Accrued_Piyc_Interest = 0;
             newMetrics.Accrued_Undrawn_Interest = 0;
+
+            newMetrics.Repayed_Cash_Interest = 0;
+            newMetrics.Repayed_Pik_Interest = 0;
+            newMetrics.Repayed_Piyc_Interest = 0;
+            newMetrics.Repayed_Undrawn_Interest = 0;
+
             newMetrics.Facility = 0;
             newMetrics.Interest_Payed = 0;
             newMetrics.Interest_Generated = 0;
@@ -541,55 +546,42 @@ namespace API.Services
             //In an list retrieve all the values in transactions
             List<Transaction> transactionForDeal = _context.Transactions.Where(t => string.Equals(t.Deal_Name, dealName))
                 .OrderByDescending(t => t.Transaction_Id).ToList();
+
             if (transactionForDeal.Count > 0 && transactionForDeal != null)
             {
-
                 foreach (Transaction transaction in transactionForDeal)
                 {
-                    newMetrics.Total_Collections += transaction.Repayment;
-                    newMetrics.Accrued_Cash_Interest += transaction.Cash_Interest_Accrued;
-                    newMetrics.Accrued_Pik_Interest += transaction.PIK_Interest_Accrued;
-                    newMetrics.Accrued_Undrawn_Interest += transaction.Undrawn_Interest_Accrued;
-                    newMetrics.Interest_Payed += transaction.Repayment_CashInterest;
-                    newMetrics.Interest_Payed += transaction.Repayment_PIKInterest;
-                    newMetrics.Interest_Payed += transaction.Repayment_UndrawnFees;
+                    //Facility Details
                     newMetrics.Total_Invested += (transaction.Withrawn_Principal ?? 0);
+                    
+                    //Accrued
+                    newMetrics.Accrued_Cash_Interest += (transaction.Cash_Interest_Accrued ?? 0);
+                    newMetrics.Accrued_Pik_Interest += (transaction.PIK_Interest_Accrued ?? 0);
+                    newMetrics.Accrued_Piyc_Interest += (transaction.PIYC_Interest_Accrued ?? 0);
+                    newMetrics.Accrued_Undrawn_Interest += (transaction.Undrawn_Interest_Accrued ?? 0);
 
-                }
+                    newMetrics.Total_Collections += (transaction.Repayment ?? 0);
 
-                foreach (Transaction accrued in accruedValuesPIK)
-                {
-                    newMetrics.Total_Collections += accrued.Repayment;
-                    newMetrics.Accrued_Cash_Interest += (accrued.Cash_Interest_Accrued ?? 0);
-                    newMetrics.Accrued_Pik_Interest += (accrued.PIK_Interest_Accrued ?? 0);
-                    newMetrics.Accrued_Undrawn_Interest += accrued.Undrawn_Interest_Accrued;
-                    newMetrics.Interest_Generated += accrued.PIK_Interest_Accrued;
-                    newMetrics.Interest_Payed += accrued.Repayment_CashInterest;
-                    newMetrics.Interest_Payed += accrued.Repayment_PIKInterest;
-                    newMetrics.Interest_Payed += accrued.Repayment_UndrawnFees;
-                }
+                    newMetrics.Repayed_Cash_Interest += (transaction.Repayment_CashInterest ?? 0);
+                    newMetrics.Repayed_Pik_Interest += (transaction.Repayment_PIKInterest ?? 0);
+                    //newMetrics.Repayed_Piyc_Interest += (transaction.repay?? 0);
+                    newMetrics.Repayed_Undrawn_Interest += (transaction.Repayment_UndrawnFees ?? 0);
 
-                foreach (Transaction accrued in accruedValuesCash)
-                {
-                    newMetrics.Total_Collections += accrued.Repayment;
-                    newMetrics.Accrued_Cash_Interest += (accrued.Cash_Interest_Accrued ?? 0);
-                    newMetrics.Accrued_Pik_Interest += (accrued.PIK_Interest_Accrued ?? 0);
-                    newMetrics.Accrued_Undrawn_Interest += accrued.Undrawn_Interest_Accrued;
-                    newMetrics.Interest_Generated += accrued.Cash_Interest_Accrued;
-                    newMetrics.Interest_Payed += accrued.Repayment_CashInterest;
-                    newMetrics.Interest_Payed += accrued.Repayment_PIKInterest;
-                    newMetrics.Interest_Payed += accrued.Repayment_UndrawnFees;
-
-
+                    newMetrics.Interest_Payed += (transaction.Repayment_CashInterest ?? 0);
+                    newMetrics.Interest_Payed += (transaction.Repayment_PIKInterest ?? 0);
+                    newMetrics.Interest_Payed += (transaction.Repayment_UndrawnFees ?? 0);
+                    newMetrics.Total_Invested += (transaction.Withrawn_Principal ?? 0);
+                    
                 }
 
                 //newMetrics.Interest_Generated = newMetrics.Accrued_Cash_Interest + newMetrics.Accrued_Pik_Interest + newMetrics.Accrued_Undrawn_Interest;
-
                 Transaction mostRecentTransaction = transactionForDeal.FirstOrDefault();
+                newMetrics.Total_Debt = mostRecentTransaction.Amount_Due_EOP;
+                newMetrics.Interest_Generated = newMetrics.Accrued_Cash_Interest + newMetrics.Accrued_Pik_Interest + newMetrics.Accrued_Undrawn_Interest;
+
                 newMetrics.Nav = mostRecentTransaction.Amount_Due_EOP;
                 newMetrics.Nav_profit = newMetrics.Nav + newMetrics.Total_Collections - newMetrics.Total_Invested;
                 newMetrics.Nav_moic = newMetrics.Nav_profit / newMetrics.Total_Invested;
-                newMetrics.Total_Debt = newMetrics.Interest_Generated + newMetrics.Total_Invested;
                 newMetrics.Facility = dealRelated.Facility;
             }
 
@@ -1051,7 +1043,7 @@ namespace API.Services
                         {
                             newTransaction.Repayment_PIKInterest = transactionAmount;
                             newTransaction.PIK_Interest_EOP = (newTransaction.PIK_Interest_BOP ?? 0) - newTransaction.Repayment_PIKInterest;
-                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_PIKInterest ?? 0);
+                            newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) + (newTransaction.Repayment_PIKInterest ?? 0);
                             //newTransactionInvestment.Cash_Interest_EOP = (newTransactionInvestment.Cash_Interest_BOP ?? 0);
 
                             //Check if there is remaining after paying PIK
@@ -1069,14 +1061,14 @@ namespace API.Services
 
                         }
                         //If PIK accrued till this point is null, process cash
-                        else
+                        else if(mostRecentTransaction.Cash_Interest_EOP != null)
                         {
                             //Need to put a condition if the cashInterest is less than transactionAmount
                             newTransaction.Repayment_CashInterest = transactionAmount;
-                            newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0) - newTransaction.Repayment_CashInterest;
+                            newTransaction.Cash_Interest_EOP = (newTransaction.Cash_Interest_BOP ?? 0) + newTransaction.Repayment_CashInterest;
                             newTransaction.Amount_Due_EOP = (newTransaction.Amount_Due_BOP ?? 0) - (newTransaction.Repayment_CashInterest ?? 0);
-                            newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
                         }
+                    
                     }
 
                     newTransaction.Principal_EOP = (newTransaction.Principal_BOP ?? 0);
@@ -1184,13 +1176,16 @@ namespace API.Services
                         newTransaction.Transaction_Date = valueDate;
                         newTransaction.Amount_Due_BOP = mostRecentTransaction.Amount_Due_EOP;
                         newTransaction.Principal_BOP = mostRecentTransaction.Principal_EOP;
+
                         newTransaction.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
                         newTransaction.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
                         newTransaction.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
+                        newTransaction.Undrawn_Interest_BOP = mostRecentTransaction.Undrawn_Interest_EOP;
 
                         newTransaction.Cash_Interest_EOP = newTransaction.Cash_Interest_BOP;
                         newTransaction.PIK_Interest_EOP = newTransaction.PIK_Interest_BOP;
                         newTransaction.PIYC_Interest_EOP = newTransaction.PIYC_Interest_BOP;
+                        newTransaction.Undrawn_Interest_EOP = newTransaction.Undrawn_Interest_BOP;
 
                         newTransaction.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0);
 
@@ -1230,10 +1225,10 @@ namespace API.Services
                         newTransactionInvestment.Amount_Due_BOP = (mostRecentTransaction.Amount_Due_EOP ?? 0);
                         newTransactionInvestment.Principal_BOP = (mostRecentTransaction.Principal_EOP ?? 0);
 
-                        newTransactionInvestment.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP + mostRecentTransaction.Cash_Interest_Accrued;
-                        newTransactionInvestment.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP + mostRecentTransaction.PIK_Interest_Accrued;
-                        newTransactionInvestment.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP + mostRecentTransaction.PIYC_Interest_Accrued;
-
+                        newTransactionInvestment.Cash_Interest_BOP = (mostRecentTransaction.Cash_Interest_EOP ?? 0)  + (mostRecentTransaction.Cash_Interest_Accrued ?? 0);
+                        newTransactionInvestment.PIK_Interest_BOP = (mostRecentTransaction.PIK_Interest_EOP ?? 0) + (mostRecentTransaction.PIK_Interest_Accrued ?? 0);
+                        newTransactionInvestment.PIYC_Interest_BOP = (mostRecentTransaction.PIYC_Interest_EOP ?? 0) + (mostRecentTransaction.PIYC_Interest_Accrued ?? 0);
+                        newTransactionInvestment.Undrawn_Interest_BOP = (mostRecentTransaction.Undrawn_Interest_EOP ?? 0) + (mostRecentTransaction.Undrawn_Interest_Accrued ?? 0);
 
                         newTransactionInvestment.Withrawn_Principal = movementDecimal;
                         newTransactionInvestment.Undrawn_Amount = (mostRecentTransaction.Undrawn_Amount ?? 0) + newTransactionInvestment.Withrawn_Principal;
@@ -1242,13 +1237,14 @@ namespace API.Services
                         newTransactionInvestment.Drawdown = movementDecimal;
                         newTransactionInvestment.Amount_Due_EOP = newTransactionInvestment.Amount_Due_BOP + movementDecimal ;
 
-                        newTransactionInvestment.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
-                        newTransactionInvestment.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
-                        newTransactionInvestment.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
+                        //newTransactionInvestment.Cash_Interest_BOP = mostRecentTransaction.Cash_Interest_EOP;
+                        //newTransactionInvestment.PIK_Interest_BOP = mostRecentTransaction.PIK_Interest_EOP;
+                        //newTransactionInvestment.PIYC_Interest_BOP = mostRecentTransaction.PIYC_Interest_EOP;
 
                         newTransactionInvestment.Cash_Interest_EOP = newTransactionInvestment.Cash_Interest_BOP;
                         newTransactionInvestment.PIK_Interest_EOP = newTransactionInvestment.PIK_Interest_BOP;
                         newTransactionInvestment.PIYC_Interest_EOP = newTransactionInvestment.PIYC_Interest_BOP;
+                        newTransactionInvestment.Undrawn_Interest_EOP = newTransactionInvestment.Undrawn_Interest_BOP;
 
 
                         await _context.Transactions.AddAsync(newTransactionInvestment);
@@ -1329,7 +1325,7 @@ namespace API.Services
 
         }
 
-            public async Task<List<Transaction>> AccruedValuesLoopOne(Deal deal, DateTime rollingTransactionDate)
+        public async Task<List<Transaction>> AccruedValuesLoopOne(Deal deal, DateTime rollingTransactionDate)
         {
 
             List<Transaction> AccruedList = new List<Transaction>();
@@ -1617,6 +1613,7 @@ namespace API.Services
             }
 
             // Calculate Undrawn Interest
+
             if (deal.Undrawn_fee.HasValue && deal.Undrawn_fee.Value > 0)
             {
 
@@ -1628,9 +1625,9 @@ namespace API.Services
 
             // Common updates
             newAccruedTransaction.Principal_EOP = newAccruedTransaction.Principal_BOP; // Principal remains unchanged
-            newAccruedTransaction.Cash_Interest_EOP = (mostRecentTransaction.Cash_Interest_EOP ?? 0) + newAccruedTransaction.Cash_Interest_Accrued;
-            newAccruedTransaction.PIK_Interest_EOP = (mostRecentTransaction.PIK_Interest_EOP ?? 0) + newAccruedTransaction.PIK_Interest_EOP;
-            newAccruedTransaction.PIYC_Interest_EOP = (mostRecentTransaction.PIYC_Interest_EOP ?? 0) + newAccruedTransaction.PIYC_Interest_EOP;
+            newAccruedTransaction.Cash_Interest_EOP = (newAccruedTransaction.Cash_Interest_BOP ?? 0) + newAccruedTransaction.Cash_Interest_Accrued;
+            newAccruedTransaction.PIK_Interest_EOP = (newAccruedTransaction.PIK_Interest_BOP ?? 0) + newAccruedTransaction.PIK_Interest_Accrued;
+            newAccruedTransaction.PIYC_Interest_EOP = (newAccruedTransaction.PIYC_Interest_BOP ?? 0) + newAccruedTransaction.PIYC_Interest_Accrued;
             
             newAccruedTransaction.Amount_Due_EOP =
                 (newAccruedTransaction.Amount_Due_BOP ?? 0) +
@@ -1680,14 +1677,11 @@ namespace API.Services
             {
                 accruedMod.Undrawn_Interest_Accrued =
                     (accruedMod.Amount_Due_BOP * (deal.Undrawn_fee / 100));
-                accruedMod.Undrawn_Interest_EOP = accruedMod.Undrawn_Interest_BOP + accruedMod.Undrawn_Interest_Accrued;
+                accruedMod.Undrawn_Interest_EOP = (accruedMod.Undrawn_Interest_BOP ?? 0) + accruedMod.Undrawn_Interest_Accrued;
             }
 
             // Common updates
             accruedMod.Principal_EOP = accruedMod.Principal_BOP; // Principal remains unchanged
-            accruedMod.Cash_Interest_EOP = (mostRecentTransaction.Cash_Interest_EOP ?? 0) + accruedMod.Cash_Interest_Accrued;
-            accruedMod.PIK_Interest_EOP = (mostRecentTransaction.PIK_Interest_EOP ?? 0) + accruedMod.PIK_Interest_EOP;
-            accruedMod.PIYC_Interest_EOP = (mostRecentTransaction.PIYC_Interest_EOP ?? 0) + accruedMod.PIYC_Interest_EOP;
 
             accruedMod.Amount_Due_EOP =
                 (accruedMod.Amount_Due_BOP ?? 0) +

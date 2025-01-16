@@ -12,9 +12,14 @@ export interface FinancialMetrics{
     interest_Generated: number;
     accrued_Cash_Interest: number;
     accrued_Pik_Interest: number;
+    accrued_Piyc_Interest: number;
     accrued_Undrawn_Interest: number;
     interest_Payed: number;
     total_Debt: number;
     facility: number;
     undrawn_Amount: number;
+    repayed_Cash_Interest: number;
+    repayed_Pik_Interest: number;
+    repayed_Piyc_Interest: number;
+    repayed_Undrawn_Interest: number;
 }

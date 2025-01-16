@@ -165,8 +165,8 @@ table .label {
 
 
 .row-accrued td {
-  background-color: #F87171;
-  color: rgb(112, 0, 0);; /* Optional: makes text readable */
+  background-color: #d1d5db;
+  color: #374151;
 }
 
 .row-projection td {

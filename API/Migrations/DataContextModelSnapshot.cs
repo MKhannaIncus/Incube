@@ -385,6 +385,9 @@ namespace API.Migrations
                     b.Property<decimal?>("Accrued_Pik_Interest")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal?>("Accrued_Piyc_Interest")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("Accrued_Undrawn_Interest")
                         .HasColumnType("decimal(18,2)");
 
@@ -407,6 +410,18 @@ namespace API.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Nav_profit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Repayed_Cash_Interest")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Repayed_Pik_Interest")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Repayed_Piyc_Interest")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Repayed_Undrawn_Interest")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Total_Collections")

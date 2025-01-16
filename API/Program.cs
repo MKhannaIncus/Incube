@@ -18,7 +18,6 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddIdentityServices(builder.Configuration);
 
-
 // Register the BackgroundTaskService
 builder.Services.AddHostedService<BackgroundTaskService>();
 

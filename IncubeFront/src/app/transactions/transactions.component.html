@@ -1,5 +1,7 @@
 <div class="table-container">
   <div class="table-responsive">
+
+    
     <table class="transaction-table table-hover table-bordered">
       <thead class="thead-dark">
         <tr>
@@ -16,19 +18,26 @@
           <th rowspan="2">Withdrawn Amount</th>
         </tr>
         <tr>
+          <!-- BOP Sub-Headers -->
           <th>Total Amount</th>
           <th>Principal</th>
           <th>Cash Interest</th>
           <th>PIK Interest</th>
           <th>PIYC Interest</th> <!-- Added PIYC -->
+
+          <!-- Accrued Sub-Headers -->
           <th>Cash Interest</th>
           <th>PIK Interest</th>
           <th>PIYC Interest</th> <!-- Added PIYC -->
           <th>Undrawn Interest</th>
+
+          <!-- Repayments Sub-Headers -->
           <th>Cash Interest</th>
           <th>PIK Interest</th>
           <th>Principal</th>
           <th>Undrawn Fees</th>
+
+          <!-- EOP Sub-Headers -->
           <th>Principal</th>
           <th>Cash Interest</th>
           <th>PIK Interest</th>
@@ -37,6 +46,7 @@
         </tr>
       </thead>
       <tbody>
+        <!-- Data Rows -->
         <tr *ngFor="let transaction of transactions"
             [ngClass]="{'row-accrued': transaction.accrued === 1}">
           <td>{{ transaction.transaction_Id }}</td>
@@ -63,35 +73,11 @@
           <td>{{ transaction.undrawn_Interest_EOP ? (transaction.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.amount_Due_EOP ? (transaction.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
           <td>{{ transaction.repayment ? (transaction.repayment | number:'1.0-0') : '-' }}</td>
-          <td>{{ transaction.withrawn_Principal ? (transaction.withrawn_Principal | number:'1.0-0') : '-' }}</td>
-        </tr>
-        <tr class="table-projected" *ngFor="let projection of projections"
-            [ngClass]="{'row-projections': projection.projection === 1}">
-          <td>Proj</td>
-          <td>{{ projection.transaction_Date | date }}</td>
-          <td>{{ projection.amount_Due_BOP ? (projection.amount_Due_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.principal_BOP ? (projection.principal_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.cash_Interest_BOP ? (projection.cash_Interest_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.piK_Interest_BOP ? (projection.piK_Interest_BOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.piyC_Interest_BOP ? (projection.piyC_Interest_BOP | number:'1.0-0') : '-' }}</td> <!-- Added PIYC BOP -->
-          <td>{{ projection.undrawn_Amount ? (projection.undrawn_Amount | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.cash_Interest_Accrued ? (projection.cash_Interest_Accrued | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.piK_Interest_Accrued ? (projection.piK_Interest_Accrued | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.piyC_Interest_Accrued ? (projection.piyC_Interest_Accrued | number:'1.0-0') : '-' }}</td> <!-- Added PIYC Accrued -->
-          <td>{{ projection.undrawn_Interest_Accrued ? (projection.undrawn_Interest_Accrued | number:'1.0-0') : '-' }}</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>{{ projection.capitalized ? (projection.capitalized | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.principal_EOP ? (projection.principal_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.cash_Interest_EOP ? (projection.cash_Interest_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.piK_Interest_EOP ? (projection.piK_Interest_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.piyC_Interest_EOP ? (projection.piyC_Interest_EOP | number:'1.0-0') : '-' }}</td> <!-- Added PIYC EOP -->
-          <td>{{ projection.undrawn_Interest_EOP ? (projection.undrawn_Interest_EOP | number:'1.0-0') : '-' }}</td>
-          <td>{{ projection.amount_Due_EOP ? (projection.amount_Due_EOP | number:'1.0-0') : '-' }}</td>
+          <td>{{ transaction.withrawn_Principal ? (transaction.withrawn_Principal| number:'1.0-0') : '-' }}</td>
         </tr>
       </tbody>
     </table>
+
+
   </div>
 </div>

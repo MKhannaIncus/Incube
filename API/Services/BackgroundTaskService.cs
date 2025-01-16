@@ -66,7 +66,7 @@ namespace API.Services
                 {
                     foreach( var deal in deals) { 
                     
-                    //var dealAccruedComplete = await transactionService.Accrued(deal);
+                    //var dealAccruedComplete = await _transactionService.Accrued(deal);
 
                     }
                 }

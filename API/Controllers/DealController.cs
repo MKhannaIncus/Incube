@@ -33,14 +33,14 @@ namespace API.Controllers
     public class DealController : BaseApiController
     {
         private readonly DataContext _context;
-        private TransactionService transactionService;
+        private TransactionService _transactionService;
         private ExcelReader excelReader;
         private FinancialMetrics financialMetrics;
 
         public DealController(DataContext context)
         {
             _context = context;
-            //transactionService = new TransactionService(null, _context);
+            _transactionService = new TransactionService(null, _context);
             excelReader = new ExcelReader();
         }
 
@@ -77,8 +77,7 @@ namespace API.Controllers
             //            .FirstOrDefault()
             //    }).FirstOrDefaultAsync();
 
-            FinancialMetrics metrics = transactionService.MetricsCalculations(dealName);
-
+            FinancialMetrics metrics = _transactionService.MetricsCalculations(dealName);
 
             return Ok(metrics);
         }
@@ -122,14 +121,14 @@ namespace API.Controllers
                 Comments = deal.Comments
             };
 
-            //transactionService.FirstTransaction(newDeal);
+            //_transactionService.FirstTransaction(newDeal);
             _context.Deals.Add(newDeal);
             await _context.SaveChangesAsync();
 
             Entities.Transaction transaction = new Entities.Transaction();
             transaction.Drawdown = 0;
             transaction.Related_Deal_Id = newDeal.Deal_Id;
-            transactionService.NewTransaction_Disbursement(transaction);
+            _transactionService.NewTransaction_Disbursement(transaction);
 
             return newDeal;
         }

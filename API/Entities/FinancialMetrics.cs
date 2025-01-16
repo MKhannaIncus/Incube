@@ -10,19 +10,11 @@ namespace API.Entities
         [Key]
         public int Metrics_id { get; set; }
 
-        //[ForeignKey("Deal")]
-        //public int Deal_id { get; set; }
-        //public Deal Deal_Id { get; set; }
-
-        //public string? Deal_Id { get; set; }
+        //public int? Deal_Id { get; set; }
         //public Deal Deal { get; set; }
 
-        //[ForeignKey("Transaction")]
-        //public int Transaction_id { get; set; }
-        //public Transaction Transaction_Id { get; set; }
         public int? Transaction_Id { get; set; }
         //public Transaction Transaction { get; set; }
-
         public decimal? Nav { get; set; }
         public decimal? Nav_irr { get; set; }
         public decimal? Nav_moic { get; set; }
@@ -32,15 +24,16 @@ namespace API.Entities
         public decimal? Interest_Generated { get; set; }
         public decimal? Accrued_Cash_Interest { get; set; }
         public decimal? Accrued_Pik_Interest { get; set; }
+        public decimal? Accrued_Piyc_Interest { get; set; }
         public decimal? Accrued_Undrawn_Interest { get; set; }
+        public decimal? Repayed_Cash_Interest { get; set; }
+        public decimal? Repayed_Pik_Interest { get; set; }
+        public decimal? Repayed_Piyc_Interest { get; set; }
+        public decimal? Repayed_Undrawn_Interest { get; set; }
         public decimal? Interest_Payed { get; set; }
         public decimal? Total_Debt { get; set; }
         public decimal? Facility { get; set; }
         public decimal? Undrawn_Amount { get; set; }
 
     }
-
-
-
-
 }
